@@ -107,7 +107,7 @@ Description: shared libraries for terminal handling (32-bit)
  This package contains the shared libraries necessary to run programs
  compiled with ncurses.
  .
- This package supports the 64-bit ABI variant of your system's
+ This package supports the 32-bit ABI variant of your system's
  architecure.
 
 Package: lib32ncurses5-dev
@@ -134,7 +134,7 @@ Description: shared libraries for terminal handling (wide character support) (32
  This package contains the shared libraries necessary to run programs
  compiled with ncursesw, which includes support for wide characters.
  .
- This package supports the 64-bit ABI variant of your system's
+ This package supports the 32-bit ABI variant of your system's
  architecure.
 
 Package: lib32ncursesw5-dev
@@ -149,7 +149,7 @@ Description: developer's libraries for ncursesw (32-bit)
  and symbolic links that developers using ncursesw will need.
  .
  This package includes support for wide characters.
- This package supports the 64-bit ABI variant of your system's
+ This package supports the 32-bit ABI variant of your system's
  architecure.
 
 Package: ncurses-bin

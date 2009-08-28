@@ -1,6 +1,7 @@
 ncurses (5.7+20090803-3) UNRELEASED; urgency=low
 
   * Fix dependencies of lib32ncursesw5-dev.
+  * Fix long descriptions of 32-bit packages on 64-bit systems.
 
  -- Sven Joachim <svenjoac@gmx.de>  Fri, 28 Aug 2009 14:37:13 +0200
 
