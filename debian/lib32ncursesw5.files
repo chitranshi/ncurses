@@ -1,0 +1,5 @@
+lib32/libncursesw.so.*
+lib32/libticw.so.*
+usr/lib32/libpanelw.so.*
+usr/lib32/libformw.so.*
+usr/lib32/libmenuw.so.*

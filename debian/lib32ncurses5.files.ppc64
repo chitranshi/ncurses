@@ -1,0 +1,4 @@
+lib32/libncurses.so.*
+usr/lib32/libpanel.so.*
+usr/lib32/libform.so.*
+usr/lib32/libmenu.so.*

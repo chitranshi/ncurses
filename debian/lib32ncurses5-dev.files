@@ -1,0 +1,11 @@
+usr/lib32/libncurses.so
+usr/lib32/libtic.so
+usr/lib32/libform.so
+usr/lib32/libmenu.so
+usr/lib32/libpanel.so
+usr/lib32/libncurses.a
+usr/lib32/libncurses++.a
+usr/lib32/libtic.a
+usr/lib32/libform.a
+usr/lib32/libmenu.a
+usr/lib32/libpanel.a

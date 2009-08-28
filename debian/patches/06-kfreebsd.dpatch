@@ -1,0 +1,19 @@
+#!/bin/sh /usr/share/dpatch/dpatch-run
+## 06-kfreebsd.dpatch by Petr Salinger <Petr.Salinger@seznam.cz>
+##
+## DP: Fixing FTBFS on GNU/kFreeBSD (Closes: #504820).
+
+@DPATCH@
+
+diff -Naurp ncurses.orig/progs/tset.c ncurses/progs/tset.c
+--- ncurses.orig/progs/tset.c	2008-10-11 19:26:19.000000000 +0000
++++ ncurses/progs/tset.c	2008-11-07 20:01:31.000000000 +0000
+@@ -981,7 +981,7 @@ set_init(void)
+ 	PC = pad_char[0];
+ #endif /* OBSOLETE */
+ 
+-#ifdef TAB3
++#if defined(TAB3) && defined(ONLCR) && defined(OCRNL) && defined(ONLRET)
+     if (oldmode.c_oflag & (TAB3 | ONLCR | OCRNL | ONLRET)) {
+ 	oldmode.c_oflag &= (TAB3 | ONLCR | OCRNL | ONLRET);
+ 	SET_TTY(STDERR_FILENO, &oldmode);

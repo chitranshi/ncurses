@@ -1,0 +1,13 @@
+usr/include/ncursesw
+usr/lib/libncursesw.so
+usr/lib/libticw.so
+usr/lib/libformw.so
+usr/lib/libmenuw.so
+usr/lib/libpanelw.so
+usr/lib/libncursesw.a
+usr/lib/libncurses++w.a
+usr/lib/libticw.a
+usr/lib/libformw.a
+usr/lib/libmenuw.a
+usr/lib/libpanelw.a
+usr/share/man/man3

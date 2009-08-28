@@ -1,0 +1,7 @@
+01-use-d-reentrant.dpatch
+02-debian-backspace.dpatch
+03-linux-use-fsuid.dpatch
+04-tic-shorten-symlinks.dpatch
+05-emdebian-wchar.dpatch
+06-kfreebsd.dpatch
+07-make.dpatch
