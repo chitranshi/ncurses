@@ -1,3 +1,9 @@
+ncurses (5.7+20090803-3) UNRELEASED; urgency=low
+
+  * Fix dependencies of lib32ncursesw5-dev.
+
+ -- Sven Joachim <svenjoac@gmx.de>  Fri, 28 Aug 2009 14:37:13 +0200
+
 ncurses (5.7+20090803-2) unstable; urgency=low
 
   * Updating package to standards version 3.8.3.
