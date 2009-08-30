@@ -99,7 +99,7 @@ CONFARGS =	--prefix=/usr \
 		--with-chtype='long' \
 		--with-mmask-t='long' \
 		--disable-termcap \
-		--with-default-terminfo-dir=/etc/terminfo \
+		--with-default-terminfo-dir=/usr/share/terminfo \
 		--with-terminfo-dirs="/etc/terminfo:/lib/terminfo:/usr/share/terminfo" \
 		--with-ticlib
 
@@ -300,9 +300,6 @@ endif
 	# Install non -DTRACE versions.
 	$(MAKE) -C $(objdir) install.libs
 	$(MAKE) -C $(wobjdir) install.libs
-
-	# Move terminfo files to the right place.
-	mv $(tempdir)/etc/terminfo $(tempdir)/usr/share/terminfo
 
 	# Remove blacklisted terminal types.
 	cd $(tempdir)/usr/share/terminfo && rm -f $(badterminfo)
