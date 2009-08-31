@@ -460,4 +460,4 @@ binary-indep: build install
 	dh_md5sums -i
 	dh_builddeb -i
 
-.PHONY: binary diff clean patch install
+.PHONY: binary binary-arch binary-indep clean patch unpatch install
