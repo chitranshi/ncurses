@@ -5,6 +5,8 @@ ncurses (5.7+20090803-3) UNRELEASED; urgency=low
   * Update xterm terminfo entry from xterm 246 (Closes: #444250).
   * Fix dependencies of lib32ncursesw5-dev.
   * Fix long descriptions of 32-bit packages on 64-bit systems.
+  * Add lintian override for alleged spelling error in ncurses-base'
+    extended description; "linux" refers to a terminal type there.
 
  -- Sven Joachim <svenjoac@gmx.de>  Fri, 28 Aug 2009 14:37:13 +0200
 
