@@ -2,6 +2,7 @@ ncurses (5.7+20090803-3) UNRELEASED; urgency=low
 
   * Configure with /usr/share/terminfo as default terminfo dir, so that
     we get the correct tabset directory (Closes: #509919, LP: #200773).
+  * Update xterm terminfo entry from xterm 246 (Closes: #444250).
   * Fix dependencies of lib32ncursesw5-dev.
   * Fix long descriptions of 32-bit packages on 64-bit systems.
 
