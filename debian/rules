@@ -281,8 +281,6 @@ ifneq ($(build_64),)
 	mv $(tempdir)/usr/lib64/libtic.so.$(soname) $(tempdir)/lib64/
 endif
 
-	mkdir -p $(tempdir)/etc
-
 	# Install into our base directory
 	GZIP='-9' $(MAKE) -C $(objdir-debug) install
 	$(MAKE) -C $(wobjdir-debug) install.libs
