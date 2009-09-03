@@ -295,7 +295,7 @@ endif
 	done
 
 	# Install non -DTRACE versions.
-	$(MAKE) -C $(objdir) install.libs
+	GZIP='-9' $(MAKE) -C $(objdir) install
 	$(MAKE) -C $(wobjdir) install.libs
 
 	# Remove blacklisted terminal types.
