@@ -282,7 +282,7 @@ ifneq ($(build_64),)
 endif
 
 	# Install into our base directory
-	GZIP='-9' $(MAKE) -C $(objdir-debug) install
+	$(MAKE) -C $(objdir-debug) install.libs
 	$(MAKE) -C $(wobjdir-debug) install.libs
 
 	# Copy libraries to the debug directory

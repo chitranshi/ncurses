@@ -5,6 +5,8 @@ ncurses (5.7+20090803-3) UNRELEASED; urgency=low
   * Update xterm terminfo entry from xterm 246 (Closes: #444250).
   * Move the debugging libraries back to /usr/lib/debug, ship detached
     debugging symbols in libncurses5-dbg (Closes: #532202).
+  * Install the binaries built without trace support in ncurses-bin
+    to avoid symbol lookup errors (Closes: #365120).
   * Fix dependencies of lib32ncursesw5-dev.
   * Fix long descriptions of 32-bit packages on 64-bit systems.
   * Add lintian override for alleged spelling error in ncurses-base'
