@@ -1,8 +1,8 @@
-usr/lib/debug/usr/lib/libncurses.so.*
-usr/lib/debug/usr/lib/libtic.so.*
-usr/lib/debug/usr/lib/libform.so.*
-usr/lib/debug/usr/lib/libmenu.so.*
-usr/lib/debug/usr/lib/libpanel.so.*
+usr/lib/debug/libncurses.so.*
+usr/lib/debug/libtic.so.*
+usr/lib/debug/libform.so.*
+usr/lib/debug/libmenu.so.*
+usr/lib/debug/libpanel.so.*
 usr/lib/libncurses_g.a
 usr/lib/libtic_g.a
 usr/lib/libform_g.a

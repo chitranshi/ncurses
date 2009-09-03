@@ -1,8 +1,8 @@
-usr/lib/debug/usr/lib/libncursesw.so.*
-usr/lib/debug/usr/lib/libticw.so.*
-usr/lib/debug/usr/lib/libformw.so.*
-usr/lib/debug/usr/lib/libmenuw.so.*
-usr/lib/debug/usr/lib/libpanelw.so.*
+usr/lib/debug/libncursesw.so.*
+usr/lib/debug/libticw.so.*
+usr/lib/debug/libformw.so.*
+usr/lib/debug/libmenuw.so.*
+usr/lib/debug/libpanelw.so.*
 usr/lib/libncursesw_g.a
 usr/lib/libticw_g.a
 usr/lib/libformw_g.a

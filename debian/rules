@@ -286,8 +286,8 @@ endif
 	$(MAKE) -C $(wobjdir-debug) install.libs
 
 	# Copy libraries to the debug directory
-	test -d $(tempdir)/usr/lib/debug || mkdir -p $(tempdir)/usr/lib/debug/usr/lib
-	cp -a $(tempdir)/usr/lib/*.so.* $(tempdir)/usr/lib/debug/usr/lib
+	test -d $(tempdir)/usr/lib/debug || mkdir -p $(tempdir)/usr/lib/debug
+	cp -a $(tempdir)/usr/lib/*.so.* $(tempdir)/usr/lib/debug
 
 	# Rename static debug libraries.
 	for lib in $(tempdir)/usr/lib/*.a; do \
