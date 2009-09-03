@@ -3,7 +3,8 @@ ncurses (5.7+20090803-3) UNRELEASED; urgency=low
   * Configure with /usr/share/terminfo as default terminfo dir, so that
     we get the correct tabset directory (Closes: #509919, LP: #200773).
   * Update xterm terminfo entry from xterm 246 (Closes: #444250).
-  * Move the debugging libraries back to /usr/lib/debug.
+  * Move the debugging libraries back to /usr/lib/debug, ship detached
+    debugging symbols in libncurses5-dbg (Closes: #532202).
   * Fix dependencies of lib32ncursesw5-dev.
   * Fix long descriptions of 32-bit packages on 64-bit systems.
   * Add lintian override for alleged spelling error in ncurses-base'
