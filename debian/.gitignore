@@ -1,0 +1,10 @@
+files
+*.substvars
+*.debhelper
+*.debhelper.log
+lib*ncurses*/
+ncurses-*/
+patched/
+shlibs.local
+tmp/
+
