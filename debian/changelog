@@ -9,6 +9,8 @@ ncurses (5.7+20090803-3) UNRELEASED; urgency=low
     to avoid symbol lookup errors (Closes: #365120).
   * Fix dependencies of lib32ncursesw5-dev.
   * Fix long descriptions of 32-bit packages on 64-bit systems.
+  * Remove compatibility symlinks in /usr/share/terminfo that were only
+    necessary for upgrades from versions prior to 5.4-9.
   * Add lintian override for alleged spelling error in ncurses-base'
     extended description; "linux" refers to a terminal type there.
   * Adjust priority of the source package to required.
