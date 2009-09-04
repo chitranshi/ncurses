@@ -7,15 +7,21 @@ ncurses (5.7+20090803-3) UNRELEASED; urgency=low
     debugging symbols in libncurses5-dbg (Closes: #532202).
   * Install the binaries built without trace support in ncurses-bin
     to avoid symbol lookup errors (Closes: #365120).
-  * Fix dependencies of lib32ncursesw5-dev.
-  * Fix long descriptions of 32-bit packages on 64-bit systems.
   * Remove compatibility symlinks in /usr/share/terminfo that were only
     necessary for upgrades from versions prior to 5.4-9.
+  * debian/control cleanups:
+    - Adjust priority of the source package to required.
+    - Fix dependencies of lib32ncursesw5-dev.
+    - Fix long descriptions of 32-bit packages on 64-bit systems.
+    - Remove very old Replaces/Conflicts/Provides on ncurses-developer,
+      ncurses and tput.
+    - Version the "Replaces: ia32-libs" for lib32ncurses-dev.
+    - Remove no longer needed "Replaces: ncurses-term" and
+      "Depends: libncurses5" from ncurses-base.
   * Add lintian override for alleged spelling error in ncurses-base'
     extended description; "linux" refers to a terminal type there.
-  * Adjust priority of the source package to required.
 
- -- Sven Joachim <svenjoac@gmx.de>  Thu, 03 Sep 2009 08:38:05 +0200
+ -- Sven Joachim <svenjoac@gmx.de>  Fri, 04 Sep 2009 12:42:44 +0200
 
 ncurses (5.7+20090803-2) unstable; urgency=low
 

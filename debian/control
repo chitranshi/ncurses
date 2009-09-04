@@ -21,8 +21,8 @@ Architecture: any
 Section: libdevel
 Priority: optional
 Depends: libncurses5 (= ${binary:Version}), libc-dev
-Conflicts: ncurses-dev, ncurses-developer, libncurses-dev
-Replaces: ncurses-dev, ncurses-developer, libncurses-dev
+Conflicts: ncurses-dev, libncurses-dev
+Replaces: ncurses-dev, libncurses-dev
 Provides: libncurses-dev, ncurses-dev
 Description: developer's libraries and docs for ncurses
  This package contains the header files, static libraries
@@ -104,7 +104,7 @@ Section: libs
 Priority: optional
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libc6-i386 (<= 2.9-18)
-Replaces: ia32-libs
+Replaces: ia32-libs (<< 1.10)
 Description: shared libraries for terminal handling (32-bit)
  This package contains the shared libraries necessary to run programs
  compiled with ncurses.
@@ -160,8 +160,6 @@ Section: utils
 Priority: required
 Essential: yes
 Pre-Depends: ${shlibs:Depends}, ${misc:Depends}
-Conflicts: ncurses, tput
-Provides: tput
 Description: terminal-related programs and man pages
  This package contains the programs used for manipulating the terminfo
  database and individual terminfo entries, as well as some programs for
@@ -174,8 +172,6 @@ Priority: required
 Essential: yes
 Conflicts: ncurses, ncurses-runtime
 Provides: ncurses-runtime
-Replaces: ncurses-term
-Depends: libncurses5
 Description: basic terminal type definitions
  This package contains terminfo data files to support the most common types of
  terminal, including ansi, dumb, linux, rxvt, screen, sun, vt100, vt102, vt220,
