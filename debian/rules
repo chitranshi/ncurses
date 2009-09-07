@@ -381,7 +381,12 @@ binary-arch: build install
 	dh_installchangelogs -s NEWS
 	dh_installexamples -s
 
-	dh_strip -s -X$(package-dbg) -X$(package-dbgw) --dbg-package=$(package-dbg)
+	# Strip the packages, shipping detached debugging symbols. Need to strip
+	# $(package-devw) separately, because -X$(package-libw) excludes it.
+	dh_strip -s -X$(package-dbg) -X$(package-dbgw) -X$(package-libw) \
+		--dbg-package=$(package-dbg)
+	dh_strip -p$(package-devw)
+	dh_strip -p$(package-libw) --dbg-package=$(package-dbgw)
 	dh_compress -s
 	dh_fixperms -s
 	dh_makeshlibs -p$(package-lib) -V "$(package-lib) $(sodepver)"

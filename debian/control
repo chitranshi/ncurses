@@ -34,7 +34,6 @@ Architecture: any
 Section: debug
 Priority: extra
 Depends: ${shlibs:Depends}, libncurses5-dev (= ${binary:Version})
-Replaces: libncursesw5-dbg (<< 5.7+2009083-3)
 Description: debugging/profiling libraries for ncurses
  This package contains the debugging libraries for ncurses.
 
@@ -65,7 +64,6 @@ Architecture: any
 Section: debug
 Priority: extra
 Depends: ${shlibs:Depends}, libncursesw5-dev (= ${binary:Version})
-Recommends: libncurses5-dbg
 Description: debugging/profiling libraries for ncurses
  This package contains the debugging libraries for ncursesw.
  .

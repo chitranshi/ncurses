@@ -4,7 +4,7 @@ ncurses (5.7+20090803-3) UNRELEASED; urgency=low
     we get the correct tabset directory (Closes: #509919, LP: #200773).
   * Update xterm terminfo entry from xterm 246 (Closes: #444250).
   * Move the debugging libraries back to /usr/lib/debug, ship detached
-    debugging symbols in libncurses5-dbg (Closes: #532202).
+    debugging symbols (Closes: #532202).
   * Install the binaries built without trace support in ncurses-bin
     to avoid symbol lookup errors (Closes: #365120).
   * Remove compatibility symlinks in /usr/share/terminfo that were only
