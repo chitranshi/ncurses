@@ -346,8 +346,8 @@ endif
 	install --mode 644 --owner=root --group=root \
 		debian/README.etc $(tempdir)/etc/terminfo/README
 
-	dh_movefiles -s
-	dh_movefiles -i
+	dh_install --autodest -s
+	dh_install --autodest -i
 
 	# We keep the libncurses shared library in /lib.
 	ln -sf /lib/libncurses.so.$(soname) debian/$(package-dev)/usr/lib/libncurses.so
