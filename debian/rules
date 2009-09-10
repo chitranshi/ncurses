@@ -4,9 +4,6 @@
 
 include /usr/share/dpatch/dpatch.make
 
-# This has to be exported to make some magic below work.
-export DH_OPTIONS
-
 # These are important since this is a library package
 soname=5
 vername=5.7
@@ -249,7 +246,6 @@ clean: unpatch
 	rm -f debian/shlibs.local
 	dh_clean
 
-install: DH_OPTIONS=
 install: build
 	# Generate proper debhelper files for so-named packages
 	dh_testdir
@@ -439,13 +435,12 @@ endif
 	dh_md5sums -s
 	dh_builddeb -s
 
-binary-indep: DH_OPTIONS=-i
 binary-indep: build install
 	dh_testdir
 	dh_testroot
 
-	dh_installdocs
-	dh_installchangelogs NEWS
+	dh_installdocs -i
+	dh_installchangelogs -i NEWS
 	dh_install -i
 	dh_lintian -i
 	dh_compress -i
