@@ -319,17 +319,6 @@ else
 
 endif
 
-	# We keep the libncurses shared library in /lib.
-	test -d $(tempdir)/lib || mkdir $(tempdir)/lib
-	mv $(tempdir)/usr/lib/libncurses.so.$(vername) $(tempdir)/lib/
-	mv $(tempdir)/usr/lib/libncurses.so.$(soname) $(tempdir)/lib/
-	mv $(tempdir)/usr/lib/libtic.so.$(vername) $(tempdir)/lib/
-	mv $(tempdir)/usr/lib/libtic.so.$(soname) $(tempdir)/lib/
-	mv $(tempdir)/usr/lib/libncursesw.so.$(vername) $(tempdir)/lib/
-	mv $(tempdir)/usr/lib/libncursesw.so.$(soname) $(tempdir)/lib/
-	mv $(tempdir)/usr/lib/libticw.so.$(vername) $(tempdir)/lib/
-	mv $(tempdir)/usr/lib/libticw.so.$(soname) $(tempdir)/lib/
-
 	# Move ncurses-base terminfo entries to /lib/terminfo.
 	for f in $(libterminfofiles); do \
 		dir=$(tempdir)/lib/terminfo/$$(dirname $$f); \
