@@ -251,8 +251,6 @@ install: build
 	dh_testdir
 	dh_testroot
 	dh_prep
-	dh_installdirs -s
-	dh_installdirs -i
 
 ifneq ($(build_32),)
 	$(MAKE) -C $(objdir-32) install.libs
