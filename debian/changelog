@@ -20,8 +20,10 @@ ncurses (5.7+20090803-3) UNRELEASED; urgency=low
       "Depends: libncurses5" from ncurses-base.
   * Add lintian override for alleged spelling error in ncurses-base'
     extended description; "linux" refers to a terminal type there.
+  * Use dh_install instead of dh_movefiles to install files and clean
+    up debian/rules a bit.
 
- -- Sven Joachim <svenjoac@gmx.de>  Fri, 04 Sep 2009 12:42:44 +0200
+ -- Sven Joachim <svenjoac@gmx.de>  Thu, 10 Sep 2009 20:28:39 +0200
 
 ncurses (5.7+20090803-2) unstable; urgency=low
 
