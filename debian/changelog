@@ -11,6 +11,7 @@ ncurses (5.7+20090803-3) UNRELEASED; urgency=low
     necessary for upgrades from versions prior to 5.4-9.
   * debian/control cleanups:
     - Adjust priority of the source package to required.
+    - Remove duplicate Section field for library packages.
     - Fix dependencies of lib32ncursesw5-dev.
     - Fix long descriptions of 32-bit packages on 64-bit systems.
     - Do not recommend libgpm2 in non-native library packages.

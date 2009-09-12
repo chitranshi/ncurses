@@ -8,7 +8,6 @@ Homepage: ftp://invisible-island.net/ncurses/
 
 Package: libncurses5
 Architecture: any
-Section: libs
 Priority: required
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: libgpm2
@@ -39,7 +38,6 @@ Description: debugging/profiling libraries for ncurses
 
 Package: libncursesw5
 Architecture: any
-Section: libs
 Priority: important
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: libgpm2
@@ -71,7 +69,6 @@ Description: debugging/profiling libraries for ncurses
 
 Package: lib64ncurses5
 Architecture: i386 powerpc sparc s390
-Section: libs
 Priority: optional
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Replaces: amd64-libs (<= 1.2)
@@ -97,7 +94,6 @@ Description: developer's libraries for ncurses (64-bit)
 
 Package: lib32ncurses5
 Architecture: amd64 ppc64
-Section: libs
 Priority: optional
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libc6-i386 (<= 2.9-18)
@@ -124,7 +120,6 @@ Description: developer's libraries for ncurses (32-bit)
 
 Package: lib32ncursesw5
 Architecture: amd64 ppc64
-Section: libs
 Priority: optional
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libc6-i386 (<= 2.9-18)
