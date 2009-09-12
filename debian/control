@@ -74,7 +74,6 @@ Architecture: i386 powerpc sparc s390
 Section: libs
 Priority: optional
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Recommends: libgpm2
 Replaces: amd64-libs (<= 1.2)
 Description: shared libraries for terminal handling (64-bit)
  This package contains the shared libraries necessary to run programs
@@ -129,7 +128,6 @@ Section: libs
 Priority: optional
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libc6-i386 (<= 2.9-18)
-Recommends: libgpm2
 Description: shared libraries for terminal handling (wide character support) (32-bit)
  This package contains the shared libraries necessary to run programs
  compiled with ncursesw, which includes support for wide characters.
