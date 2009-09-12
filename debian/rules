@@ -85,7 +85,7 @@ endif
 CFLAGS = -O2 -g
 CONFARGS =	--prefix=/usr \
 		--with-shared \
-		--mandir='$${datadir}/man' \
+		--mandir=/usr/share/man \
 		--without-profile --without-debug \
 		--disable-rpath --enable-echo \
 		--enable-const \
