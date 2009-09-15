@@ -1,11 +1,13 @@
-#!/bin/sh /usr/share/dpatch/dpatch-run
+---
+ form/Makefile.in    |    2 +-
+ menu/Makefile.in    |    2 +-
+ ncurses/Makefile.in |    2 +-
+ panel/Makefile.in   |    2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-@DPATCH@
-
-diff -Naurp ncurses-5.6+20071103.orig/form/Makefile.in ncurses-5.6+20071103/form/Makefile.in
---- ncurses-5.6+20071103.orig/form/Makefile.in	2007-09-10 12:37:45.000000000 +0000
-+++ ncurses-5.6+20071103/form/Makefile.in	2007-11-04 14:25:36.000000000 +0000
-@@ -81,7 +81,7 @@ CFLAGS		= @CFLAGS@
+--- a/form/Makefile.in
++++ b/form/Makefile.in
+@@ -82,7 +82,7 @@
  
  CPPFLAGS	= -I@top_srcdir@/ncurses -DHAVE_CONFIG_H @CPPFLAGS@
  
@@ -14,10 +16,9 @@ diff -Naurp ncurses-5.6+20071103.orig/form/Makefile.in ncurses-5.6+20071103/form
  
  CFLAGS_LIBTOOL	= $(CCFLAGS)
  CFLAGS_NORMAL	= $(CCFLAGS)
-diff -Naurp ncurses-5.6+20071103.orig/menu/Makefile.in ncurses-5.6+20071103/menu/Makefile.in
---- ncurses-5.6+20071103.orig/menu/Makefile.in	2007-09-10 12:37:45.000000000 +0000
-+++ ncurses-5.6+20071103/menu/Makefile.in	2007-11-04 14:25:36.000000000 +0000
-@@ -81,7 +81,7 @@ CFLAGS		= @CFLAGS@
+--- a/menu/Makefile.in
++++ b/menu/Makefile.in
+@@ -82,7 +82,7 @@
  
  CPPFLAGS	= -I@top_srcdir@/ncurses -DHAVE_CONFIG_H @CPPFLAGS@
  
@@ -26,10 +27,9 @@ diff -Naurp ncurses-5.6+20071103.orig/menu/Makefile.in ncurses-5.6+20071103/menu
  
  CFLAGS_LIBTOOL	= $(CCFLAGS)
  CFLAGS_NORMAL	= $(CCFLAGS)
-diff -Naurp ncurses-5.6+20071103.orig/ncurses/Makefile.in ncurses-5.6+20071103/ncurses/Makefile.in
---- ncurses-5.6+20071103.orig/ncurses/Makefile.in	2007-09-10 12:39:03.000000000 +0000
-+++ ncurses-5.6+20071103/ncurses/Makefile.in	2007-11-04 14:25:36.000000000 +0000
-@@ -90,7 +90,7 @@ CFLAGS		= @CFLAGS@
+--- a/ncurses/Makefile.in
++++ b/ncurses/Makefile.in
+@@ -91,7 +91,7 @@
  INCDIR		= $(srcdir)/../include
  CPPFLAGS	= -DHAVE_CONFIG_H -I../ncurses -I$(srcdir) @CPPFLAGS@
  
@@ -38,10 +38,9 @@ diff -Naurp ncurses-5.6+20071103.orig/ncurses/Makefile.in ncurses-5.6+20071103/n
  
  BUILD_CPPFLAGS	= -I../include @BUILD_CPPFLAGS@
  BUILD_CC	= @BUILD_CC@
-diff -Naurp ncurses-5.6+20071103.orig/panel/Makefile.in ncurses-5.6+20071103/panel/Makefile.in
---- ncurses-5.6+20071103.orig/panel/Makefile.in	2007-09-10 12:37:45.000000000 +0000
-+++ ncurses-5.6+20071103/panel/Makefile.in	2007-11-04 14:25:36.000000000 +0000
-@@ -82,7 +82,7 @@ CFLAGS		= @CFLAGS@
+--- a/panel/Makefile.in
++++ b/panel/Makefile.in
+@@ -83,7 +83,7 @@
  
  CPPFLAGS	= -I@top_srcdir@/ncurses -DHAVE_CONFIG_H @CPPFLAGS@
  
