@@ -2,7 +2,7 @@
 # This file has gone through many maintainers.  Mostly rewritten
 # by Daniel Jacobowitz.
 
-include /usr/share/dpatch/dpatch.make
+include /usr/share/quilt/quilt.make
 
 # These are important since this is a library package
 soname=5
@@ -123,14 +123,14 @@ badterminfo = 5/5250 b/bterm i/iterm i/iterm-am i/iterm-color \
 # 64 bit libraries), so force the libgpm soname to the correct value.
 export cf_cv_gpm_soname=libgpm.so.2
 
-$(objdir)/config.status: patch-stamp
+$(objdir)/config.status: $(QUILT_STAMPFN)
 	test -d $(objdir) || mkdir $(objdir)
 	cd $(objdir) && CFLAGS="$(CFLAGS)" $(srcdir)/configure \
 		$(CONFARGS) \
 		--with-install-prefix=$(fulltempdir) \
 		--enable-overwrite
 
-$(objdir-32)/config.status: patch-stamp
+$(objdir-32)/config.status: $(QUILT_STAMPFN)
 	test -d $(objdir-32) || mkdir $(objdir-32)
 
 	cd $(objdir-32) && CFLAGS="$(CFLAGS)" CC="gcc -m32" \
@@ -143,7 +143,7 @@ $(objdir-32)/config.status: patch-stamp
 		--with-install-prefix=$(fulltempdir) \
 		--enable-overwrite --libdir=$(usr_lib32)
 
-$(objdir-64)/config.status: patch-stamp
+$(objdir-64)/config.status: $(QUILT_STAMPFN)
 	test -d $(objdir-64) || mkdir $(objdir-64)
 
 	# Force necessary configure checks which do not work when
@@ -160,7 +160,7 @@ $(objdir-64)/config.status: patch-stamp
 		--with-install-prefix=$(fulltempdir) \
 		--enable-overwrite --libdir=/usr/lib64
 
-$(objdir-debug)/config.status: patch-stamp
+$(objdir-debug)/config.status: $(QUILT_STAMPFN)
 	test -d $(objdir-debug) || mkdir $(objdir-debug)
 	cd $(objdir-debug) && \
 		CFLAGS="$(CFLAGS) -DTRACE" $(srcdir)/configure \
@@ -168,14 +168,14 @@ $(objdir-debug)/config.status: patch-stamp
 		--with-install-prefix=$(fulltempdir) \
 		--enable-overwrite
 
-$(wobjdir)/config.status: patch-stamp
+$(wobjdir)/config.status: $(QUILT_STAMPFN)
 	test -d $(wobjdir) || mkdir $(wobjdir)
 	cd $(wobjdir) && CFLAGS="$(CFLAGS)" $(srcdir)/configure \
 		$(CONFARGS) \
 		--with-install-prefix=$(fulltempdir) \
 		--disable-overwrite --enable-widec
 
-$(wobjdir-debug)/config.status: patch-stamp
+$(wobjdir-debug)/config.status: $(QUILT_STAMPFN)
 	test -d $(wobjdir-debug) || mkdir $(wobjdir-debug)
 	cd $(wobjdir-debug) && \
 		CFLAGS="$(CFLAGS) -DTRACE" $(srcdir)/configure \
@@ -183,7 +183,7 @@ $(wobjdir-debug)/config.status: patch-stamp
 		--with-install-prefix=$(fulltempdir) \
 		--disable-overwrite --enable-widec
 
-$(wobjdir-32)/config.status: patch-stamp
+$(wobjdir-32)/config.status: $(QUILT_STAMPFN)
 	test -d $(wobjdir-32) || mkdir $(wobjdir-32)
 
 	cd $(wobjdir-32) && CFLAGS="$(CFLAGS)" CC="gcc -m32" \

@@ -2,7 +2,10 @@ Source: ncurses
 Section: libs
 Priority: required
 Maintainer: Debian QA Group <packages@qa.debian.org>
-Build-Depends: debhelper (>= 7), dpatch, g++-multilib [amd64 i386 kfreebsd-amd64 powerpc ppc64 s390 sparc], libgpm-dev [!hurd-i386 !kfreebsd-amd64 !kfreebsd-i386]
+Build-Depends: debhelper (>= 7),
+               g++-multilib [amd64 i386 kfreebsd-amd64 powerpc ppc64 s390 sparc],
+               libgpm-dev [!hurd-i386 !kfreebsd-amd64 !kfreebsd-i386],
+               quilt (>= 0.40)
 Standards-Version: 3.8.3
 Homepage: http://invisible-island.net/ncurses/
 

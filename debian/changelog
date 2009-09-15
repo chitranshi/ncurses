@@ -6,6 +6,7 @@ ncurses (5.7+20090912-1) UNRELEASED; urgency=low
     - Fix typo in curs_mouse.3x (Closes: #429198).
   * Remove the patch introduced in version 5.7+20090627-1, no longer
     necessary.
+  * Switch patch system to quilt.
   * Configure with /usr/share/terminfo as default terminfo dir, so that
     we get the correct tabset directory (Closes: #509919, LP: #200773).
   * Update xterm terminfo entry from xterm 246 (Closes: #444250).
@@ -32,7 +33,7 @@ ncurses (5.7+20090912-1) UNRELEASED; urgency=low
   * Use dh_install instead of dh_movefiles to install files and clean
     up debian/rules a bit.
 
- -- Sven Joachim <svenjoac@gmx.de>  Mon, 14 Sep 2009 15:57:53 +0200
+ -- Sven Joachim <svenjoac@gmx.de>  Tue, 15 Sep 2009 16:41:59 +0200
 
 ncurses (5.7+20090803-2) unstable; urgency=low
 
