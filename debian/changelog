@@ -21,7 +21,8 @@ ncurses (5.7+20090912-1) UNRELEASED; urgency=low
     - Remove duplicate Section field for library packages.
     - Fix dependencies of lib32ncursesw5-dev.
     - Fix long descriptions of 32-bit packages on 64-bit systems.
-    - Do not recommend libgpm2 in non-native library packages.
+    - Do not recommend libgpm2 in non-native library packages, nor on
+      non-Linux architectures.
     - Remove very old Replaces/Conflicts/Provides on ncurses-developer,
       ncurses and tput.
     - Version the "Replaces: ia32-libs" for lib32ncurses-dev.

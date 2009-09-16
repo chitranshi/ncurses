@@ -13,7 +13,7 @@ Package: libncurses5
 Architecture: any
 Priority: required
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Recommends: libgpm2
+Recommends: libgpm2 [!hurd-i386 !kfreebsd-amd64 !kfreebsd-i386]
 Description: shared libraries for terminal handling
  This package contains the shared libraries necessary to run programs
  compiled with ncurses.
@@ -43,7 +43,7 @@ Package: libncursesw5
 Architecture: any
 Priority: important
 Depends: ${shlibs:Depends}, ${misc:Depends}
-Recommends: libgpm2
+Recommends: libgpm2 [!hurd-i386 !kfreebsd-amd64 !kfreebsd-i386]
 Description: shared libraries for terminal handling (wide character support)
  This package contains the shared libraries necessary to run programs
  compiled with ncursesw, which includes support for wide characters.
