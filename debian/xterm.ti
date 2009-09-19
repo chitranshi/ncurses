@@ -1400,7 +1400,7 @@ xterm-16color|xterm with 16 colors,
 	setaf=\E[%?%p1%{8}%<%t%p1%{30}%+%e%p1%{82}%+%;%dm,
 	setb=%p1%{8}%/%{6}%*%{4}%+\E[%d%p1%{8}%m%Pa%?%ga%{1}%=%t4%e%ga%{3}%=%t6%e%ga%{4}%=%t1%e%ga%{6}%=%t3%e%ga%d%;m,
 	setf=%p1%{8}%/%{6}%*%{3}%+\E[%d%p1%{8}%m%Pa%?%ga%{1}%=%t4%e%ga%{3}%=%t6%e%ga%{4}%=%t1%e%ga%{6}%=%t3%e%ga%d%;m,
-	use=xterm-new,
+	use=xterm-debian,
 #
 # This uses RGB values 0..1000
 #
@@ -1415,7 +1415,7 @@ xterm-256color|xterm with 256 colors,
 	setaf=\E[%?%p1%{8}%<%t3%p1%d%e%p1%{16}%<%t9%p1%{8}%-%d%e38;5;%p1%d%;m,
 	setb@,
 	setf@,
-	use=xterm-new,
+	use=xterm-debian,
 xterm-88color|xterm with 88 colors,
 	colors#88,
 	pairs#7744,

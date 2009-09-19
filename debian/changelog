@@ -10,6 +10,8 @@ ncurses (5.7+20090912-1) UNRELEASED; urgency=low
   * Configure with /usr/share/terminfo as default terminfo dir, so that
     we get the correct tabset directory (Closes: #509919, LP: #200773).
   * Update xterm terminfo entry from xterm 246 (Closes: #444250).
+  * Derive xterm{16,256,88}-color from xterm-debian rather than
+    xterm-new for correct backspace key behavior.
   * Move the debugging libraries back to /usr/lib/debug, ship detached
     debugging symbols (Closes: #532202).
   * Install the binaries built without trace support in ncurses-bin
