@@ -13,8 +13,8 @@ ncurses (5.7+20090919-1) UNRELEASED; urgency=low
   * Update xterm terminfo entry from xterm 246 (Closes: #444250).
   * Derive xterm{16,256,88}-color from xterm-debian rather than
     xterm-new for correct backspace key behavior.
-  * Move the debugging libraries back to /usr/lib/debug, ship detached
-    debugging symbols (Closes: #532202).
+  * Move the debugging libraries back to /usr/lib/debug (Closes: #553239),
+    ship detached debugging symbols (Closes: #532022).
   * Install the binaries built without trace support in ncurses-bin
     to avoid symbol lookup errors (Closes: #365120).
   * Remove compatibility symlinks in /usr/share/terminfo that were only
