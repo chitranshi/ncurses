@@ -343,7 +343,7 @@ ifneq ($(build_32),)
 endif
 ifneq ($(build_64),)
 	ln -sf /lib64/libncurses.so.$(soname) debian/$(package-dev-64)/usr/lib64/libncurses.so
-	ln -sf /lib64/libtic.so.$(soname) debian/$(package-dev-64)/usr/lib64/tic.so
+	ln -sf /lib64/libtic.so.$(soname) debian/$(package-dev-64)/usr/lib64/libtic.so
 endif
 
 	# By tradition, we provide -lcurses and -ltermcap.
