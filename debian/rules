@@ -262,6 +262,8 @@ ifneq ($(build_32),)
 	mv $(tempdir)$(usr_lib32)/libncursesw.so.$(soname) $(tempdir)$(lib32)/
 	mv $(tempdir)$(usr_lib32)/libtic.so.$(vername) $(tempdir)$(lib32)/
 	mv $(tempdir)$(usr_lib32)/libtic.so.$(soname) $(tempdir)$(lib32)/
+	mv $(tempdir)$(usr_lib32)/libticw.so.$(vername) $(tempdir)$(lib32)/
+	mv $(tempdir)$(usr_lib32)/libticw.so.$(soname) $(tempdir)$(lib32)/
 endif
 
 ifneq ($(build_64),)

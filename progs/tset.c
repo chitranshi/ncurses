@@ -981,7 +981,7 @@ set_init(void)
 	PC = pad_char[0];
 #endif /* OBSOLETE */
 
-#ifdef TAB3
+#if defined(TAB3) && defined(ONLCR) && defined(OCRNL) && defined(ONLRET)
     if (oldmode.c_oflag & (TAB3 | ONLCR | OCRNL | ONLRET)) {
 	oldmode.c_oflag &= (TAB3 | ONLCR | OCRNL | ONLRET);
 	SET_TTY(STDERR_FILENO, &oldmode);
