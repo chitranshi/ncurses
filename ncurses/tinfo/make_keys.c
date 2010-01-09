@@ -37,7 +37,6 @@
  */
 
 #define USE_TERMLIB 1
-#include <wchar.h>
 #include <curses.priv.h>
 
 MODULE_ID("$Id: make_keys.c,v 1.15 2008/11/16 00:19:59 juergen Exp $")

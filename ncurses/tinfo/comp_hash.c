@@ -39,7 +39,6 @@
  */
 
 #define USE_TERMLIB 1
-#include <wchar.h>
 #include <curses.priv.h>
 
 #include <tic.h>
