@@ -22,7 +22,7 @@ Package: libncurses5-dev
 Architecture: any
 Section: libdevel
 Priority: optional
-Depends: libncurses5 (= ${binary:Version}), libc-dev
+Depends: libncurses5 (= ${binary:Version}), libc-dev, ${misc:Depends}
 Conflicts: ncurses-dev, libncurses-dev
 Replaces: ncurses-dev, libncurses-dev
 Provides: libncurses-dev, ncurses-dev
@@ -35,7 +35,7 @@ Package: libncurses5-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: ${shlibs:Depends}, libncurses5-dev (= ${binary:Version})
+Depends: ${shlibs:Depends}, libncurses5-dev (= ${binary:Version}), ${misc:Depends}
 Description: debugging/profiling libraries for ncurses
  This package contains the debugging libraries for ncurses.
 
@@ -52,7 +52,7 @@ Package: libncursesw5-dev
 Architecture: any
 Section: libdevel
 Priority: optional
-Depends: libncursesw5 (= ${binary:Version}), libc-dev
+Depends: libncursesw5 (= ${binary:Version}), libc-dev, ${misc:Depends}
 Suggests: libncurses5-dev
 Description: developer's libraries for ncursesw
  This package contains the header files, static libraries
@@ -64,7 +64,7 @@ Package: libncursesw5-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: ${shlibs:Depends}, libncursesw5-dev (= ${binary:Version})
+Depends: ${shlibs:Depends}, libncursesw5-dev (= ${binary:Version}), ${misc:Depends}
 Description: debugging/profiling libraries for ncurses
  This package contains the debugging libraries for ncursesw.
  .
@@ -86,7 +86,7 @@ Package: lib64ncurses5-dev
 Architecture: i386 powerpc sparc s390
 Section: libdevel
 Priority: optional
-Depends: lib64ncurses5 (= ${binary:Version}), libncurses5-dev, lib64c-dev
+Depends: lib64ncurses5 (= ${binary:Version}), libncurses5-dev, lib64c-dev, ${misc:Depends}
 Replaces: amd64-libs-dev (<= 1.2)
 Description: developer's libraries for ncurses (64-bit)
  This package contains the header files, static libraries
@@ -112,7 +112,7 @@ Package: lib32ncurses5-dev
 Architecture: amd64 ppc64
 Section: libdevel
 Priority: optional
-Depends: lib32ncurses5 (= ${binary:Version}), libncurses5-dev, lib32c-dev
+Depends: lib32ncurses5 (= ${binary:Version}), libncurses5-dev, lib32c-dev, ${misc:Depends}
 Conflicts: libc6-i386 (<= 2.9-18)
 Description: developer's libraries for ncurses (32-bit)
  This package contains the header files, static libraries
@@ -137,7 +137,7 @@ Package: lib32ncursesw5-dev
 Architecture: amd64 ppc64
 Section: libdevel
 Priority: optional
-Depends: lib32ncursesw5 (= ${binary:Version}), libncursesw5-dev, lib32c-dev
+Depends: lib32ncursesw5 (= ${binary:Version}), libncursesw5-dev, lib32c-dev, ${misc:Depends}
 Conflicts: libc6-i386 (<= 2.9-18)
 Suggests: lib32ncurses5-dev
 Description: developer's libraries for ncursesw (32-bit)
@@ -164,6 +164,7 @@ Architecture: all
 Section: utils
 Priority: required
 Essential: yes
+Depends: ${misc:Depends}
 Conflicts: ncurses, ncurses-runtime
 Provides: ncurses-runtime
 Description: basic terminal type definitions
@@ -175,6 +176,7 @@ Package: ncurses-term
 Architecture: all
 Section: admin
 Priority: standard
+Depends: ${misc:Depends}
 Description: additional terminal type definitions
  This package contains all of the numerous terminal definitions not found in
  the ncurses-base package.
