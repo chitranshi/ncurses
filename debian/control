@@ -7,6 +7,8 @@ Build-Depends: debhelper (>= 7),
                libgpm-dev [!hurd-i386 !kfreebsd-amd64 !kfreebsd-i386],
                quilt (>= 0.40)
 Standards-Version: 3.8.3
+Vcs-Browser: http://git.debian.org/?p=collab-maint/ncurses.git
+Vcs-Git: git://git.debian.org/collab-maint/ncurses.git
 Homepage: http://invisible-island.net/ncurses/
 
 Package: libncurses5
