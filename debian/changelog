@@ -37,6 +37,7 @@ ncurses (5.7+20090919-1) UNRELEASED; urgency=low
     - Set Homepage field to http://invisible-island.net/ncurses/.
     - Add Vcs-Browser and Vcs-Git fields.
     - Add ${misc:Depends} in all Depends fields.
+    - Add myself to Uploaders.
   * Add lintian override for alleged spelling error in ncurses-base'
     extended description; "linux" refers to a terminal type there.
   * Use dh_install instead of dh_movefiles to install files and clean

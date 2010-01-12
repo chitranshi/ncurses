@@ -2,6 +2,7 @@ Source: ncurses
 Section: libs
 Priority: required
 Maintainer: Craig Small <csmall@debian.org>
+Uploaders: Sven Joachim <svenjoac@gmx.de>
 Build-Depends: debhelper (>= 7),
                g++-multilib [amd64 i386 kfreebsd-amd64 powerpc ppc64 s390 sparc],
                libgpm-dev [!hurd-i386 !kfreebsd-amd64 !kfreebsd-i386],
