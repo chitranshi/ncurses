@@ -336,28 +336,6 @@ endif
 
 	dh_install -s
 
-	# We keep the libncurses shared library in /lib.
-	ln -sf /lib/libncurses.so.$(soname) debian/$(package-dev)/usr/lib/libncurses.so
-	ln -sf /lib/libncursesw.so.$(soname) debian/$(package-devw)/usr/lib/libncursesw.so
-	ln -sf /lib/libtic.so.$(soname) debian/$(package-dev)/usr/lib/libtic.so
-	ln -sf /lib/libticw.so.$(soname) debian/$(package-devw)/usr/lib/libticw.so
-ifneq ($(build_32),)
-	ln -sf /lib32/libncurses.so.$(soname) debian/$(package-dev-32)$(usr_lib32)/libncurses.so
-	ln -sf /lib32/libncursesw.so.$(soname) debian/$(package-devw-32)$(usr_lib32)/libncursesw.so
-	ln -sf /lib32/libtic.so.$(soname) debian/$(package-dev-32)$(usr_lib32)/libtic.so
-	ln -sf /lib32/libticw.so.$(soname) debian/$(package-devw-32)$(usr_lib32)/libticw.so
-endif
-ifneq ($(build_64),)
-	ln -sf /lib64/libncurses.so.$(soname) debian/$(package-dev-64)/usr/lib64/libncurses.so
-	ln -sf /lib64/libtic.so.$(soname) debian/$(package-dev-64)/usr/lib64/libtic.so
-endif
-
-	# By tradition, we provide -lcurses and -ltermcap.
-	ln -sf libncurses.so debian/$(package-dev)/usr/lib/libcurses.so
-	ln -sf libncurses.so debian/$(package-dev)/usr/lib/libtermcap.so
-	ln -sf libncurses.a debian/$(package-dev)/usr/lib/libtermcap.a
-	ln -sf libncurses.a debian/$(package-dev)/usr/lib/libcurses.a
-
 binary:	binary-arch binary-indep
 
 binary-arch: build install
@@ -375,6 +353,7 @@ binary-arch: build install
 	dh_strip -p$(package-libw) --dbg-package=$(package-dbgw)
 	dh_compress -s
 	dh_fixperms -s
+	dh_link -s
 	dh_makeshlibs -p$(package-lib) -V "$(package-lib) $(sodepver)"
 	dh_makeshlibs -p$(package-libw) -V "$(package-libw) $(sodepver)"
 ifneq ($(build_32),)
