@@ -1,4 +1,4 @@
-ncurses (5.7+20090919-1) UNRELEASED; urgency=low
+ncurses (5.7+20100220-1) UNRELEASED; urgency=low
 
   [ Sven Joachim ]
   * New upstream patchlevel.
@@ -47,7 +47,7 @@ ncurses (5.7+20090919-1) UNRELEASED; urgency=low
   * New maintainer Closes: 543852
   * Cross compile patch applied Closes: #550716
 
- -- Craig Small <csmall@debian.org>  Mon, 11 Jan 2010 22:59:01 +1100
+ -- Sven Joachim <svenjoac@gmx.de>  Sun, 21 Feb 2010 09:45:58 +0100
 
 ncurses (5.7+20090803-2) unstable; urgency=low
 
