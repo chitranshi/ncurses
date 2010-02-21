@@ -32,9 +32,11 @@ fulltempdir=$(workdir)/$(tempdir)
 
 srcdir=$(shell pwd)
 objdir=$(srcdir)/obj
+objdir-static=$(srcdir)/obj-static
 objdir-32=$(srcdir)/obj-32
 objdir-64=$(srcdir)/obj-64
 wobjdir=$(srcdir)/obj-wide
+wobjdir-static=$(srcdir)/obj-wide-static
 wobjdir-32=$(srcdir)/obj-wide-32
 objdir-debug=$(srcdir)/obj-debug
 wobjdir-debug=$(srcdir)/obj-wide-debug
@@ -130,6 +132,15 @@ $(objdir)/config.status: $(QUILT_STAMPFN)
 		--with-install-prefix=$(fulltempdir) \
 		--enable-overwrite
 
+$(objdir-static)/config.status: $(QUILT_STAMPFN)
+	test -d $(objdir-static) || mkdir $(objdir-static)
+	cd $(objdir-static) && CFLAGS="$(CFLAGS)" $(srcdir)/configure \
+		$(CONFARGS) \
+		--without-shared \
+		--without-dlsym \
+		--with-install-prefix=$(fulltempdir) \
+		--enable-overwrite
+
 $(objdir-32)/config.status: $(QUILT_STAMPFN)
 	test -d $(objdir-32) || mkdir $(objdir-32)
 
@@ -175,6 +186,15 @@ $(wobjdir)/config.status: $(QUILT_STAMPFN)
 		--with-install-prefix=$(fulltempdir) \
 		--disable-overwrite --enable-widec
 
+$(wobjdir-static)/config.status: $(QUILT_STAMPFN)
+	test -d $(wobjdir-static) || mkdir $(wobjdir-static)
+	cd $(wobjdir-static) && CFLAGS="$(CFLAGS)" $(srcdir)/configure \
+		$(CONFARGS) \
+		--without-shared \
+		--without-dlsym \
+		--with-install-prefix=$(fulltempdir) \
+		--disable-overwrite --enable-widec
+
 $(wobjdir-debug)/config.status: $(QUILT_STAMPFN)
 	test -d $(wobjdir-debug) || mkdir $(wobjdir-debug)
 	cd $(wobjdir-debug) && \
@@ -198,13 +218,17 @@ $(wobjdir-32)/config.status: $(QUILT_STAMPFN)
 		--libdir=$(usr_lib32)
 
 
-build: build-normal build-wide build-debug build-wide-debug \
-	$(build_64) $(build_32)
+build: build-normal build-static build-wide build-debug build-wide-debug \
+	build-wide-static $(build_64) $(build_32)
 
 	touch $@
 
 build-normal: $(objdir)/config.status
 	cd $(objdir) && $(MAKE)
+	touch $@
+
+build-static: $(objdir-static)/config.status
+	cd $(objdir-static) && $(MAKE)
 	touch $@
 
 build-32: $(objdir-32)/config.status
@@ -223,6 +247,10 @@ build-wide: $(wobjdir)/config.status
 	cd $(wobjdir) && $(MAKE)
 	touch $@
 
+build-wide-static: $(wobjdir-static)/config.status
+	cd $(wobjdir-static) && $(MAKE)
+	touch $@
+
 build-wide-32: $(wobjdir-32)/config.status
 	cd $(wobjdir-32) && $(MAKE)
 	touch $@
@@ -235,14 +263,16 @@ clean: unpatch
 	dh_testdir
 	rm -f build
 	rm -rf $(objdir)
+	rm -rf $(objdir-static)
 	rm -rf $(objdir-32)
 	rm -rf $(objdir-64)
 	rm -rf $(wobjdir)
+	rm -rf $(wobjdir-static)
 	rm -rf $(wobjdir-32)
 	rm -rf $(objdir-debug)
 	rm -rf $(wobjdir-debug)
-	rm -f build-normal build-wide build-debug build-wide-debug \
-		$(build_32) $(build_64)
+	rm -f build-normal build-static build-wide build-debug build-wide-debug \
+		build-wide-static $(build_32) $(build_64)
 	rm -f debian/shlibs.local
 	dh_clean
 

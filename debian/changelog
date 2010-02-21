@@ -21,6 +21,7 @@ ncurses (5.7+20100220-1) UNRELEASED; urgency=low
     lib64ncurses-dev (Closes: #563272).
   * Install the binaries built without trace support in ncurses-bin
     to avoid symbol lookup errors (Closes: #365120).
+  * Build static libraries with "--without-dlsym" (Closes: #556378).
   * Remove compatibility symlinks in /usr/share/terminfo that were only
     necessary for upgrades from versions prior to 5.4-9.
   * debian/control cleanups:
