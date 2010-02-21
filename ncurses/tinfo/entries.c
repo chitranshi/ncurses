@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2006-2008,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 2006-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -36,9 +36,8 @@
 #include <ctype.h>
 
 #include <tic.h>
-#include <term_entry.h>
 
-MODULE_ID("$Id: entries.c,v 1.15 2009/07/11 14:42:42 tom Exp $")
+MODULE_ID("$Id: entries.c,v 1.17 2010/01/23 17:57:43 tom Exp $")
 
 /****************************************************************************
  *
@@ -125,6 +124,7 @@ _nc_leaks_tinfo(void)
 	del_curterm(TerminalOf(CURRENT_SCREEN));
     }
 
+    _nc_comp_captab_leaks();
     _nc_free_entries(_nc_head);
     _nc_get_type(0);
     _nc_first_name(0);

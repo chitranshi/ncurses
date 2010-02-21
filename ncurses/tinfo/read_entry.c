@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2007,2008 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -40,9 +40,8 @@
 #include <hashed_db.h>
 
 #include <tic.h>
-#include <term_entry.h>
 
-MODULE_ID("$Id: read_entry.c,v 1.102 2008/08/03 19:33:04 tom Exp $")
+MODULE_ID("$Id: read_entry.c,v 1.106 2010/01/23 17:57:43 tom Exp $")
 
 #define TYPE_CALLOC(type,elts) typeCalloc(type, (unsigned)(elts))
 
@@ -314,7 +313,7 @@ _nc_read_termtype(TERMTYPE *ptr, char *buffer, int limit)
 
 	if (need) {
 	    if (ext_str_count >= (MAX_ENTRY_SIZE * 2))
-		  return (TGETENT_NO);
+		return (TGETENT_NO);
 	    if ((ptr->ext_Names = TYPE_CALLOC(char *, need)) == 0)
 		  return (TGETENT_NO);
 	    TR(TRACE_DATABASE,
@@ -404,26 +403,22 @@ _nc_read_tic_entry(char *filename,
     /*
      * If we are looking in a directory, assume the entry is a file under that,
      * according to the normal rules.
-     *
-     * FIXME - add caseless-filename fixup.
      */
-    if (_nc_is_dir_path(path)) {
-	unsigned need = 4 + strlen(path) + strlen(name);
+    unsigned need = LEAF_LEN + 3 + strlen(path) + strlen(name);
+    if (need <= limit)
+	(void) sprintf(filename, "%s/" LEAF_FMT "/%s", path, *name, name);
 
-	if (need <= limit) {
-	    (void) sprintf(filename, "%s/" LEAF_FMT "/%s", path, *name, name);
-	    result = _nc_read_file_entry(filename, tp);
-	}
-    }
+    if (_nc_is_dir_path(path))
+	result = _nc_read_file_entry(filename, tp);
 #if USE_HASHED_DB
     else {
 	static const char suffix[] = DBM_SUFFIX;
 	DB *capdbp;
 	unsigned lens = sizeof(suffix) - 1;
 	unsigned size = strlen(path);
-	unsigned need = lens + size;
+	unsigned test = lens + size;
 
-	if (need <= limit) {
+	if (test < limit) {
 	    if (size >= lens
 		&& !strcmp(path + size - lens, suffix))
 		(void) strcpy(filename, path);
@@ -515,6 +510,7 @@ _nc_read_entry(const char *const name, char *const filename, TERMTYPE *const tp)
 {
     int code = TGETENT_NO;
 
+    sprintf(filename, "%.*s", PATH_MAX - 1, name);
     if (strlen(name) == 0
 	|| strcmp(name, ".") == 0
 	|| strcmp(name, "..") == 0

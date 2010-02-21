@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2008,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -32,7 +32,7 @@
  *     and: Thomas E. Dickey                        1996-on                 *
  ****************************************************************************/
 
-/* $Id: curses.h.in,v 1.206 2009/09/06 15:55:10 tom Exp $ */
+/* $Id: curses.h.in,v 1.209 2010/01/23 21:54:01 tom Exp $ */
 
 #ifndef __NCURSES_H
 #define __NCURSES_H
@@ -109,6 +109,12 @@
 #ifndef NCURSES_REENTRANT
 #define NCURSES_REENTRANT @cf_cv_enable_reentrant@
 #endif
+
+/*
+ * Control whether bindings for interop support are added.
+ */
+#undef	NCURSES_INTEROP_FUNCS
+#define	NCURSES_INTEROP_FUNCS @NCURSES_INTEROP_FUNCS@
 
 /*
  * The internal type used for window dimensions.
@@ -817,6 +823,8 @@ extern NCURSES_EXPORT(char *) tparm (NCURSES_CONST char *, long,long,long,long,l
 extern NCURSES_EXPORT(char *) tparm_varargs (NCURSES_CONST char *, ...);	/* special */
 #endif
 
+extern NCURSES_EXPORT(char *) tiparm (const char *, ...);		/* special */
+
 /*
  * These functions are not in X/Open, but we use them in macro definitions:
  */
@@ -1095,12 +1103,16 @@ extern NCURSES_EXPORT(int) NCURSES_SP_NAME(use_legacy_coding) (SCREEN*, int);
 
 #if !NCURSES_OPAQUE
 #if defined(_XOPEN_SOURCE_EXTENDED) && @NCURSES_EXT_COLORS@
-#define wattrset(win,at)	((win)->_color = PAIR_NUMBER(at), \
-                                 (win)->_attrs = (at), \
-                                 NCURSES_CAST(int, (win)->_attrs))
+#define wattrset(win,at)	((win) \
+				  ? ((win)->_color = PAIR_NUMBER(at), \
+                                     (win)->_attrs = (at), \
+                                     OK) \
+				  : ERR)
 #else
-#define wattrset(win,at)        ((win)->_attrs = (at), \
-				 NCURSES_CAST(int, (win)->_attrs))
+#define wattrset(win,at)        ((win) \
+				  ? ((win)->_attrs = (at), \
+				     OK) \
+				  : ERR)
 #endif
 #endif /* NCURSES_OPAQUE */
 

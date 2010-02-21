@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2004,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -48,7 +48,7 @@
 
 #include <curses.priv.h>
 
-MODULE_ID("$Id: lib_kernel.c,v 1.27 2009/06/06 21:25:50 tom Exp $")
+MODULE_ID("$Id: lib_kernel.c,v 1.29 2010/01/16 16:33:38 tom Exp $")
 
 static int
 _nc_vdisable(void)
@@ -84,7 +84,7 @@ NCURSES_SP_NAME(erasechar) (NCURSES_SP_DCL0)
     int result = ERR;
     TERMINAL *termp = TerminalOf(SP_PARM);
 
-    T((T_CALLED("erasechar(%p)"), SP_PARM));
+    T((T_CALLED("erasechar(%p)"), (void *) SP_PARM));
 
     if (termp != 0) {
 #ifdef TERMIOS
@@ -95,7 +95,7 @@ NCURSES_SP_NAME(erasechar) (NCURSES_SP_DCL0)
 	result = termp->Ottyb.sg_erase;
 #endif
     }
-    returnCode(result);
+    returnChar(result);
 }
 
 #if NCURSES_SP_FUNCS
@@ -119,7 +119,7 @@ NCURSES_SP_NAME(killchar) (NCURSES_SP_DCL0)
     int result = ERR;
     TERMINAL *termp = TerminalOf(SP_PARM);
 
-    T((T_CALLED("killchar(%p)"), SP_PARM));
+    T((T_CALLED("killchar(%p)"), (void *) SP_PARM));
 
     if (termp != 0) {
 #ifdef TERMIOS
@@ -130,7 +130,7 @@ NCURSES_SP_NAME(killchar) (NCURSES_SP_DCL0)
 	result = termp->Ottyb.sg_kill;
 #endif
     }
-    returnCode(result);
+    returnChar(result);
 }
 
 #if NCURSES_SP_FUNCS
@@ -153,7 +153,7 @@ NCURSES_SP_NAME(flushinp) (NCURSES_SP_DCL0)
 {
     TERMINAL *termp = TerminalOf(SP_PARM);
 
-    T((T_CALLED("flushinp(%p)"), SP_PARM));
+    T((T_CALLED("flushinp(%p)"), (void *) SP_PARM));
 
     if (termp != 0) {
 #ifdef TERMIOS

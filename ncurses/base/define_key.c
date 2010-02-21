@@ -33,22 +33,28 @@
 
 #include <curses.priv.h>
 
-MODULE_ID("$Id: define_key.c,v 1.17 2009/05/09 18:30:16 tom Exp $")
+MODULE_ID("$Id: define_key.c,v 1.20 2009/11/28 22:53:17 tom Exp $")
 
 NCURSES_EXPORT(int)
 NCURSES_SP_NAME(define_key) (NCURSES_SP_DCLx const char *str, int keycode)
 {
     int code = ERR;
 
-    T((T_CALLED("define_key(%p, %s,%d)"), SP_PARM, _nc_visbuf(str), keycode));
+    T((T_CALLED("define_key(%p, %s,%d)"), (void *) SP_PARM, _nc_visbuf(str), keycode));
     if (SP_PARM == 0 || !HasTInfoTerminal(SP_PARM)) {
 	code = ERR;
     } else if (keycode > 0) {
 	unsigned ukey = (unsigned) keycode;
 
+#ifdef USE_TERM_DRIVER
+#define CallHasKey(keycode) CallDriver_1(SP_PARM, kyExist, keycode)
+#else
+#define CallHasKey(keycode) NCURSES_SP_NAME(has_key)(NCURSES_SP_ARGx keycode)
+#endif
+
 	if (str != 0) {
 	    NCURSES_SP_NAME(define_key) (NCURSES_SP_ARGx str, 0);
-	} else if (NCURSES_SP_NAME(has_key) (NCURSES_SP_ARGx keycode)) {
+	} else if (CallHasKey(keycode)) {
 	    while (_nc_remove_key(&(SP_PARM->_keytry), ukey))
 		code = OK;
 	}

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2008,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -44,13 +44,11 @@
 #include <tic.h>
 #include <ctype.h>
 
-#include <term_entry.h>
-
 #ifndef CUR
 #define CUR SP_TERMTYPE
 #endif
 
-MODULE_ID("$Id: lib_termcap.c,v 1.70 2009/08/30 17:16:00 tom Exp $")
+MODULE_ID("$Id: lib_termcap.c,v 1.72 2010/01/23 17:57:43 tom Exp $")
 
 NCURSES_EXPORT_VAR(char *) UP = 0;
 NCURSES_EXPORT_VAR(char *) BC = 0;
@@ -226,7 +224,7 @@ NCURSES_SP_NAME(tgetflag) (NCURSES_SP_DCLx NCURSES_CONST char *id)
     int result = 0;		/* Solaris returns zero for missing flag */
     int i, j;
 
-    T((T_CALLED("tgetflag(%p, %s)"), SP_PARM, id));
+    T((T_CALLED("tgetflag(%p, %s)"), (void *) SP_PARM, id));
     if (HasTInfoTerminal(SP_PARM)) {
 	TERMTYPE *tp = &(TerminalOf(SP_PARM)->type);
 	struct name_table_entry const *entry_ptr;
@@ -278,7 +276,7 @@ NCURSES_SP_NAME(tgetnum) (NCURSES_SP_DCLx NCURSES_CONST char *id)
     int result = ABSENT_NUMERIC;
     int i, j;
 
-    T((T_CALLED("tgetnum(%p, %s)"), SP_PARM, id));
+    T((T_CALLED("tgetnum(%p, %s)"), (void *) SP_PARM, id));
     if (HasTInfoTerminal(SP_PARM)) {
 	TERMTYPE *tp = &(TerminalOf(SP_PARM)->type);
 	struct name_table_entry const *entry_ptr;
@@ -330,7 +328,7 @@ NCURSES_SP_NAME(tgetstr) (NCURSES_SP_DCLx NCURSES_CONST char *id, char **area)
     char *result = NULL;
     int i, j;
 
-    T((T_CALLED("tgetstr(%s,%p)"), id, area));
+    T((T_CALLED("tgetstr(%s,%p)"), id, (void *) area));
     if (HasTInfoTerminal(SP_PARM)) {
 	TERMTYPE *tp = &(TerminalOf(SP_PARM)->type);
 	struct name_table_entry const *entry_ptr;

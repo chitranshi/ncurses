@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2000-2007,2008 Free Software Foundation, Inc.              *
+ * Copyright (c) 2000-2008,2009 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -29,7 +29,7 @@
 /*
  * Author: Thomas E. Dickey - 2000
  *
- * $Id: railroad.c,v 1.17 2008/12/07 02:07:41 juergen Exp $
+ * $Id: railroad.c,v 1.19 2009/10/24 21:37:56 tom Exp $
  *
  * A simple demo of the termcap interface.
  */
@@ -58,13 +58,17 @@ static bool interrupted = FALSE;
 static int
 outc(TPUTS_ARG c)
 {
+    int rc = OK;
+
     if (interrupted) {
-	char tmp = c;
-	write(STDOUT_FILENO, &tmp, 1);
+	char tmp = (char) c;
+	if (write(STDOUT_FILENO, &tmp, 1) == -1)
+	    rc = ERR;
     } else {
-	putc(c, stdout);
+	if (putc(c, stdout) == EOF)
+	    rc = ERR;
     }
-    return 0;
+    return rc;
 }
 
 static void

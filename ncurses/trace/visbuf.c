@@ -42,7 +42,7 @@
 #include <tic.h>
 #include <ctype.h>
 
-MODULE_ID("$Id: visbuf.c,v 1.33 2009/07/11 14:44:20 tom Exp $")
+MODULE_ID("$Id: visbuf.c,v 1.35 2009/12/12 21:34:23 tom Exp $")
 
 #define NUM_VISBUFS 4
 
@@ -238,7 +238,9 @@ _nc_viswibuf(const wint_t *buf)
     static unsigned mylen;
     unsigned n;
 
-    for (n = 0; buf[n] != 0; ++n) ;
+    for (n = 0; buf[n] != 0; ++n) {
+	;			/* empty */
+    }
     if (mylen < ++n) {
 	mylen = n + 80;
 	if (mybuf != 0)
@@ -246,8 +248,10 @@ _nc_viswibuf(const wint_t *buf)
 	else
 	    mybuf = typeMalloc(wchar_t, mylen);
     }
-    for (n = 0; buf[n] != 0; ++n)
+    for (n = 0; buf[n] != 0; ++n) {
 	mybuf[n] = (wchar_t) buf[n];
+    }
+    mybuf[n] = L'\0';
 
     return _nc_viswbuf2(0, mybuf);
 }
@@ -300,8 +304,11 @@ _nc_viscbuf2(int bufnum, const NCURSES_CH_T * buf, int len)
 			int k;
 
 			PUTC_ch = buf[j].chars[PUTC_i];
-			if (PUTC_ch == L'\0')
+			if (PUTC_ch == L'\0') {
+			    if (PUTC_i == 0)
+				result = _nc_trace_bufcat(bufnum, "\\000");
 			    break;
+			}
 			PUTC_n = (int) wcrtomb(PUTC_buf,
 					       buf[j].chars[PUTC_i], &PUT_st);
 			if (PUTC_n <= 0)

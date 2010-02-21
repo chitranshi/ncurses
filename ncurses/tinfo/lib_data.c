@@ -42,7 +42,7 @@
 
 #include <curses.priv.h>
 
-MODULE_ID("$Id: lib_data.c,v 1.55 2009/06/07 14:48:25 tom Exp $")
+MODULE_ID("$Id: lib_data.c,v 1.58 2010/01/23 19:41:58 Miroslav.Lichvar Exp $")
 
 /*
  * OS/2's native linker complains if we don't initialize public data when
@@ -155,6 +155,10 @@ NCURSES_EXPORT_VAR(NCURSES_GLOBALS) _nc_globals = {
     0,				/* safeprint_rows */
 #endif
 
+#ifdef USE_TERM_DRIVER
+    0,				/* term_driver */
+#endif
+
 #ifdef TRACE
     FALSE,			/* init_trace */
     CHARS_0s,			/* trace_fname */
@@ -229,6 +233,7 @@ NCURSES_EXPORT_VAR(NCURSES_PRESCREEN) _nc_prescreen = {
 #if NCURSES_NO_PADDING
     FALSE,			/* flag to set if padding disabled  */
 #endif
+    0,				/* _outch */
 #if BROKEN_LINKER || USE_REENTRANT
     NULL,			/* real_acs_map */
     0,				/* LINES */
@@ -255,8 +260,7 @@ _nc_screen_of(WINDOW *win)
     SCREEN *sp = 0;
 
     if (win != 0) {
-	WINDOWLIST *wp = (WINDOWLIST *) win;
-	sp = wp->screen;
+	sp = WINDOW_EXT(win, screen);
     }
     return (sp);
 }

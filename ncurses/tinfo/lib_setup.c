@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2008,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -42,7 +42,6 @@
 
 #include <curses.priv.h>
 #include <tic.h>		/* for MAX_NAME_SIZE */
-#include <term_entry.h>
 
 #if SVR4_TERMIO && !defined(_POSIX_SOURCE)
 #define _POSIX_SOURCE
@@ -52,7 +51,7 @@
 #include <locale.h>
 #endif
 
-MODULE_ID("$Id: lib_setup.c,v 1.119 2009/09/05 20:10:02 tom Exp $")
+MODULE_ID("$Id: lib_setup.c,v 1.127 2010/01/23 17:57:43 tom Exp $")
 
 /****************************************************************************
  *
@@ -224,7 +223,7 @@ _nc_handle_sigwinch(SCREEN *sp)
 NCURSES_EXPORT(void)
 NCURSES_SP_NAME(use_env) (NCURSES_SP_DCLx bool f)
 {
-    T((T_CALLED("use_env(%p,%d)"), SP_PARM, (int) f));
+    T((T_CALLED("use_env(%p,%d)"), (void *) SP_PARM, (int) f));
 #if NCURSES_SP_FUNCS
     if (IsPreScreen(SP_PARM)) {
 	SP_PARM->_use_env = f;
@@ -268,6 +267,7 @@ _nc_get_screensize(SCREEN *sp,
 	sp->_TABSIZE = my_tabsize;
     }
 #else
+    (void) sp;
     TABSIZE = my_tabsize;
 #endif
     T(("TABSIZE = %d", my_tabsize));
@@ -465,35 +465,34 @@ grab_entry(const char *const tn, TERMTYPE *const tp)
     return (status);
 }
 #endif
+#endif /* !USE_TERM_DRIVER */
 
 /*
-**	do_prototype()
-**
 **	Take the real command character out of the CC environment variable
 **	and substitute it in for the prototype given in 'command_character'.
 */
-static void
-do_prototype(TERMINAL * termp)
+void
+_nc_tinfo_cmdch(TERMINAL * termp, char proto)
 {
     unsigned i;
     char CC;
-    char proto;
     char *tmp;
 
-    if ((tmp = getenv("CC")) != 0) {
-	if ((CC = *tmp) != 0) {
-	    proto = *command_character;
-
-	    for_each_string(i, &(termp->type)) {
-		for (tmp = termp->type.Strings[i]; *tmp; tmp++) {
-		    if (*tmp == proto)
-			*tmp = CC;
-		}
+    /*
+     * Only use the character if the string is a single character,
+     * since it is fairly common for developers to set the C compiler
+     * name as an environment variable - using the same symbol.
+     */
+    if ((tmp = getenv("CC")) != 0 && strlen(tmp) == 1) {
+	CC = *tmp;
+	for_each_string(i, &(termp->type)) {
+	    for (tmp = termp->type.Strings[i]; *tmp; tmp++) {
+		if (*tmp == proto)
+		    *tmp = CC;
 	    }
 	}
     }
 }
-#endif /* !USE_TERM_DRIVER */
 
 /*
  * Find the locale which is in effect.
@@ -602,7 +601,7 @@ TINFO_SETUP_TERM(TERMINAL ** tp,
 	termp = *tp;
 #else
     termp = cur_term;
-    T((T_CALLED("setupterm(%s,%d,%p)"), _nc_visbuf(tname), Filedes, errret));
+    T((T_CALLED("setupterm(%s,%d,%p)"), _nc_visbuf(tname), Filedes, (void *) errret));
 #endif
 
     if (tname == 0) {
@@ -663,7 +662,7 @@ TINFO_SETUP_TERM(TERMINAL ** tp,
 	}
 #ifdef USE_TERM_DRIVER
 	TCB = (TERMINAL_CONTROL_BLOCK *) termp;
-	code = _nc_get_driver(TCB, tname, errret);
+	code = _nc_globals.term_driver(TCB, tname, errret);
 	if (code == OK) {
 	    termp->Filedes = Filedes;
 	    termp->_termname = strdup(tname);
@@ -706,8 +705,8 @@ TINFO_SETUP_TERM(TERMINAL ** tp,
 
 	set_curterm(termp);
 
-	if (command_character && getenv("CC"))
-	    do_prototype(termp);
+	if (command_character)
+	    _nc_tinfo_cmdch(termp, *command_character);
 
 	/*
 	 * If an application calls setupterm() rather than initscr() or
@@ -749,6 +748,44 @@ TINFO_SETUP_TERM(TERMINAL ** tp,
 #endif
     returnCode(code);
 }
+
+#if NCURSES_SP_FUNCS
+/*
+ * In case of handling multiple screens, we need to have a screen before
+ * initialization in setupscreen takes place.  This is to extend the substitute
+ * for some of the stuff in _nc_prescreen, especially for slk and ripoff
+ * handling which should be done per screen.
+ */
+NCURSES_EXPORT(SCREEN *)
+new_prescr(void)
+{
+    static SCREEN *sp;
+
+    START_TRACE();
+    T((T_CALLED("new_prescr()")));
+
+    if (sp == 0) {
+	sp = _nc_alloc_screen_sp();
+	if (sp != 0) {
+	    sp->rsp = sp->rippedoff;
+	    sp->_filtered = _nc_prescreen.filter_mode;
+	    sp->_use_env = _nc_prescreen.use_env;
+#if NCURSES_NO_PADDING
+	    sp->_no_padding = _nc_prescreen._no_padding;
+#endif
+	    sp->slk_format = 0;
+	    sp->_slk = 0;
+	    sp->_prescreen = TRUE;
+	    SP_PRE_INIT(sp);
+#if USE_REENTRANT
+	    sp->_TABSIZE = _nc_prescreen._TABSIZE;
+	    sp->_ESCDELAY = _nc_prescreen._ESCDELAY;
+#endif
+	}
+    }
+    returnSP(sp);
+}
+#endif
 
 #ifdef USE_TERM_DRIVER
 /*

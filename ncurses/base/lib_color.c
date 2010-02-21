@@ -45,7 +45,7 @@
 #define CUR SP_TERMTYPE
 #endif
 
-MODULE_ID("$Id: lib_color.c,v 1.95 2009/08/22 19:04:36 tom Exp $")
+MODULE_ID("$Id: lib_color.c,v 1.97 2009/11/07 20:36:44 tom Exp $")
 
 #ifdef USE_TERM_DRIVER
 #define CanChange      InfoOf(SP_PARM).canchange
@@ -262,6 +262,7 @@ reset_color_pair(NCURSES_SP_DCL0)
 #else
     bool result = FALSE;
 
+    (void) SP_PARM;
     if (orig_pair != 0) {
 	TPUTS_TRACE("orig_pair");
 	putp(orig_pair);
@@ -281,7 +282,7 @@ NCURSES_SP_NAME(_nc_reset_colors) (NCURSES_SP_DCL0)
 {
     int result = FALSE;
 
-    T((T_CALLED("_nc_reset_colors(%p)"), SP_PARM));
+    T((T_CALLED("_nc_reset_colors(%p)"), (void *) SP_PARM));
     if (SP_PARM->_color_defs > 0)
 	SP_PARM->_color_defs = -(SP_PARM->_color_defs);
     if (reset_color_pair(NCURSES_SP_ARG))
@@ -313,7 +314,7 @@ NCURSES_SP_NAME(start_color) (NCURSES_SP_DCL0)
     int result = ERR;
     int maxpairs = 0, maxcolors = 0;
 
-    T((T_CALLED("start_color(%p)"), SP_PARM));
+    T((T_CALLED("start_color(%p)"), (void *) SP_PARM));
 
     if (SP_PARM == 0) {
 	result = ERR;
@@ -429,7 +430,7 @@ NCURSES_SP_NAME(init_pair) (NCURSES_SP_DCLx short pair, short f, short b)
     colorpair_t previous;
     int maxcolors;
 
-    T((T_CALLED("init_pair(%p,%d,%d,%d)"), SP_PARM, pair, f, b));
+    T((T_CALLED("init_pair(%p,%d,%d,%d)"), (void *) SP_PARM, pair, f, b));
 
     if (!ValidPair(pair))
 	returnCode(ERR);
@@ -572,7 +573,10 @@ NCURSES_SP_NAME(init_color) (NCURSES_SP_DCLx
     int result = ERR;
     int maxcolors;
 
-    T((T_CALLED("init_color(%p,%d,%d,%d,%d)"), SP_PARM, color, r, g, b));
+    T((T_CALLED("init_color(%p,%d,%d,%d,%d)"),
+       (void *) SP_PARM,
+       color,
+       r, g, b));
 
     if (SP_PARM == 0)
 	returnCode(result);
@@ -624,7 +628,7 @@ init_color(short color, short r, short g, short b)
 NCURSES_EXPORT(bool)
 NCURSES_SP_NAME(can_change_color) (NCURSES_SP_DCL)
 {
-    T((T_CALLED("can_change_color(%p)"), SP_PARM));
+    T((T_CALLED("can_change_color(%p)"), (void *) SP_PARM));
     returnCode((CanChange != 0) ? TRUE : FALSE);
 }
 
@@ -641,6 +645,7 @@ NCURSES_SP_NAME(has_colors) (NCURSES_SP_DCL0)
 {
     int code;
 
+    (void) SP_PARM;
     T((T_CALLED("has_colors()")));
 #ifdef USE_TERM_DRIVER
     code = HasColor;
@@ -670,7 +675,12 @@ NCURSES_SP_NAME(color_content) (NCURSES_SP_DCLx
     int result = ERR;
     int maxcolors;
 
-    T((T_CALLED("color_content(%p,%d,%p,%p,%p)"), SP_PARM, color, r, g, b));
+    T((T_CALLED("color_content(%p,%d,%p,%p,%p)"),
+       (void *) SP_PARM,
+       color,
+       (void *) r,
+       (void *) g,
+       (void *) b));
 
     if (SP_PARM == 0)
 	returnCode(result);
@@ -712,7 +722,11 @@ NCURSES_SP_NAME(pair_content) (NCURSES_SP_DCLx
 {
     int result;
 
-    T((T_CALLED("pair_content(%p,%d,%p,%p)"), SP_PARM, pair, f, b));
+    T((T_CALLED("pair_content(%p,%d,%p,%p)"),
+       (void *) SP_PARM,
+       pair,
+       (void *) f,
+       (void *) b));
 
     if (!ValidPair(pair)) {
 	result = ERR;
@@ -732,7 +746,10 @@ NCURSES_SP_NAME(pair_content) (NCURSES_SP_DCLx
 	if (b)
 	    *b = bg;
 
-	TR(TRACE_ATTRS, ("...pair_content(%p,%d,%d,%d)", SP_PARM, pair, fg, bg));
+	TR(TRACE_ATTRS, ("...pair_content(%p,%d,%d,%d)",
+			 (void *) SP_PARM,
+			 pair,
+			 fg, bg));
 	result = OK;
     }
     returnCode(result);

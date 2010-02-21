@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2003,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -34,10 +34,9 @@
 
 #include <curses.priv.h>
 
-#include <term_entry.h>
 #include <tic.h>
 
-MODULE_ID("$Id: lib_ti.c,v 1.27 2009/07/28 22:03:36 tom Exp $")
+MODULE_ID("$Id: lib_ti.c,v 1.29 2010/01/23 17:57:43 tom Exp $")
 
 #if 0
 static bool
@@ -56,7 +55,7 @@ NCURSES_SP_NAME(tigetflag) (NCURSES_SP_DCLx NCURSES_CONST char *str)
     int result = ABSENT_BOOLEAN;
     int i, j;
 
-    T((T_CALLED("tigetflag(%p, %s)"), SP_PARM, str));
+    T((T_CALLED("tigetflag(%p, %s)"), (void *) SP_PARM, str));
 
     if (HasTInfoTerminal(SP_PARM)) {
 	TERMTYPE *tp = &(TerminalOf(SP_PARM)->type);
@@ -101,7 +100,7 @@ NCURSES_SP_NAME(tigetnum) (NCURSES_SP_DCLx NCURSES_CONST char *str)
     int i, j;
     int result = CANCELLED_NUMERIC;	/* Solaris returns a -1 on error */
 
-    T((T_CALLED("tigetnum(%p, %s)"), SP_PARM, str));
+    T((T_CALLED("tigetnum(%p, %s)"), (void *) SP_PARM, str));
 
     if (HasTInfoTerminal(SP_PARM)) {
 	TERMTYPE *tp = &(TerminalOf(SP_PARM)->type);
@@ -148,7 +147,7 @@ NCURSES_SP_NAME(tigetstr) (NCURSES_SP_DCLx NCURSES_CONST char *str)
     char *result = CANCELLED_STRING;
     int i, j;
 
-    T((T_CALLED("tigetstr(%p, %s)"), SP_PARM, str));
+    T((T_CALLED("tigetstr(%p, %s)"), (void *) SP_PARM, str));
 
     if (HasTInfoTerminal(SP_PARM)) {
 	TERMTYPE *tp = &(TerminalOf(SP_PARM)->type);

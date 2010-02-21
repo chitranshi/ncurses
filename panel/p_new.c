@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2008,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -38,7 +38,7 @@
  */
 #include "panel.priv.h"
 
-MODULE_ID("$Id: p_new.c,v 1.14 2009/04/11 20:43:04 tom Exp $")
+MODULE_ID("$Id: p_new.c,v 1.16 2010/01/23 21:22:16 tom Exp $")
 
 #ifdef TRACE
 static char *stdscr_id;
@@ -66,7 +66,7 @@ root_panel(NCURSES_SP_DCL0)
 #if NO_LEAKS
       ph->destroy = del_panel;
 #endif
-      _nc_stdscr_pseudo_panel = (PANEL *) malloc(sizeof(PANEL));
+      _nc_stdscr_pseudo_panel = typeMalloc(PANEL, 1);
       if (_nc_stdscr_pseudo_panel != 0)
 	{
 	  PANEL *pan = _nc_stdscr_pseudo_panel;
@@ -95,7 +95,7 @@ new_panel(WINDOW *win)
 
   GetWindowHook(win);
 
-  T((T_CALLED("new_panel(%p)"), win));
+  T((T_CALLED("new_panel(%p)"), (void *)win));
 
   if (!win)
     returnPanel(pan);
@@ -104,7 +104,7 @@ new_panel(WINDOW *win)
     (void)root_panel(NCURSES_SP_ARG);
   assert(_nc_stdscr_pseudo_panel);
 
-  if (!(win->_flags & _ISPAD) && (pan = (PANEL *) malloc(sizeof(PANEL))))
+  if (!(win->_flags & _ISPAD) && (pan = typeMalloc(PANEL, 1)))
     {
       pan->win = win;
       pan->above = (PANEL *) 0;

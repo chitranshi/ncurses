@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
--- Copyright (c) 1998-2008,2009 Free Software Foundation, Inc.               --
+-- Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.               --
 --                                                                           --
 -- Permission is hereby granted, free of charge, to any person obtaining a   --
 -- copy of this software and associated documentation files (the             --
@@ -25,7 +25,7 @@
 -- sale, use or other dealings in this Software without prior written        --
 -- authorization.                                                            --
 -------------------------------------------------------------------------------
--- $Id: NEWS,v 1.1437 2009/09/19 21:13:13 tom Exp $
+-- $Id: NEWS,v 1.1506 2010/02/20 22:57:37 tom Exp $
 -------------------------------------------------------------------------------
 
 This is a log of changes that ncurses has gone through since Zeyd started
@@ -44,6 +44,196 @@ See the AUTHORS file for the corresponding full names.
 
 Changes through 1.9.9e did not credit all contributions;
 it is not possible to add this information.
+
+20100220
+	+ add make-tar.sh scripts to Ada95 and test subdirectories to help with
+	  making those separately distributable.
+	+ build-fix for static libraries without dlsym (Debian #556378).
+	+ fix a syntax error in man/form_field_opts.3x (patch by Ingo
+	  Schwarze).
+
+20100213
+	+ add several screen-bce.XXX entries -TD
+
+20100206
+	+ update mrxvt terminfo entry -TD
+	+ modify win_driver.c to support mouse single-clicks.
+	+ correct name for termlib in ncurses*-config, e.g., if it is renamed
+	  to provide a single file for ncurses/ncursesw libraries (patch by
+	  Miroslav Lichvar).
+
+20100130
+	+ use vfork in test/ditto.c if available (request by Mike Frysinger).
+	+ miscellaneous cleanup of manpages.
+	+ fix typo in curs_bkgd.3x (patch by Tim van der Molen).
+	+ build-fix for --srcdir (patch by Miroslav Lichvar).
+
+20100123
+	+ for term-driver configuration, ensure that the driver pointer is
+	  initialized in setupterm so that terminfo/termcap programs work.
+	+ amend fix for Debian #542031 to ensure that wattrset() returns only
+	  OK or ERR, rather than the attribute value (report by Miroslav
+	  Lichvar).
+	+ reorder WINDOWLIST to put WINDOW data after SCREEN pointer, making
+	  _nc_screen_of() compatible between normal/wide libraries again (patch
+	  by Miroslav Lichvar)
+	+ review/fix include-dependencies in modules files (report by Miroslav
+	  Lichvar).
+
+20100116
+	+ modify win_driver.c to initialize acs_map for win32 console, so
+	  that line-drawing works.
+	+ modify win_driver.c to initialize TERMINAL struct so that programs
+	  such as test/lrtest.c and test/ncurses.c which test string
+	  capabilities can run.
+	+ modify term-driver modules to eliminate forward-reference
+	  declarations.
+
+20100109
+	+ modify configure macro CF_XOPEN_SOURCE, etc., to use CF_ADD_CFLAGS
+	  consistently to add new -D's while removing duplicates.
+	+ modify a few configure macros to consistently put new options
+	  before older in the list.
+	+ add tiparm(), based on review of X/Open Curses Issue 7.
+	+ minor documentation cleanup.
+	+ update config.guess, config.sub from
+		http://savannah.gnu.org/projects/config
+	  (caveat - its maintainer put 2010 copyright date on files dated 2009)
+
+20100102
+	+ minor improvement to tic's checking of similar SGR's to allow for the
+	  most common case of SGR 0.
+	+ modify getmouse() to act as its documentation implied, returning on
+	  each call the preceding event until none are left.  When no more
+	  events remain, it will return ERR.
+
+20091227
+	+ change order of lookup in progs/tput.c, looking for terminfo data
+	  first.  This fixes a confusion between termcap "sg" and terminfo
+	  "sgr" or "sgr0", originally from 990123 changes, but exposed by
+	  20091114 fixes for hashing.  With this change, only "dl" and "ed" are
+	  ambiguous (Mandriva #56272).
+
+20091226
+	+ add bterm terminfo entry, based on bogl 0.1.18 -TD
+	+ minor fix to rxvt+pcfkeys terminfo entry -TD
+	+ build-fixes for Ada95 tree for gnat 4.4 "style".
+
+20091219
+	+ remove old check in mvderwin() which prevented moving a derived
+	  window whose origin happened to coincide with its parent's origin
+	  (report by Katarina Machalkova).
+	+ improve test/ncurses.c to put mouse droppings in the proper window.
+	+ update minix terminfo entry -TD
+	+ add bw (auto-left-margin) to nsterm* entries (Benjamin Sittler)
+
+20091212
+	+ correct transfer of multicolumn characters in multirow
+	  field_buffer(), which stopped at the end of the first row due to
+	  filling of unused entries in a cchar_t array with nulls.
+	+ updated nsterm* entries (Benjamin Sittler, Emanuele Giaquinta)
+	+ modify _nc_viscbuf2() and _tracecchar_t2() to show wide-character
+	  nulls.
+	+ use strdup() in set_menu_mark(), restore .marklen struct member on
+	  failure.
+	+ eliminate clause 3 from the UCB copyrights in read_termcap.c and
+	  tset.c per
+		ftp://ftp.cs.berkeley.edu/pub/4bsd/README.Impt.License.Change
+	  (patch by Nicholas Marriott).
+	+ replace a malloc in tic.c with strdup, checking for failure (patch by
+	  Nicholas Marriott).
+	+ update config.guess, config.sub from
+		http://savannah.gnu.org/projects/config
+
+20091205
+	+ correct layout of working window used to extract data in
+	  wide-character configured by set_field_buffer (patch by Rafael
+	  Garrido Fernandez)
+	+ improve some limit-checks related to filename length in reading and
+	  writing terminfo entries.
+	+ ensure that filename is always filled in when attempting to read
+	  a terminfo entry, so that infocmp can report the filename (patch
+	  by Nicholas Marriott).
+
+20091128
+	+ modify mk-1st.awk to allow tinfo library to be built when term-driver
+	  is enabled.
+	+ add error-check to configure script to ensure that sp-funcs is
+	  enabled if term-driver is, since some internal interfaces rely upon
+	  this.
+
+20091121
+	+ fix case where progs/tput is used while sp-funcs is configure; this
+	  requires save/restore of out-character function from _nc_prescreen
+	  rather than the SCREEN structure (report by Charles Wilson).
+	+ fix typo in man/curs_trace.3x which caused incorrect symbolic links
+	+ improved configure macros CF_GCC_ATTRIBUTES, CF_PROG_LINT.
+
+20091114
+
+	+ updated man/curs_trace.3x
+	+ limit hashing for termcap-names to 2-characters (Ubuntu #481740).
+	+ change a variable name in lib_newwin.c to make it clearer which
+	  value is being freed on error (patch by Nicholas Marriott).
+
+20091107
+	+ improve test/ncurses.c color-cycling test by reusing attribute-
+	  and color-cycling logic from the video-attributes screen.
+	+ add ifdef'd with NCURSES_INTEROP_FUNCS experimental bindings in form
+	  library which help make it compatible with interop applications
+	  (patch by Juergen Pfeifer).
+	+ add configure option --enable-interop, for integrating changes
+	  for generic/interop support to form-library by Juergen Pfeifer
+
+20091031
+	+ modify use of $CC environment variable which is defined by X/Open
+	  as a curses feature, to ignore it if it is not a single character
+	  (prompted by discussion with Benjamin C W Sittler).
+	+ add START_TRACE in slk_init
+	+ fix a regression in _nc_ripoffline which made test/ncurses.c not show
+	  soft-keys, broken in 20090927 merging.
+	+ change initialization of "hidden" flag for soft-keys from true to
+	  false, broken in 20090704 merging (Ubuntu #464274).
+	+ update nsterm entries (patch by Benjamin C W Sittler, prompted by
+	  discussion with Fabian Groffen in GenToo #206201).
+	+ add test/xterm-256color.dat
+
+20091024
+	+ quiet some pedantic gcc warnings.
+	+ modify _nc_wgetch() to check for a -1 in the fifo, e.g., after a
+	  SIGWINCH, and discard that value, to avoid confusing application
+	  (patch by Eygene Ryabinkin, FreeBSD bin/136223).
+
+20091017
+	+ modify handling of $PKG_CONFIG_LIBDIR to use only the first item in
+	  a possibly colon-separated list (Debian #550716).
+
+20091010
+	+ supply a null-terminator to buffer in _nc_viswibuf().
+	+ fix a sign-extension bug in unget_wch() (report by Mike Gran).
+	+ minor fixes to error-returns in default function for tputs, as well
+	  as in lib_screen.c
+
+20091003
+	+ add WACS_xxx definitions to wide-character configuration for thick-
+	  and double-lines (discussion with Slava Zanko).
+	+ remove unnecessary kcan assignment to ^C from putty (Sven Joachim)
+	+ add ccc and initc capabilities to xterm-16color -TD
+	> patch by Benjamin C W Sittler:
+	+ add linux-16color
+	+ correct initc capability of linux-c-nc end-of-range
+	+ similar change for dg+ccc and dgunix+ccc
+
+20090927
+	+ move leak-checking for comp_captab.c into _nc_leaks_tinfo() since
+	  that module since 20090711 is in libtinfo.
+	+ add configure option --enable-term-driver, to allow compiling with
+	  terminal-driver.  That is used in mingw port, and (being somewhat
+	  more complicated) is an experimental alternative to the conventional
+	  termlib internals.  Currently, it requires the sp-funcs feature to
+	  be enabled.
+	+ completed integrating "sp-funcs" by Juergen Pfeifer in ncurses
+	  library (some work remains for forms library).
 
 20090919
 	+ document return code from define_key (report by Mike Gran).

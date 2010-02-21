@@ -40,10 +40,10 @@
 #include <curses.priv.h>
 
 #ifndef CUR
-#define CUR SP_TERMTYPE 
+#define CUR SP_TERMTYPE
 #endif
 
-MODULE_ID("$Id: lib_traceatr.c,v 1.66 2009/05/10 00:48:29 tom Exp $")
+MODULE_ID("$Id: lib_traceatr.c,v 1.68 2009/12/12 21:37:37 tom Exp $")
 
 #define COLOR_OF(c) ((c < 0) ? "default" : (c > 7 ? color_of(c) : colors[c].name))
 
@@ -232,6 +232,9 @@ _nc_altcharset_name(attr_t attr, chtype ch)
 
     const char *result = 0;
 
+#if NCURSES_SP_FUNCS
+    (void) sp;
+#endif
     if ((attr & A_ALTCHARSET) && (acs_chars != 0)) {
 	char *cp;
 	char *found = 0;
@@ -322,8 +325,11 @@ _tracecchar_t2(int bufnum, const cchar_t *ch)
 		(void) _nc_trace_bufcat(bufnum, "{ ");
 		for (PUTC_i = 0; PUTC_i < CCHARW_MAX; ++PUTC_i) {
 		    PUTC_ch = ch->chars[PUTC_i];
-		    if (PUTC_ch == L'\0')
+		    if (PUTC_ch == L'\0') {
+			if (PUTC_i == 0)
+			    result = _nc_trace_bufcat(bufnum, "\\000");
 			break;
+		    }
 		    PUTC_n = wcrtomb(PUTC_buf, ch->chars[PUTC_i], &PUT_st);
 		    if (PUTC_n <= 0) {
 			if (PUTC_ch != L'\0') {

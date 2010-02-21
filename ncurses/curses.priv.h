@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2008,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -35,7 +35,7 @@
 
 
 /*
- * $Id: curses.priv.h,v 1.437 2009/09/12 18:09:17 tom Exp $
+ * $Id: curses.priv.h,v 1.451 2010/02/06 19:15:52 tom Exp $
  *
  *	curses.priv.h
  *
@@ -61,6 +61,7 @@ extern "C" {
 #define MODULE_ID(id) /*nothing*/
 #endif
 
+#include <stddef.h>		/* for offsetof */
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -196,11 +197,10 @@ extern NCURSES_EXPORT(void *) _nc_memmove (void *, const void *, size_t);
 /*
  * Options for terminal drivers, etc...
  */
-#if 0
+#ifdef USE_TERM_DRIVER
 #define USE_SP_RIPOFF     1
 #define USE_SP_TERMTYPE   1
 #define USE_SP_WINDOWLIST 1
-#define USE_TERM_DRIVER   1
 #endif
 
 /*
@@ -558,6 +558,9 @@ typedef enum {
 #if USE_SYSMOUSE
 	,M_SYSMOUSE		/* FreeBSD sysmouse on console */
 #endif
+#ifdef USE_TERM_DRIVER
+	,M_TERM_DRIVER		/* Win32 console, etc */
+#endif
 } MouseType;
 
 /*
@@ -687,8 +690,10 @@ typedef struct {
  */
 #if MIXEDCASE_FILENAMES
 #define LEAF_FMT "%c"
+#define LEAF_LEN 1
 #else
 #define LEAF_FMT "%02x"
+#define LEAF_LEN 2
 #endif
 
 /*
@@ -700,6 +705,13 @@ typedef struct {
  */
 #define TRACEMSE_MAX	(80 + (5 * 10) + (32 * 15))
 #define TRACEMSE_FMT	"id %2d  at (%2d, %2d, %2d) state %4lx = {" /* } */
+
+#ifdef USE_TERM_DRIVER
+struct DriverTCB; /* Terminal Control Block forward declaration */
+#define INIT_TERM_DRIVER()	_nc_globals.term_driver = _nc_get_driver
+#else
+#define INIT_TERM_DRIVER()	/* nothing */
+#endif
 
 /*
  * Global data which is not specific to a screen.
@@ -745,6 +757,10 @@ typedef struct {
 #if !USE_SAFE_SPRINTF
 	int		safeprint_cols;
 	int		safeprint_rows;
+#endif
+
+#ifdef USE_TERM_DRIVER
+	int		(*term_driver)(struct DriverTCB*, const char*, int*);
 #endif
 
 #ifdef TRACE
@@ -806,6 +822,7 @@ typedef struct {
 #if NCURSES_NO_PADDING
 	bool		_no_padding;	/* flag to set if padding disabled  */
 #endif
+	NCURSES_SP_OUTC	_outch;		/* output handler if not putc */
 #if BROKEN_LINKER || USE_REENTRANT
 	chtype		*real_acs_map;
 	int		_LINES;
@@ -969,9 +986,6 @@ struct screen {
 	bool		_nc_sp_idlok;
 	bool		_nc_sp_idcok;
 
-#define _nc_idlok SP_PARM->_nc_sp_idlok
-#define _nc_idcok SP_PARM->_nc_sp_idcok
-
 	/*
 	 * These are the data that support the mouse interface.
 	 */
@@ -1020,6 +1034,13 @@ struct screen {
 	int		_sysmouse_new_buttons;
 #endif
 
+#ifdef USE_TERM_DRIVER
+	MEVENT		_drv_mouse_fifo[FIFO_SIZE];
+	int		_drv_mouse_head;
+	int		_drv_mouse_tail;
+	int		_drv_mouse_old_buttons;
+	int		_drv_mouse_new_buttons;
+#endif
 	/*
 	 * This supports automatic resizing
 	 */
@@ -1088,9 +1109,9 @@ extern NCURSES_EXPORT_VAR(SCREEN *) _nc_screen_chain;
 extern NCURSES_EXPORT_VAR(SIG_ATOMIC_T) _nc_have_sigwinch;
 
 	WINDOWLIST {
-	WINDOW	win;		/* first, so WINDOW_EXT() works */
 	WINDOWLIST *next;
 	SCREEN *screen;		/* screen containing the window */
+	WINDOW	win;		/* WINDOW_EXT() needs to account for offset */
 #ifdef _XOPEN_SOURCE_EXTENDED
 	char addch_work[(MB_LEN_MAX * 9) + 1];
 	unsigned addch_used;	/* number of bytes in addch_work[] */
@@ -1099,7 +1120,7 @@ extern NCURSES_EXPORT_VAR(SIG_ATOMIC_T) _nc_have_sigwinch;
 #endif
 };
 
-#define WINDOW_EXT(win,field) (((WINDOWLIST *)(win))->field)
+#define WINDOW_EXT(w,m) (((WINDOWLIST *)((char *)(w) - offsetof(WINDOWLIST, win)))->m)
 
 #define SP_PRE_INIT(sp)                         \
     sp->_cursrow = -1;                          \
@@ -1261,7 +1282,7 @@ extern NCURSES_EXPORT_VAR(SIG_ATOMIC_T) _nc_have_sigwinch;
 					putc(PUTC_ch,b);			    \
 				    break;					    \
 				}						    \
-				fwrite(PUTC_buf, (unsigned) PUTC_n, 1, b);	    \
+				IGNORE_RC(fwrite(PUTC_buf, (unsigned) PUTC_n, 1, b)); \
 			    }							    \
 			    COUNT_OUTCHARS(PUTC_i);				    \
 			} } } while (0)
@@ -1430,11 +1451,14 @@ extern NCURSES_EXPORT(void)	_nc_locked_tracef (const char *, ...) GCC_PRINTFLIKE
 #define T(a)		TR(TRACE_CALLS, a)
 #define TRACE_RETURN(value,type) return _nc_retrace_##type(value)
 
+#define NonNull(s)	((s) != 0 ? s : "<null>")
+
 #define returnAttr(code)	TRACE_RETURN(code,attr_t)
 #define returnBits(code)	TRACE_RETURN(code,unsigned)
 #define returnBool(code)	TRACE_RETURN(code,bool)
 #define returnCPtr(code)	TRACE_RETURN(code,cptr)
 #define returnCVoidPtr(code)	TRACE_RETURN(code,cvoid_ptr)
+#define returnChar(code)	TRACE_RETURN(code,char)
 #define returnChtype(code)	TRACE_RETURN(code,chtype)
 #define returnCode(code)	TRACE_RETURN(code,int)
 #define returnPtr(code)		TRACE_RETURN(code,ptr)
@@ -1454,6 +1478,7 @@ extern NCURSES_EXPORT(char *)           _nc_varargs (const char *, va_list);
 extern NCURSES_EXPORT(chtype)           _nc_retrace_chtype (chtype);
 extern NCURSES_EXPORT(const char *)     _nc_altcharset_name(attr_t, chtype);
 extern NCURSES_EXPORT(const char *)     _nc_retrace_cptr (const char *);
+extern NCURSES_EXPORT(char)             _nc_retrace_char (char);
 extern NCURSES_EXPORT(int)              _nc_retrace_int (int);
 extern NCURSES_EXPORT(unsigned)         _nc_retrace_unsigned (unsigned);
 extern NCURSES_EXPORT(void *)           _nc_retrace_void_ptr (void *);
@@ -1494,6 +1519,7 @@ extern NCURSES_EXPORT(const char *) _nc_viscbuf (const NCURSES_CH_T *, int);
 #define returnBool(code)	return code
 #define returnCPtr(code)	return code
 #define returnCVoidPtr(code)	return code
+#define returnChar(code)	return ((char) code)
 #define returnChtype(code)	return code
 #define returnCode(code)	return code
 #define returnPtr(code)		return code
@@ -1503,6 +1529,15 @@ extern NCURSES_EXPORT(const char *) _nc_viscbuf (const NCURSES_CH_T *, int);
 #define returnWin(code)		return code
 
 #endif /* TRACE/!TRACE */
+
+/*
+ * Workaround for defective implementation of gcc attribute warn_unused_result
+ */
+#if defined(__GNUC__) && defined(_FORTIFY_SOURCE)
+#define IGNORE_RC(func) errno = func
+#else
+#define IGNORE_RC(func) (void) func
+#endif /* gcc workarounds */
 
 /*
  * Return-codes for tgetent() and friends.
@@ -1714,6 +1749,7 @@ extern NCURSES_EXPORT(char *) _nc_get_locale(void);
 extern NCURSES_EXPORT(int)    _nc_unicode_locale(void);
 extern NCURSES_EXPORT(int)    _nc_locale_breaks_acs(TERMINAL *);
 extern NCURSES_EXPORT(int)    _nc_setupterm(NCURSES_CONST char *, int, int *, bool);
+extern NCURSES_EXPORT(void)   _nc_tinfo_cmdch(TERMINAL *, char);
 
 /* lib_set_term.c */
 extern NCURSES_EXPORT(int)    _nc_ripoffline(int, int(*)(WINDOW*, int));
@@ -1838,6 +1874,26 @@ extern NCURSES_EXPORT(int) _nc_eventlist_timeout(_nc_eventlist *);
 #endif
 
 /*
+ * Wide-character macros to hide some platform-differences.
+ */
+#if USE_WIDEC_SUPPORT
+#if HAVE_MBTOWC && HAVE_MBLEN
+#define reset_mbytes(state) IGNORE_RC(mblen(NULL, 0)), IGNORE_RC(mbtowc(NULL, NULL, 0))
+#define count_mbytes(buffer,length,state) mblen(buffer,length)
+#define check_mbytes(wch,buffer,length,state) \
+	(int) mbtowc(&wch, buffer, length)
+#define state_unused
+#elif HAVE_MBRTOWC && HAVE_MBRLEN
+#define reset_mbytes(state) init_mb(state)
+#define count_mbytes(buffer,length,state) mbrlen(buffer,length,&state)
+#define check_mbytes(wch,buffer,length,state) \
+	(int) mbrtowc(&wch, buffer, length, &state)
+#else
+make an error
+#endif
+#endif
+
+/*
  * Not everyone has vsscanf(), but we'd like to use it for scanw().
  */
 #if !HAVE_VSSCANF
@@ -1872,7 +1928,7 @@ extern NCURSES_EXPORT_VAR(SCREEN *) SP;
 #define _nc_set_screen(sp)      SP = sp
 #endif
 
-#if NCURSES_SP_FUNCS && 0
+#if NCURSES_SP_FUNCS
 #define CURRENT_SCREEN_PRE      (IsPreScreen(CURRENT_SCREEN) ? CURRENT_SCREEN : new_prescr())
 #else
 #define CURRENT_SCREEN_PRE      CURRENT_SCREEN
@@ -1932,7 +1988,6 @@ extern NCURSES_EXPORT(int) _nc_get_tty_mode(TTY *);
     sp->jump = outc
 
 #ifdef USE_TERM_DRIVER
-struct DriverTCB; /* Terminal Control Block forward declaration */
 typedef void* TERM_HANDLE;
 
 typedef struct _termInfo

@@ -51,7 +51,7 @@
 #include <termcap.h>		/* ospeed */
 #include <tic.h>
 
-MODULE_ID("$Id: lib_tputs.c,v 1.77 2009/06/07 13:59:11 tom Exp $")
+MODULE_ID("$Id: lib_tputs.c,v 1.80 2009/11/21 23:09:31 tom Exp $")
 
 NCURSES_EXPORT_VAR(char) PC = 0;              /* used by termcap library */
 NCURSES_EXPORT_VAR(NCURSES_OSPEED) ospeed = 0;        /* used by termcap library */
@@ -75,15 +75,18 @@ _nc_set_no_padding(SCREEN *sp)
 #endif
 
 #if NCURSES_SP_FUNCS
-#define my_outch SP_PARM->_outch
+#define SetOutCh(func) if (SP_PARM) SP_PARM->_outch = func; else _nc_prescreen._outch = func
+#define GetOutCh()     (SP_PARM ? SP_PARM->_outch : _nc_prescreen._outch)
 #else
-static NCURSES_SP_OUTC my_outch = NCURSES_SP_NAME(_nc_outch);
+#define SetOutCh(func) static_outch = func
+#define GetOutCh()     static_outch
+static NCURSES_SP_OUTC static_outch = NCURSES_SP_NAME(_nc_outch);
 #endif
 
 NCURSES_EXPORT(int)
 NCURSES_SP_NAME(delay_output) (NCURSES_SP_DCLx int ms)
 {
-    T((T_CALLED("delay_output(%p,%d)"), SP_PARM, ms));
+    T((T_CALLED("delay_output(%p,%d)"), (void *) SP_PARM, ms));
 
     if (!HasTInfoTerminal(SP_PARM))
 	returnCode(ERR);
@@ -92,6 +95,7 @@ NCURSES_SP_NAME(delay_output) (NCURSES_SP_DCLx int ms)
 	NCURSES_SP_NAME(_nc_flush) (NCURSES_SP_ARG);
 	napms(ms);
     } else {
+	NCURSES_SP_OUTC my_outch = GetOutCh();
 	register int nullcount;
 
 	nullcount = (ms * _nc_baudrate(ospeed)) / (BAUDBYTE * 1000);
@@ -129,21 +133,25 @@ _nc_flush(void)
 NCURSES_EXPORT(int)
 NCURSES_SP_NAME(_nc_outch) (NCURSES_SP_DCLx int ch)
 {
+    int rc = OK;
+
     COUNT_OUTCHARS(1);
 
     if (HasTInfoTerminal(SP_PARM)
 	&& SP_PARM != 0
 	&& SP_PARM->_cleanup) {
-	char tmp = ch;
+	char tmp = (char) ch;
 	/*
 	 * POSIX says write() is safe in a signal handler, but the
 	 * buffered I/O is not.
 	 */
-	write(fileno(NC_OUTPUT(SP_PARM)), &tmp, 1);
+	if (write(fileno(NC_OUTPUT(SP_PARM)), &tmp, 1) == -1)
+	    rc = ERR;
     } else {
-	putc(ch, NC_OUTPUT(SP_PARM));
+	if (putc(ch, NC_OUTPUT(SP_PARM)) == EOF)
+	    rc = ERR;
     }
-    return OK;
+    return rc;
 }
 
 #if NCURSES_SP_FUNCS
@@ -195,6 +203,7 @@ NCURSES_SP_NAME(tputs) (NCURSES_SP_DCLx
 			int affcnt,
 			NCURSES_SP_OUTC outc)
 {
+    NCURSES_SP_OUTC my_outch = GetOutCh();
     bool always_delay;
     bool normal_delay;
     int number;
@@ -209,7 +218,7 @@ NCURSES_SP_NAME(tputs) (NCURSES_SP_DCLx
 	if (outc == NCURSES_SP_NAME(_nc_outch))
 	    (void) strcpy(addrbuf, "_nc_outch");
 	else
-	    (void) sprintf(addrbuf, "%p", outc);
+	    (void) sprintf(addrbuf, "%p", (void *) outc);
 	if (_nc_tputs_trace) {
 	    _tracef("tputs(%s = %s, %d, %s) called", _nc_tputs_trace,
 		    _nc_visbuf(string), affcnt, addrbuf);
@@ -276,7 +285,7 @@ NCURSES_SP_NAME(tputs) (NCURSES_SP_DCLx
     }
 #endif /* BSD_TPUTS */
 
-    my_outch = outc;		/* redirect delay_output() */
+    SetOutCh(outc);		/* redirect delay_output() */
     while (*string) {
 	if (*string != '$')
 	    (*outc) (NCURSES_SP_ARGx *string);
@@ -348,7 +357,7 @@ NCURSES_SP_NAME(tputs) (NCURSES_SP_DCLx
 	delay_output(trailpad / 10);
 #endif /* BSD_TPUTS */
 
-    my_outch = NCURSES_SP_NAME(_nc_outch);
+    SetOutCh(my_outch);
     return OK;
 }
 

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2004,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -32,7 +32,7 @@
 
 #include "form.priv.h"
 
-MODULE_ID("$Id: frm_win.c,v 1.14 2009/04/18 18:38:57 tom Exp $")
+MODULE_ID("$Id: frm_win.c,v 1.16 2010/01/23 21:14:36 tom Exp $")
 
 /*---------------------------------------------------------------------------
 |   Facility      :  libnform  
@@ -46,7 +46,7 @@ MODULE_ID("$Id: frm_win.c,v 1.14 2009/04/18 18:38:57 tom Exp $")
 NCURSES_EXPORT(int)
 set_form_win(FORM *form, WINDOW *win)
 {
-  T((T_CALLED("set_form_win(%p,%p)"), form, win));
+  T((T_CALLED("set_form_win(%p,%p)"), (void *)form, (void *)win));
 
   if (form && (form->status & _POSTED))
     RETURN(E_POSTED);
@@ -55,7 +55,7 @@ set_form_win(FORM *form, WINDOW *win)
 #if NCURSES_SP_FUNCS
       FORM *f = Normalize_Form(form);
 
-      f->win = win ? win : Get_Form_Screen(f)->_stdscr;
+      f->win = win ? win : StdScreen(Get_Form_Screen(f));
       RETURN(E_OK);
 #else
       Normalize_Form(form)->win = win;
@@ -78,11 +78,11 @@ form_win(const FORM *form)
   WINDOW *result;
   const FORM *f;
 
-  T((T_CALLED("form_win(%p)"), form));
+  T((T_CALLED("form_win(%p)"), (const void *)form));
 
   f = Normalize_Form(form);
 #if NCURSES_SP_FUNCS
-  result = (f->win ? f->win : Get_Form_Screen(f)->_stdscr);
+  result = (f->win ? f->win : StdScreen(Get_Form_Screen(f)));
 #else
   result = (f->win ? f->win : stdscr);
 #endif

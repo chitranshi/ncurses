@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2007,2008 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -29,7 +29,7 @@
 /*
  * Author: Thomas E. Dickey (1998-on)
  *
- * $Id: ditto.c,v 1.34 2009/07/17 00:07:25 tom Exp $
+ * $Id: ditto.c,v 1.36 2010/01/30 23:39:09 tom Exp $
  *
  * The program illustrates how to set up multiple screens from a single
  * program.
@@ -43,7 +43,6 @@
  */
 #include <test.priv.h>
 #include <sys/stat.h>
-#include <errno.h>
 
 #ifdef USE_PTHREADS
 #include <pthread.h>
@@ -51,6 +50,10 @@
 
 #ifdef USE_XTERM_PTY
 #include USE_OPENPTY_HEADER
+#endif
+
+#ifdef HAVE_VFORK_H
+#include <vfork.h>
 #endif
 
 #define MAX_FIFO 256
@@ -162,7 +165,7 @@ open_tty(char *path)
 	failed(slave_name);
     }
     sprintf(s_option, "-S%s/%d", slave_name, aslave);
-    if (fork()) {
+    if (vfork()) {
 	execlp("xterm", "xterm", s_option, "-title", path, (char *) 0);
 	_exit(0);
     }
@@ -379,7 +382,7 @@ main(int argc, char *argv[])
 
     if (argc <= 1)
 	usage();
-    
+
     if ((data = typeCalloc(DITTO, (size_t) argc)) == 0)
 	failed("calloc data");
 

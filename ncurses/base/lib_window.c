@@ -39,7 +39,7 @@
 
 #include <curses.priv.h>
 
-MODULE_ID("$Id: lib_window.c,v 1.26 2009/04/18 18:46:09 tom Exp $")
+MODULE_ID("$Id: lib_window.c,v 1.28 2009/12/19 22:01:07 tom Exp $")
 
 NCURSES_EXPORT(void)
 _nc_synchook(WINDOW *win)
@@ -57,32 +57,30 @@ mvderwin(WINDOW *win, int y, int x)
 {
     WINDOW *orig;
     int i;
+    int rc = ERR;
 
-    T((T_CALLED("mvderwin(%p,%d,%d)"), win, y, x));
+    T((T_CALLED("mvderwin(%p,%d,%d)"), (void *) win, y, x));
 
-    if (win && (orig = win->_parent)) {
-	if (win->_parx == x && win->_pary == y)
-	    returnCode(OK);
-	if (x < 0 || y < 0)
-	    returnCode(ERR);
-	if ((x + getmaxx(win) > getmaxx(orig)) ||
-	    (y + getmaxy(win) > getmaxy(orig)))
-	    returnCode(ERR);
-    } else
-	returnCode(ERR);
-    wsyncup(win);
-    win->_parx = x;
-    win->_pary = y;
-    for (i = 0; i < getmaxy(win); i++)
-	win->_line[i].text = &(orig->_line[y++].text[x]);
-    returnCode(OK);
+    if (win != 0
+	&& (orig = win->_parent) != 0
+	&& (x >= 0 && y >= 0)
+	&& (x + getmaxx(win) <= getmaxx(orig))
+	&& (y + getmaxy(win) <= getmaxy(orig))) {
+	wsyncup(win);
+	win->_parx = x;
+	win->_pary = y;
+	for (i = 0; i < getmaxy(win); i++)
+	    win->_line[i].text = &(orig->_line[y++].text[x]);
+	rc = OK;
+    }
+    returnCode(rc);
 }
 
 NCURSES_EXPORT(int)
 syncok(WINDOW *win, bool bf)
 /* enable/disable automatic wsyncup() on each change to window */
 {
-    T((T_CALLED("syncok(%p,%d)"), win, bf));
+    T((T_CALLED("syncok(%p,%d)"), (void *) win, bf));
 
     if (win) {
 	win->_sync = bf;
@@ -98,7 +96,7 @@ wsyncup(WINDOW *win)
 {
     WINDOW *wp;
 
-    T((T_CALLED("wsyncup(%p)"), win));
+    T((T_CALLED("wsyncup(%p)"), (void *) win));
     if (win && win->_parent) {
 	for (wp = win; wp->_parent; wp = wp->_parent) {
 	    int y;
@@ -128,7 +126,7 @@ wsyncdown(WINDOW *win)
 /* mark changed every cell in win that is changed in any of its ancestors */
 /* Rewritten by J. Pfeifer, 1-Apr-96 (don't even think that...)           */
 {
-    T((T_CALLED("wsyncdown(%p)"), win));
+    T((T_CALLED("wsyncdown(%p)"), (void *) win));
 
     if (win && win->_parent) {
 	WINDOW *pp = win->_parent;
@@ -167,7 +165,7 @@ wcursyncup(WINDOW *win)
 {
     WINDOW *wp;
 
-    T((T_CALLED("wcursyncup(%p)"), win));
+    T((T_CALLED("wcursyncup(%p)"), (void *) win));
     for (wp = win; wp && wp->_parent; wp = wp->_parent) {
 	wmove(wp->_parent, wp->_pary + wp->_cury, wp->_parx + wp->_curx);
     }
@@ -182,7 +180,7 @@ dupwin(WINDOW *win)
     size_t linesize;
     int i;
 
-    T((T_CALLED("dupwin(%p)"), win));
+    T((T_CALLED("dupwin(%p)"), (void *) win));
 
     if (win != 0) {
 #if NCURSES_SP_FUNCS

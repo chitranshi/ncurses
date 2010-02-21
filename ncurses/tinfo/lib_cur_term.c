@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2008,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -37,10 +37,9 @@
  */
 
 #include <curses.priv.h>
-#include <term_entry.h>		/* TTY, cur_term */
 #include <termcap.h>		/* ospeed */
 
-MODULE_ID("$Id: lib_cur_term.c,v 1.27 2009/09/13 14:40:05 tom Exp $")
+MODULE_ID("$Id: lib_cur_term.c,v 1.29 2010/01/23 17:57:43 tom Exp $")
 
 #undef CUR
 #define CUR termp->type.
@@ -82,7 +81,7 @@ NCURSES_SP_NAME(set_curterm) (NCURSES_SP_DCLx TERMINAL * termp)
 {
     TERMINAL *oldterm;
 
-    T((T_CALLED("set_curterm(%p)"), termp));
+    T((T_CALLED("set_curterm(%p)"), (void *) termp));
 
     _nc_lock_global(curses);
     oldterm = cur_term;
@@ -110,7 +109,7 @@ NCURSES_SP_NAME(set_curterm) (NCURSES_SP_DCLx TERMINAL * termp)
     }
     _nc_unlock_global(curses);
 
-    T((T_RETURN("%p"), oldterm));
+    T((T_RETURN("%p"), (void *) oldterm));
     return (oldterm);
 }
 
@@ -127,7 +126,7 @@ NCURSES_SP_NAME(del_curterm) (NCURSES_SP_DCLx TERMINAL * termp)
 {
     int rc = ERR;
 
-    T((T_CALLED("del_curterm(%p, %p)"), SP_PARM, termp));
+    T((T_CALLED("del_curterm(%p, %p)"), (void *) SP_PARM, (void *) termp));
 
     if (termp != 0) {
 #ifdef USE_TERM_DRIVER

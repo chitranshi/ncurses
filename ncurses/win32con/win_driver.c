@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2008,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -31,110 +31,14 @@
  *                                                                          *
  ****************************************************************************/
 
+/*
+ * TODO - GetMousePos(POINT * result) from ntconio.c
+ * TODO - implement nodelay
+ */
+
 #include <curses.priv.h>
 
-MODULE_ID("$Id: win_driver.c,v 1.1 2009/02/21 15:11:29 juergen Exp $")
-
-static bool drv_CanHandle(TERMINAL_CONTROL_BLOCK * TCB, const char *tname, int *);
-static void drv_init(TERMINAL_CONTROL_BLOCK *);
-static void drv_release(TERMINAL_CONTROL_BLOCK *);
-static int drv_size(TERMINAL_CONTROL_BLOCK *, int *, int *);
-static int drv_sgmode(TERMINAL_CONTROL_BLOCK * TCB,
-		      bool setFlag,
-		      TTY * buf);
-static chtype drv_conattr(TERMINAL_CONTROL_BLOCK * TCB);
-
-static int drv_mvcur(TERMINAL_CONTROL_BLOCK * TCB,
-		     int yold, int xold, int ynew, int xnew);
-static int drv_mode(TERMINAL_CONTROL_BLOCK * TCB,
-		    bool progFlag, bool defFlag);
-static bool drv_rescol(TERMINAL_CONTROL_BLOCK * TCB);
-static bool drv_rescolors(TERMINAL_CONTROL_BLOCK * TCB);
-static void drv_setcolor(TERMINAL_CONTROL_BLOCK * TCB,
-			 bool fore,
-			 int color,
-			 int (*outc) (SCREEN *, int));
-static int drv_dobeepflash(TERMINAL_CONTROL_BLOCK * TCB, bool);
-static void drv_initpair(TERMINAL_CONTROL_BLOCK * TCB,
-			 short pair,
-			 short f,
-			 short b);
-static void drv_initcolor(TERMINAL_CONTROL_BLOCK * TCB,
-			  short color,
-			  short r,
-			  short g,
-			  short b);
-static void drv_do_color(TERMINAL_CONTROL_BLOCK * TCB,
-			 short old_pair,
-			 short pair,
-			 bool reverse,
-			 int (*outc) (SCREEN *, int));
-static void drv_initmouse(TERMINAL_CONTROL_BLOCK * TCB);
-static void drv_setfilter(TERMINAL_CONTROL_BLOCK * TCB);
-static void drv_hwlabel(TERMINAL_CONTROL_BLOCK * TCB,
-			int labnum,
-			char *text);
-static void drv_hwlabelOnOff(TERMINAL_CONTROL_BLOCK * TCB,
-			     bool OnFlag);
-static int drv_doupdate(TERMINAL_CONTROL_BLOCK * TCB);
-
-static int drv_defaultcolors(TERMINAL_CONTROL_BLOCK * TCB,
-			     int fg,
-			     int bg);
-static int drv_print(TERMINAL_CONTROL_BLOCK * TCB,
-		     char *data,
-		     int len);
-/*static int _getsize(TERMINAL_CONTROL_BLOCK*,int *, int *);*/
-static int drv_setsize(TERMINAL_CONTROL_BLOCK * TCB, int l, int c);
-static void drv_initacs(TERMINAL_CONTROL_BLOCK * TCB, chtype *, chtype *);
-static void drv_wrap(SCREEN *);
-static void drv_screen_init(SCREEN *);
-static int drv_twait(TERMINAL_CONTROL_BLOCK *,
-		     int,
-		     int,
-		     int *EVENTLIST_2nd(_nc_eventlist *));
-static int drv_read(TERMINAL_CONTROL_BLOCK * TCB, int *buf);
-static int drv_nap(TERMINAL_CONTROL_BLOCK * TCB GCC_UNUSED, int ms);
-static int drv_kpad(TERMINAL_CONTROL_BLOCK * TCB, bool);
-static int drv_keyok(TERMINAL_CONTROL_BLOCK * TCB, int, bool);
-static bool drv_kyExist(TERMINAL_CONTROL_BLOCK * TCB, int);
-
-NCURSES_EXPORT_VAR (TERM_DRIVER) _nc_WIN_DRIVER = {
-    FALSE,
-	drv_CanHandle,		/* CanHandle */
-	drv_init,		/* init */
-	drv_release,		/* release */
-	drv_size,		/* size */
-	drv_sgmode,		/* sgmode */
-	drv_conattr,		/* conattr */
-	drv_mvcur,		/* hwcur */
-	drv_mode,		/* mode */
-	drv_rescol,		/* rescol */
-	drv_rescolors,		/* rescolors */
-	drv_setcolor,		/* color */
-	drv_dobeepflash,	/* DoBeepFlash */
-	drv_initpair,		/* initpair */
-	drv_initcolor,		/* initcolor */
-	drv_do_color,		/* docolor */
-	drv_initmouse,		/* initmouse */
-	drv_setfilter,		/* setfilter */
-	drv_hwlabel,		/* hwlabel */
-	drv_hwlabelOnOff,	/* hwlabelOnOff */
-	drv_doupdate,		/* update */
-	drv_defaultcolors,	/* defaultcolors */
-	drv_print,		/* print */
-	drv_size,		/* getsize */
-	drv_setsize,		/* setsize */
-	drv_initacs,		/* initacs */
-	drv_screen_init,	/* scinit */
-	drv_wrap,		/* scexit */
-	drv_twait,		/* twait */
-	drv_read,		/* read */
-	drv_nap,		/* nap */
-	drv_kpad,		/* kpad */
-	drv_keyok,		/* kyOk */
-	drv_kyExist		/* kyExist */
-};
+MODULE_ID("$Id: win_driver.c,v 1.6 2010/02/06 19:55:44 tom Exp $")
 
 #define WINMAGIC NCDRV_MAGIC(NCDRV_WINCONSOLE)
 
@@ -288,9 +192,9 @@ drv_doupdate(TERMINAL_CONTROL_BLOCK * TCB)
 
     Width = screen_columns(sp);
     Height = screen_lines(sp);
-    nonempty = min(Height, sp->_newscr->_maxy + 1);
+    nonempty = min(Height, NewScreen(sp)->_maxy + 1);
 
-    if ((sp->_curscr->_clear || sp->_newscr->_clear)) {
+    if ((CurScreen(sp)->_clear || NewScreen(sp)->_clear)) {
 	int x;
 	chtype empty[Width];
 
@@ -300,52 +204,52 @@ drv_doupdate(TERMINAL_CONTROL_BLOCK * TCB)
 	for (y = 0; y < nonempty; y++) {
 	    con_write(TCB, y, 0, empty, Width);
 	    memcpy(empty,
-		   sp->_curscr->_line[y].text,
+		   CurScreen(sp)->_line[y].text,
 		   Width * sizeof(chtype));
 	}
-	sp->_curscr->_clear = FALSE;
-	sp->_newscr->_clear = FALSE;
-	touchwin(sp->_newscr);
+	CurScreen(sp)->_clear = FALSE;
+	NewScreen(sp)->_clear = FALSE;
+	touchwin(NewScreen(sp));
     }
 
     for (y = 0; y < nonempty; y++) {
-	x0 = sp->_newscr->_line[y].firstchar;
+	x0 = NewScreen(sp)->_line[y].firstchar;
 	if (x0 != _NOCHANGE) {
-	    x1 = sp->_newscr->_line[y].lastchar;
+	    x1 = NewScreen(sp)->_line[y].lastchar;
 	    n = x1 - x0 + 1;
 	    if (n > 0) {
-		memcpy(sp->_curscr->_line[y].text + x0,
-		       sp->_newscr->_line[y].text + x0,
+		memcpy(CurScreen(sp)->_line[y].text + x0,
+		       NewScreen(sp)->_line[y].text + x0,
 		       n * sizeof(chtype));
 		con_write(TCB,
 			  y,
 			  x0,
-			  ((chtype *) sp->_curscr->_line[y].text) + x0, n);
+			  ((chtype *) CurScreen(sp)->_line[y].text) + x0, n);
 
 		/* mark line changed successfully */
-		if (y <= sp->_newscr->_maxy) {
-		    MARK_NOCHANGE(sp->_newscr, y);
+		if (y <= NewScreen(sp)->_maxy) {
+		    MARK_NOCHANGE(NewScreen(sp), y);
 		}
-		if (y <= sp->_curscr->_maxy) {
-		    MARK_NOCHANGE(sp->_curscr, y);
+		if (y <= CurScreen(sp)->_maxy) {
+		    MARK_NOCHANGE(CurScreen(sp), y);
 		}
 	    }
 	}
     }
 
     /* put everything back in sync */
-    for (y = nonempty; y <= sp->_newscr->_maxy; y++) {
-	MARK_NOCHANGE(sp->_newscr, y);
+    for (y = nonempty; y <= NewScreen(sp)->_maxy; y++) {
+	MARK_NOCHANGE(NewScreen(sp), y);
     }
-    for (y = nonempty; y <= sp->_curscr->_maxy; y++) {
-	MARK_NOCHANGE(sp->_curscr, y);
+    for (y = nonempty; y <= CurScreen(sp)->_maxy; y++) {
+	MARK_NOCHANGE(CurScreen(sp), y);
     }
 
-    if (!sp->_newscr->_leaveok) {
-	sp->_curscr->_curx = sp->_newscr->_curx;
-	sp->_curscr->_cury = sp->_newscr->_cury;
+    if (!NewScreen(sp)->_leaveok) {
+	CurScreen(sp)->_curx = NewScreen(sp)->_curx;
+	CurScreen(sp)->_cury = NewScreen(sp)->_cury;
 
-	TCB->drv->hwcur(TCB, 0, 0, sp->_curscr->_cury, sp->_curscr->_curx);
+	TCB->drv->hwcur(TCB, 0, 0, CurScreen(sp)->_cury, CurScreen(sp)->_curx);
     }
     SetConsoleActiveScreenBuffer(TCB->hdl);
     return OK;
@@ -356,13 +260,22 @@ drv_CanHandle(TERMINAL_CONTROL_BLOCK * TCB,
 	      const char *tname,
 	      int *errret GCC_UNUSED)
 {
+    bool code = FALSE;
+
+    T((T_CALLED("drv_CanHandle(%p)"), TCB));
+
     assert(TCB != 0);
     assert(tname != 0);
+
     TCB->magic = WINMAGIC;
     if (*tname == 0 || *tname == 0 || strcmp(tname, "unknown") == 0) {
-	return TRUE;
-    } else
-	return FALSE;
+	code = TRUE;
+	if ((TCB->term.type.Booleans) == 0) {
+	    _nc_init_entry(&(TCB->term.type));
+	}
+    }
+
+    returnBool(code);
 }
 
 static int
@@ -471,6 +384,73 @@ drv_setsize(TERMINAL_CONTROL_BLOCK * TCB GCC_UNUSED,
 }
 
 static int
+drv_sgmode(TERMINAL_CONTROL_BLOCK * TCB, bool setFlag, TTY * buf)
+{
+    DWORD dwFlag = 0;
+    tcflag_t iflag;
+    tcflag_t lflag;
+
+    AssertTCB();
+
+    if (TCB == 0 || buf == NULL)
+	return ERR;
+
+    if (setFlag) {
+	iflag = buf->c_iflag;
+	lflag = buf->c_lflag;
+
+	GetConsoleMode(TCB->inp, &dwFlag);
+
+	if (lflag & ICANON)
+	    dwFlag |= ENABLE_LINE_INPUT;
+	else
+	    dwFlag &= ~ENABLE_LINE_INPUT;
+
+	if (lflag & ECHO)
+	    dwFlag |= ENABLE_ECHO_INPUT;
+	else
+	    dwFlag &= ~ENABLE_ECHO_INPUT;
+
+	if (iflag & BRKINT)
+	    dwFlag |= ENABLE_PROCESSED_INPUT;
+	else
+	    dwFlag &= ~ENABLE_PROCESSED_INPUT;
+
+	dwFlag |= ENABLE_MOUSE_INPUT;
+
+	buf->c_iflag = iflag;
+	buf->c_lflag = lflag;
+	SetConsoleMode(TCB->inp, dwFlag);
+	TCB->term.Nttyb = *buf;
+    } else {
+	iflag = TCB->term.Nttyb.c_iflag;
+	lflag = TCB->term.Nttyb.c_lflag;
+	GetConsoleMode(TCB->inp, &dwFlag);
+
+	if (dwFlag & ENABLE_LINE_INPUT)
+	    lflag |= ICANON;
+	else
+	    lflag &= ~ICANON;
+
+	if (dwFlag & ENABLE_ECHO_INPUT)
+	    lflag |= ECHO;
+	else
+	    lflag &= ~ECHO;
+
+	if (dwFlag & ENABLE_PROCESSED_INPUT)
+	    iflag |= BRKINT;
+	else
+	    iflag &= ~BRKINT;
+
+	TCB->term.Nttyb.c_iflag = iflag;
+	TCB->term.Nttyb.c_lflag = lflag;
+
+	*buf = TCB->term.Nttyb;
+    }
+    return OK;
+}
+
+static int
 drv_mode(TERMINAL_CONTROL_BLOCK * TCB, bool progFlag, bool defFlag)
 {
     SCREEN *sp;
@@ -576,14 +556,20 @@ MapKey(TERMINAL_CONTROL_BLOCK * TCB, WORD vKey)
 static void
 drv_release(TERMINAL_CONTROL_BLOCK * TCB)
 {
+    T((T_CALLED("drv_release(%p)"), TCB));
+
     AssertTCB();
     if (TCB->prop)
 	free(TCB->prop);
+
+    returnVoid;
 }
 
 static void
 drv_init(TERMINAL_CONTROL_BLOCK * TCB)
 {
+    T((T_CALLED("drv_init(%p)"), TCB));
+
     AssertTCB();
 
     if (TCB) {
@@ -646,6 +632,7 @@ drv_init(TERMINAL_CONTROL_BLOCK * TCB)
 	for (i = 0; i < NUMPAIRS; i++)
 	    PropOf(TCB)->pairs[i] = a;
     }
+    returnVoid;
 }
 
 static void
@@ -699,6 +686,8 @@ drv_initmouse(TERMINAL_CONTROL_BLOCK * TCB)
 
     AssertTCB();
     SetSP();
+
+    sp->_mouse_type = M_TERM_DRIVER;
 }
 
 static int
@@ -755,82 +744,51 @@ drv_setfilter(TERMINAL_CONTROL_BLOCK * TCB)
     SetSP();
 }
 
-static int
-drv_sgmode(TERMINAL_CONTROL_BLOCK * TCB, bool setFlag, TTY * buf)
-{
-    DWORD dwFlag = 0;
-    tcflag_t iflag;
-    tcflag_t lflag;
-
-    AssertTCB();
-
-    if (TCB == 0 || buf == NULL)
-	return ERR;
-
-    if (setFlag) {
-	iflag = buf->c_iflag;
-	lflag = buf->c_lflag;
-
-	GetConsoleMode(TCB->inp, &dwFlag);
-
-	if (lflag & ICANON)
-	    dwFlag |= ENABLE_LINE_INPUT;
-	else
-	    dwFlag &= ~ENABLE_LINE_INPUT;
-
-	if (lflag & ECHO)
-	    dwFlag |= ENABLE_ECHO_INPUT;
-	else
-	    dwFlag &= ~ENABLE_ECHO_INPUT;
-
-	if (iflag & BRKINT)
-	    dwFlag |= ENABLE_PROCESSED_INPUT;
-	else
-	    dwFlag &= ~ENABLE_PROCESSED_INPUT;
-
-	/* we disable that for now to focus on keyboard. */
-	dwFlag &= ~ENABLE_MOUSE_INPUT;
-
-	buf->c_iflag = iflag;
-	buf->c_lflag = lflag;
-	SetConsoleMode(TCB->inp, dwFlag);
-	TCB->term.Nttyb = *buf;
-    } else {
-	iflag = TCB->term.Nttyb.c_iflag;
-	lflag = TCB->term.Nttyb.c_lflag;
-	GetConsoleMode(TCB->inp, &dwFlag);
-
-	if (dwFlag & ENABLE_LINE_INPUT)
-	    lflag |= ICANON;
-	else
-	    lflag &= ~ICANON;
-
-	if (dwFlag & ENABLE_ECHO_INPUT)
-	    lflag |= ECHO;
-	else
-	    lflag &= ~ECHO;
-
-	if (dwFlag & ENABLE_PROCESSED_INPUT)
-	    iflag |= BRKINT;
-	else
-	    iflag &= ~BRKINT;
-
-	TCB->term.Nttyb.c_iflag = iflag;
-	TCB->term.Nttyb.c_lflag = lflag;
-
-	*buf = TCB->term.Nttyb;
-    }
-    return OK;
-}
-
 static void
 drv_initacs(TERMINAL_CONTROL_BLOCK * TCB,
 	    chtype *real_map GCC_UNUSED,
 	    chtype *fake_map GCC_UNUSED)
 {
+#define DATA(a,b) { a, b }
+    static struct {
+	int acs_code;
+	int use_code;
+    } table[] = {
+	DATA('a', 0xb1),	/* ACS_CKBOARD  */
+	    DATA('f', 0xf8),	/* ACS_DEGREE   */
+	    DATA('g', 0xf1),	/* ACS_PLMINUS  */
+	    DATA('j', 0xd9),	/* ACS_LRCORNER */
+	    DATA('l', 0xda),	/* ACS_ULCORNER */
+	    DATA('k', 0xbf),	/* ACS_URCORNER */
+	    DATA('m', 0xc0),	/* ACS_LLCORNER */
+	    DATA('n', 0xc5),	/* ACS_PLUS     */
+	    DATA('q', 0xc4),	/* ACS_HLINE    */
+	    DATA('t', 0xc3),	/* ACS_LTEE     */
+	    DATA('u', 0xb4),	/* ACS_RTEE     */
+	    DATA('v', 0xc1),	/* ACS_BTEE     */
+	    DATA('w', 0xc2),	/* ACS_TTEE     */
+	    DATA('x', 0xb3),	/* ACS_VLINE    */
+	    DATA('y', 0xf3),	/* ACS_LEQUAL   */
+	    DATA('z', 0xf2),	/* ACS_GEQUAL   */
+	    DATA('0', 0xdb),	/* ACS_BLOCK    */
+	    DATA('{', 0xe3),	/* ACS_PI       */
+	    DATA('}', 0x9c),	/* ACS_STERLING */
+	    DATA(',', 0xae),	/* ACS_LARROW   */
+	    DATA('+', 0xaf),	/* ACS_RARROW   */
+	    DATA('~', 0xf9),	/* ACS_BULLET   */
+    };
+#undef DATA
+    unsigned n;
+
     SCREEN *sp;
     AssertTCB();
     SetSP();
+
+    for (n = 0; n < SIZEOF(table); ++n) {
+	real_map[table[n].acs_code] = table[n].use_code | A_ALTCHARSET;
+	if (sp != 0)
+	    sp->_screen_acs_map[table[n].acs_code] = TRUE;
+    }
 }
 
 static ULONGLONG
@@ -956,6 +914,62 @@ drv_twait(TERMINAL_CONTROL_BLOCK * TCB,
     return code;
 }
 
+#define BUTTON_MASK (FROM_LEFT_1ST_BUTTON_PRESSED | \
+		     FROM_LEFT_2ND_BUTTON_PRESSED | \
+		     FROM_LEFT_3RD_BUTTON_PRESSED)
+
+static bool
+handle_mouse(SCREEN *sp, MOUSE_EVENT_RECORD mer)
+{
+    MEVENT work;
+    bool result = FALSE;
+
+    sp->_drv_mouse_old_buttons = sp->_drv_mouse_new_buttons;
+    sp->_drv_mouse_new_buttons = mer.dwButtonState & BUTTON_MASK;
+
+    /*
+     * We're only interested if the button is pressed or released.
+     * FIXME: implement continuous event-tracking.
+     */
+    if (sp->_drv_mouse_new_buttons != sp->_drv_mouse_old_buttons) {
+
+	memset(&work, 0, sizeof(work));
+
+	if (sp->_drv_mouse_new_buttons) {
+
+	    if (sp->_drv_mouse_new_buttons & FROM_LEFT_1ST_BUTTON_PRESSED)
+		work.bstate |= BUTTON1_PRESSED;
+	    if (sp->_drv_mouse_new_buttons & FROM_LEFT_2ND_BUTTON_PRESSED)
+		work.bstate |= BUTTON2_PRESSED;
+	    if (sp->_drv_mouse_new_buttons & FROM_LEFT_3RD_BUTTON_PRESSED)
+		work.bstate |= BUTTON3_PRESSED;
+	    if (sp->_drv_mouse_new_buttons & FROM_LEFT_4TH_BUTTON_PRESSED)
+		work.bstate |= BUTTON4_PRESSED;
+
+	} else {
+
+	    if (sp->_drv_mouse_old_buttons & FROM_LEFT_1ST_BUTTON_PRESSED)
+		work.bstate |= BUTTON1_RELEASED;
+	    if (sp->_drv_mouse_old_buttons & FROM_LEFT_2ND_BUTTON_PRESSED)
+		work.bstate |= BUTTON2_RELEASED;
+	    if (sp->_drv_mouse_old_buttons & FROM_LEFT_3RD_BUTTON_PRESSED)
+		work.bstate |= BUTTON3_RELEASED;
+	    if (sp->_drv_mouse_old_buttons & FROM_LEFT_4TH_BUTTON_PRESSED)
+		work.bstate |= BUTTON4_RELEASED;
+
+	    result = TRUE;
+	}
+
+	work.x = mer.dwMousePosition.X;
+	work.y = mer.dwMousePosition.Y;
+
+	sp->_drv_mouse_fifo[sp->_drv_mouse_tail] = work;
+	sp->_drv_mouse_tail += 1;
+    }
+
+    return result;
+}
+
 static int
 drv_read(TERMINAL_CONTROL_BLOCK * TCB, int *buf)
 {
@@ -973,6 +987,7 @@ drv_read(TERMINAL_CONTROL_BLOCK * TCB, int *buf)
 
     memset(&inp, 0, sizeof(inp));
 
+    T((T_CALLED("drv_read(%p)"), TCB));
     while ((b = ReadConsoleInput(TCB->inp, &inp, 1, &nRead))) {
 	if (b && nRead > 0) {
 	    if (inp.EventType == KEY_EVENT) {
@@ -993,14 +1008,16 @@ drv_read(TERMINAL_CONTROL_BLOCK * TCB, int *buf)
 		} else {	/* *buf != 0 */
 		    break;
 		}
-	    } else if (0 && inp.EventType == MOUSE_EVENT) {
-		*buf = KEY_MOUSE;
-		break;
+	    } else if (inp.EventType == MOUSE_EVENT) {
+		if (handle_mouse(sp, inp.Event.MouseEvent)) {
+		    *buf = KEY_MOUSE;
+		    break;
+		}
 	    }
 	    continue;
 	}
     }
-    return n;
+    returnCode(n);
 }
 
 static int
@@ -1083,3 +1100,40 @@ drv_keyok(TERMINAL_CONTROL_BLOCK * TCB, int keycode, bool flag)
     }
     return code;
 }
+
+NCURSES_EXPORT_VAR (TERM_DRIVER) _nc_WIN_DRIVER = {
+    FALSE,
+	drv_CanHandle,		/* CanHandle */
+	drv_init,		/* init */
+	drv_release,		/* release */
+	drv_size,		/* size */
+	drv_sgmode,		/* sgmode */
+	drv_conattr,		/* conattr */
+	drv_mvcur,		/* hwcur */
+	drv_mode,		/* mode */
+	drv_rescol,		/* rescol */
+	drv_rescolors,		/* rescolors */
+	drv_setcolor,		/* color */
+	drv_dobeepflash,	/* DoBeepFlash */
+	drv_initpair,		/* initpair */
+	drv_initcolor,		/* initcolor */
+	drv_do_color,		/* docolor */
+	drv_initmouse,		/* initmouse */
+	drv_setfilter,		/* setfilter */
+	drv_hwlabel,		/* hwlabel */
+	drv_hwlabelOnOff,	/* hwlabelOnOff */
+	drv_doupdate,		/* update */
+	drv_defaultcolors,	/* defaultcolors */
+	drv_print,		/* print */
+	drv_size,		/* getsize */
+	drv_setsize,		/* setsize */
+	drv_initacs,		/* initacs */
+	drv_screen_init,	/* scinit */
+	drv_wrap,		/* scexit */
+	drv_twait,		/* twait */
+	drv_read,		/* read */
+	drv_nap,		/* nap */
+	drv_kpad,		/* kpad */
+	drv_keyok,		/* kyOk */
+	drv_kyExist		/* kyExist */
+};
