@@ -5,6 +5,7 @@ ncurses (5.7+20100220-1) UNRELEASED; urgency=low
     - Workaround for bug in g++ 4.1-4.4 warnings for wattrset() macro
       on amd64 (Closes: #542031).
     - Fix typo in curs_mouse.3x (Closes: #429198).
+    - Bump shlibs version, as there are several new symbols.
   * Remove patch introduced in 5.5-2, applied upstream. Remove patch
     introduced in version 5.7+20090627-1, no longer necessary.
   * Switch patch system to quilt.
