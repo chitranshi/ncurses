@@ -44,6 +44,7 @@ ncurses (5.7+20100220-1) UNRELEASED; urgency=low
     extended description; "linux" refers to a terminal type there.
   * Use dh_install instead of dh_movefiles to install files and clean
     up debian/rules a bit.
+  * Update Standards-Version to 3.8.4, no changes needed.
 
   [ Craig Small ]
   * New maintainer Closes: 543852
