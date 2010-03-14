@@ -7,7 +7,7 @@ include /usr/share/quilt/quilt.make
 # These are important since this is a library package
 soname=5
 vername=5.7
-sodepver = (>= 5.7+20100220)
+sodepver = (>= 5.7+20100313)
 
 # Name our packages
 package-base=ncurses-base

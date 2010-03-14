@@ -1,10 +1,12 @@
-ncurses (5.7+20100220-1) UNRELEASED; urgency=low
+ncurses (5.7+20100313-1) UNRELEASED; urgency=low
 
   [ Sven Joachim ]
   * New upstream patchlevel.
     - Workaround for bug in g++ 4.1-4.4 warnings for wattrset() macro
       on amd64 (Closes: #542031).
     - Fix typo in curs_mouse.3x (Closes: #429198).
+    - Modify CF_MAN_PAGES configure macro to replace all occurrences of
+      TPUT in tput.1's manpage (Closes: #573597).
     - Bump shlibs version, as there are several new symbols.
   * Remove patch introduced in 5.5-2, applied upstream. Remove patch
     introduced in version 5.7+20090627-1, no longer necessary.
