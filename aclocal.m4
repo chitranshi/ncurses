@@ -28,7 +28,7 @@ dnl***************************************************************************
 dnl
 dnl Author: Thomas E. Dickey 1995-on
 dnl
-dnl $Id: aclocal.m4,v 1.491 2010/01/30 23:42:10 tom Exp $
+dnl $Id: aclocal.m4,v 1.494 2010/03/13 20:15:30 tom Exp $
 dnl Macros used in NCURSES auto-configuration script.
 dnl
 dnl These macros are maintained separately from NCURSES.  The copyright on
@@ -62,13 +62,13 @@ AC_DEFUN([AM_LANGINFO_CODESET],
   fi
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_ADA_INCLUDE_DIRS version: 5 updated: 2006/10/14 15:23:15
+dnl CF_ADA_INCLUDE_DIRS version: 6 updated: 2010/02/26 19:52:07
 dnl -------------------
 dnl Construct the list of include-options for the C programs in the Ada95
 dnl binding.
 AC_DEFUN([CF_ADA_INCLUDE_DIRS],
 [
-ACPPFLAGS="-I. -I../../include $ACPPFLAGS"
+ACPPFLAGS="-I. -I../include -I../../include $ACPPFLAGS"
 if test "$srcdir" != "."; then
 	ACPPFLAGS="-I\${srcdir}/../../include $ACPPFLAGS"
 fi
@@ -985,7 +985,7 @@ done
 AC_SUBST(DIRS_TO_MAKE)
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_DISABLE_LEAKS version: 4 updated: 2006/12/16 15:10:42
+dnl CF_DISABLE_LEAKS version: 5 updated: 2010/03/13 15:14:55
 dnl ----------------
 dnl Combine no-leak checks with the libraries or tools that are used for the
 dnl checks.
@@ -998,7 +998,7 @@ AC_REQUIRE([CF_WITH_VALGRIND])
 AC_MSG_CHECKING(if you want to perform memory-leak testing)
 AC_ARG_ENABLE(leaks,
 	[  --disable-leaks         test: free permanent memory, analyze leaks],
-	[with_no_leaks=yes],
+	[if test "x$enableval" = xno; then with_no_leaks=yes; else with_no_leaks=no; fi],
 	: ${with_no_leaks:=no})
 AC_MSG_RESULT($with_no_leaks)
 
@@ -3304,7 +3304,7 @@ AC_ARG_WITH(manpage-tbl,
 AC_MSG_RESULT($MANPAGE_TBL)
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAN_PAGES version: 35 updated: 2007/03/31 11:47:29
+dnl CF_MAN_PAGES version: 36 updated: 2010/03/13 13:41:01
 dnl ------------
 dnl Try to determine if the man-pages on the system are compressed, and if
 dnl so, what format is used.  Use this information to construct a script that
@@ -3435,7 +3435,7 @@ CF_EOF
 		cf_NAME=`echo "$cf_name" | sed y%abcdefghijklmnopqrstuvwxyz./-%ABCDEFGHIJKLMNOPQRSTUVWXYZ___%`
 		cf_name=`echo $cf_name|sed "$program_transform_name"`
 cat >>$cf_edit_man <<-CF_EOF
-		s,@$cf_NAME@,$cf_name,
+		s,@$cf_NAME@,$cf_name,g
 CF_EOF
 	done
 	])
@@ -5258,6 +5258,36 @@ if test "$cf_cv_utf8_lib" = "add-on" ; then
 	LIBS="-lutf8 $LIBS"
 fi
 ])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_VA_COPY version: 2 updated: 2010/03/04 05:37:29
+dnl ----------
+dnl check for va_copy, part of stdarg.h
+dnl Also, workaround for glibc's __va_copy, by checking for both.
+AC_DEFUN([CF_VA_COPY],[
+AC_CACHE_CHECK(for va_copy, cf_cv_have_va_copy,[
+AC_TRY_LINK([
+#include <stdarg.h>
+],[
+	static va_list dst;
+	static va_list src;
+	va_copy(dst, src)],
+	cf_cv_have_va_copy=yes,
+	cf_cv_have_va_copy=no)])
+
+test "$cf_cv_have_va_copy" = yes && AC_DEFINE(HAVE_VA_COPY)
+
+AC_CACHE_CHECK(for __va_copy, cf_cv_have___va_copy,[
+AC_TRY_LINK([
+#include <stdarg.h>
+],[
+	static va_list dst;
+	static va_list src;
+	__va_copy(dst, src)],
+	cf_cv_have___va_copy=yes,
+	cf_cv_have___va_copy=no)])
+
+test "$cf_cv_have___va_copy" = yes && AC_DEFINE(HAVE___VA_COPY)
+])
 dnl ---------------------------------------------------------------------------
 dnl CF_VERBOSE version: 3 updated: 2007/07/29 09:55:12
 dnl ----------

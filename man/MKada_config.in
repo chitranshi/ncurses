@@ -1,5 +1,5 @@
 .\"***************************************************************************
-.\" Copyright (c) 1998-2006,2010 Free Software Foundation, Inc.              *
+.\" Copyright (c) 2010 Free Software Foundation, Inc.                        *
 .\"                                                                          *
 .\" Permission is hereby granted, free of charge, to any person obtaining a  *
 .\" copy of this software and associated documentation files (the            *
@@ -26,39 +26,31 @@
 .\" authorization.                                                           *
 .\"***************************************************************************
 .\"
-.\" Author: Thomas E. Dickey 1996
-.\"
-.\" $Id: wresize.3x,v 1.10 2010/02/27 21:49:29 Tim.van.der.Molen Exp $
-.TH wresize 3X ""
+.\" $Id: MKada_config.in,v 1.3 2010/03/06 22:29:06 tom Exp $
+.TH ADACURSES "1" "" "" "User Commands"
 .SH NAME
-\fBwresize\fR - resize a curses window
+adacurses-config \- helper script for AdaCurses libraries
 .SH SYNOPSIS
-\fB#include <curses.h>\fR
-.sp
-\fBint wresize(WINDOW *win, int lines, int columns);\fR
+.B adacurses-config
+[\fIoptions\fR]
 .SH DESCRIPTION
-The \fBwresize\fR function reallocates storage for an \fBncurses\fR
-window to adjust its dimensions to the specified values.
-If either dimension is larger than the current values, the
-window's data is filled with blanks that have the current background rendition
-(as set by \fBwbkgdset\fR) merged into them.
-.SH RETURN VALUE
-The function returns the integer \fBERR\fR upon failure and \fBOK\fR on success.
-It will fail if either of the dimensions less than or equal to zero,
-or if an error occurs while (re)allocating memory for the window.
-.SH NOTES
-The only restriction placed on the dimensions is that they be greater than zero.
-The dimensions are not compared to \fBcurses\fR screen dimensions to
-simplify the logic of \fBresizeterm\fR.
-The caller must ensure that the window's dimensions fit within the
-actual screen dimensions.
-.SH SEE ALSO
-\fBresizeterm\fR(3X).
-.SH AUTHOR
-Thomas Dickey (from an equivalent function written in 1988 for BSD curses).
-.\"#
-.\"# The following sets edit modes for GNU EMACS
-.\"# Local Variables:
-.\"# mode:nroff
-.\"# fill-column:79
-.\"# End:
+This is a shell script which simplifies configuring an application to use
+the AdaCurses library binding to ncurses.
+.SH OPTIONS
+.TP
+\fB\-\-cflags\fR
+echos the gnat (Ada compiler) flags needed to compile with adacurses
+.TP
+\fB\-\-libs\fR
+echos the gnat libraries needed to link with adacurses
+.TP
+\fB\-\-version\fR
+echos the release+patchdate version of adacurses
+.TP
+\fB\-\-help\fR
+prints this message
+.SH "SEE ALSO"
+\fBcurses\fR(3X)
+.PP
+This describes \fBncurses\fR
+version @NCURSES_MAJOR@.@NCURSES_MINOR@ (patch @NCURSES_PATCH@).
