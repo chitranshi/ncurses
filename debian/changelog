@@ -1,4 +1,4 @@
-ncurses (5.7+20100313-1) UNRELEASED; urgency=low
+ncurses (5.7+20100313-1) unstable; urgency=low
 
   [ Sven Joachim ]
   * New upstream patchlevel.
