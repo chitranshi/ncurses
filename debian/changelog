@@ -1,4 +1,11 @@
-ncurses (5.7+20100313-1) UNRELEASED; urgency=low
+ncurses (5.7+20100313-2) UNRELEASED; urgency=low
+
+  [ Sven Joachim ]
+  * Disable rmm and smm features in xterm terminfo entry (see #574396).
+
+ -- Sven Joachim <svenjoac@gmx.de>  Fri, 19 Mar 2010 18:03:29 +0100
+
+ncurses (5.7+20100313-1) unstable; urgency=low
 
   [ Sven Joachim ]
   * New upstream patchlevel.
