@@ -1,4 +1,4 @@
-ncurses (5.7+20100313-2) UNRELEASED; urgency=medium
+ncurses (5.7+20100313-2) unstable; urgency=medium
 
   [ Sven Joachim ]
   * Disable rmm and smm features in xterm terminfo entry (see #574396).
