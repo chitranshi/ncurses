@@ -25,7 +25,8 @@ Package: libncurses5-dev
 Architecture: any
 Section: libdevel
 Priority: optional
-Depends: libncurses5 (= ${binary:Version}), libc-dev, ${misc:Depends}
+Depends: libncurses5 (= ${binary:Version}), ncurses-bin (= ${binary:Version}),
+	 libc-dev, ${misc:Depends}
 Conflicts: ncurses-dev, libncurses-dev
 Replaces: ncurses-dev, libncurses-dev
 Provides: libncurses-dev, ncurses-dev
@@ -55,7 +56,8 @@ Package: libncursesw5-dev
 Architecture: any
 Section: libdevel
 Priority: optional
-Depends: libncursesw5 (= ${binary:Version}), libc-dev, ${misc:Depends}
+Depends: libncursesw5 (= ${binary:Version}), ncurses-bin (= ${binary:Version}),
+	 libc-dev, ${misc:Depends}
 Suggests: libncurses5-dev
 Description: developer's libraries for ncursesw
  This package contains the header files, static libraries

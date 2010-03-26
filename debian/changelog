@@ -1,3 +1,15 @@
+ncurses (5.7+20100313-2) UNRELEASED; urgency=medium
+
+  [ Sven Joachim ]
+  * Disable rmm and smm features in xterm terminfo entry (see #574396).
+  * Include an empty /usr/share/terminfo directory in ncurses-bin to
+    ensure that configure scripts detect terminfo support (Closes: #575284).
+  * Let libncurses5-dev and libncursesw5-dev depend on the same version of
+    ncurses-bin to mitigate the impact of #480437.
+  * Explicitly specify source format 1.0 (lintian warning).
+
+ -- Sven Joachim <svenjoac@gmx.de>  Thu, 25 Mar 2010 14:13:38 +0100
+
 ncurses (5.7+20100313-1) unstable; urgency=low
 
   [ Sven Joachim ]

@@ -961,6 +961,8 @@ xterm-basic|modern xterm terminal emulator - common,
 # <http://vt100.net/docs/vt220-rm/>.
 xterm-debian|Debian xterm (VT220-conformant backspace),
 	kbs=\177,
+	rmm@,
+	smm@,
 	use=xterm-new,
 #
 # The xterm-new description has all of the features, but is not completely

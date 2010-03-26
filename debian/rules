@@ -375,6 +375,7 @@ binary-arch: build install
 	dh_installdocs -s debian/FAQ
 	dh_installchangelogs -s NEWS
 	dh_installexamples -s
+	dh_installdirs -s
 
 	# Strip the packages, shipping detached debugging symbols. Need to strip
 	# $(package-devw) separately, because -X$(package-libw) excludes it.
