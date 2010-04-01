@@ -1,3 +1,11 @@
+ncurses (5.7+20100313-3) UNRELEASED; urgency=low
+
+  * Fix dangling symlinks in ncurses-term that were introduced by the
+    removal of the ncurses-base compatibility symlinks in version
+    5.7+20100313-1 (Closes: #576127).
+
+ -- Sven Joachim <svenjoac@gmx.de>  Thu, 01 Apr 2010 09:01:27 +0200
+
 ncurses (5.7+20100313-2) unstable; urgency=medium
 
   [ Sven Joachim ]
