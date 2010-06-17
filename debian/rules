@@ -4,6 +4,8 @@
 
 include /usr/share/quilt/quilt.make
 
+export LDFLAGS
+
 # These are important since this is a library package
 soname=5
 vername=5.7
