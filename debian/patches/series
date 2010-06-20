@@ -4,3 +4,4 @@
 05-emdebian-wchar.diff
 06-kfreebsd.diff
 08-pkg-config-libdir.diff
+09-mlterm-256color.diff

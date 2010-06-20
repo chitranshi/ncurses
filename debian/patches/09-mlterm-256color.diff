@@ -1,0 +1,16 @@
+Description: add mlterm+256color entry, for mlterm 3.0.0
+Author: Thomas Dickey <dickey@his.com>
+Applied-Upstream: yes
+
+--- a/misc/terminfo.src
++++ b/misc/terminfo.src
+@@ -3868,6 +3868,9 @@
+ 	kRIT6=\EO1;6C, kRIT7=\EO1;7C, kUP=\EO1;2A, kUP3=\EO1;3A,
+ 	kUP4=\EO1;4A, kUP5=\EO1;5A, kUP6=\EO1;6A, kUP7=\EO1;7A,
+ 
++mlterm-256color|mlterm 3.0 with xterm 256-colors,
++	use=xterm+256color, use=rxvt,
++
+ # From: Thomas Dickey <dickey@clark.net> 04 Oct 1997
+ # Updated: Oezguer Kesim <kesim@math.fu-berlin.de> 02 Nov 1997
+ # Notes:
