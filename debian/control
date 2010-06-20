@@ -182,7 +182,8 @@ Architecture: all
 Section: admin
 Priority: standard
 Depends: ${misc:Depends}
-Replaces: ncurses-base (<< 5.7+20100313-1)
+Replaces: ncurses-base (<< 5.7+20100313-1), mlterm-common (<< 3.0.1-2)
+Breaks: mlterm-common (<< 3.0.1-2)
 Description: additional terminal type definitions
  This package contains all of the numerous terminal definitions not found in
  the ncurses-base package.
