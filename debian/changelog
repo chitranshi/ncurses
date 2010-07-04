@@ -3,7 +3,8 @@ ncurses (5.7+20100313-3) UNRELEASED; urgency=low
   [ Sven Joachim ]
   * Fix dangling symlinks in ncurses-term that were introduced by the
     removal of the ncurses-base compatibility symlinks in version
-    5.7+20100313-1 (Closes: #576127).
+    5.7+20100313-1 (Closes: #576127).  Add versioned Breaks against older
+    ncurses-term versions in ncurses-base.
   * Ship mlterm terminfo in ncurses-term (see #485448).
   * New patch 09-mlterm-256color.diff adding an mlterm-256color terminfo
     entry, backported from upstream's 20100612 patch.
