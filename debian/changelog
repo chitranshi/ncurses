@@ -8,11 +8,12 @@ ncurses (5.7+20100313-3) UNRELEASED; urgency=low
   * Ship mlterm terminfo in ncurses-term (see #485448).
   * New patch 09-mlterm-256color.diff adding an mlterm-256color terminfo
     entry, backported from upstream's 20100612 patch.
+  * Upgrade Standards-Version to 3.9.0, no changes needed.
 
   [ Steve Langasek ]
   * Export LDFLAGS in debian/rules (Closes: #586144).
 
- -- Sven Joachim <svenjoac@gmx.de>  Thu, 01 Apr 2010 09:01:27 +0200
+ -- Sven Joachim <svenjoac@gmx.de>  Sun, 04 Jul 2010 18:22:51 +0200
 
 ncurses (5.7+20100313-2) unstable; urgency=medium
 
