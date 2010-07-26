@@ -1,0 +1,1 @@
+ncurses-bin: package-contains-empty-directory usr/share/terminfo/

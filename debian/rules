@@ -385,6 +385,7 @@ binary-arch: build install
 		--dbg-package=$(package-dbg)
 	dh_strip -p$(package-devw)
 	dh_strip -p$(package-libw) --dbg-package=$(package-dbgw)
+	dh_lintian -s
 	dh_compress -s
 	dh_fixperms -s
 	dh_link -s

@@ -9,6 +9,8 @@ ncurses (5.7+20100313-3) UNRELEASED; urgency=low
   * New patch 09-mlterm-256color.diff adding an mlterm-256color terminfo
     entry, backported from upstream's 20100612 patch.
   * Ship curses and termcap symlinks in lib{32,64}ncurses5-dev (LP: #485118).
+  * Add lintian override for the empty /usr/share/terminfo directory that
+    was introduced in 5.7+20100313-2.
   * Upgrade Standards-Version to 3.9.1, no changes needed.
 
   [ Steve Langasek ]
