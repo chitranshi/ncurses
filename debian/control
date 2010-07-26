@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 7),
                g++-multilib [amd64 i386 kfreebsd-amd64 powerpc ppc64 s390 sparc],
                libgpm-dev [!hurd-i386 !kfreebsd-amd64 !kfreebsd-i386],
                quilt (>= 0.40)
-Standards-Version: 3.9.0
+Standards-Version: 3.9.1
 Vcs-Browser: http://git.debian.org/?p=collab-maint/ncurses.git
 Vcs-Git: git://git.debian.org/collab-maint/ncurses.git
 Homepage: http://invisible-island.net/ncurses/
