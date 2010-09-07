@@ -4,8 +4,9 @@ ncurses (5.7+20100313-3) UNRELEASED; urgency=low
     removal of the ncurses-base compatibility symlinks in version
     5.7+20100313-1 (Closes: #576127).  Add versioned Breaks against older
     ncurses-term versions in ncurses-base.
+  * Correct rxvt-unicode sgr0 terminfo entry (Closes: #595484).
 
- -- Sven Joachim <svenjoac@gmx.de>  Thu, 01 Apr 2010 09:01:27 +0200
+ -- Sven Joachim <svenjoac@gmx.de>  Tue, 07 Sep 2010 20:35:26 +0200
 
 ncurses (5.7+20100313-2) unstable; urgency=medium
 
