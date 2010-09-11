@@ -1,4 +1,4 @@
-ncurses (5.7+20100313-3) UNRELEASED; urgency=low
+ncurses (5.7+20100313-3) unstable; urgency=low
 
   * Fix dangling symlinks in ncurses-term that were introduced by the
     removal of the ncurses-base compatibility symlinks in version
@@ -6,7 +6,7 @@ ncurses (5.7+20100313-3) UNRELEASED; urgency=low
     ncurses-term versions in ncurses-base.
   * Correct rxvt-unicode sgr0 terminfo entry (Closes: #595484).
 
- -- Sven Joachim <svenjoac@gmx.de>  Tue, 07 Sep 2010 20:35:26 +0200
+ -- Sven Joachim <svenjoac@gmx.de>  Sat, 11 Sep 2010 21:13:00 +0200
 
 ncurses (5.7+20100313-2) unstable; urgency=medium
 
