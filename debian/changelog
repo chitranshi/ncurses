@@ -7,8 +7,6 @@ ncurses (5.7+20100313-3) UNRELEASED; urgency=low
     ncurses-term versions in ncurses-base.
   * Correct rxvt-unicode sgr0 terminfo entry (Closes: #595484).
   * Ship mlterm terminfo in ncurses-term (see #485448).
-  * New patch 09-mlterm-256color.diff adding an mlterm-256color terminfo
-    entry, backported from upstream's 20100612 patch.
   * Ship curses and termcap symlinks in lib{32,64}ncurses5-dev (LP: #485118).
   * Add lintian override for the empty /usr/share/terminfo directory that
     was introduced in 5.7+20100313-2.
