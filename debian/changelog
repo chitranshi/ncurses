@@ -1,11 +1,6 @@
-ncurses (5.7+20100313-3) UNRELEASED; urgency=low
+ncurses (5.7+20100911-1) UNRELEASED; urgency=low
 
   [ Sven Joachim ]
-  * Fix dangling symlinks in ncurses-term that were introduced by the
-    removal of the ncurses-base compatibility symlinks in version
-    5.7+20100313-1 (Closes: #576127).  Add versioned Breaks against older
-    ncurses-term versions in ncurses-base.
-  * Correct rxvt-unicode sgr0 terminfo entry (Closes: #595484).
   * Ship mlterm terminfo in ncurses-term (see #485448).
   * Ship curses and termcap symlinks in lib{32,64}ncurses5-dev (LP: #485118).
   * Add lintian override for the empty /usr/share/terminfo directory that
@@ -15,7 +10,7 @@ ncurses (5.7+20100313-3) UNRELEASED; urgency=low
   [ Steve Langasek ]
   * Export LDFLAGS in debian/rules (Closes: #586144).
 
- -- Sven Joachim <svenjoac@gmx.de>  Mon, 26 Jul 2010 20:05:16 +0200
+ -- Sven Joachim <svenjoac@gmx.de>  Wed, 15 Sep 2010 11:19:52 +0200
 
 ncurses (5.7+20100313-2) unstable; urgency=medium
 
