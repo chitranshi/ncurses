@@ -9,6 +9,8 @@ ncurses (5.7+20100911-1) UNRELEASED; urgency=low
 
   [ Loïc Minier ]
   * Update patch 05-emdebian-wchar to apply cleanly.
+  * Drop 08-pkg-config-libdir patch as dpkg >= 1.15.6 don't set
+    PKG_CONFIG_LIBDIR anymore.
 
   [ Steve Langasek ]
   * Export LDFLAGS in debian/rules (Closes: #586144).
