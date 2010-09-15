@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2008,2009 Free Software Foundation, Inc.                   *
+ * Copyright (c) 2008-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -31,7 +31,7 @@
  *                                                                          *
  ****************************************************************************/
 
-/* $Id: nc_mingw.h,v 1.1 2009/02/07 23:33:19 tom Exp $ */
+/* $Id: nc_mingw.h,v 1.2 2010/08/07 18:42:26 tom Exp $ */
 
 #ifndef NC_MINGW_H
 #define NC_MINGW_H 1
@@ -55,5 +55,9 @@ extern int _nc_gettimeofday(struct timeval *, void *);
 #define SIGHUP  1
 #define SIGKILL 9
 #define getlogin() "username"
+
+#undef wcwidth
+#define wcwidth(ucs) _nc_wcwidth(ucs)
+extern int _nc_wcwidth(wchar_t);
 
 #endif /* NC_MINGW_H */

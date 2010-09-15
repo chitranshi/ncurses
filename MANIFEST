@@ -31,6 +31,7 @@
 ./Ada95/include/ncurses_cfg.hin
 ./Ada95/include/ncurses_defs
 ./Ada95/make-tar.sh
+./Ada95/mk-1st.awk
 ./Ada95/samples/Makefile.in
 ./Ada95/samples/README
 ./Ada95/samples/explain.txt
@@ -117,6 +118,8 @@
 ./Ada95/samples/tour.adb
 ./Ada95/samples/tour.ads
 ./Ada95/src/Makefile.in
+./Ada95/src/library.gpr
+./Ada95/src/modules
 ./Ada95/src/terminal_interface-curses-aux.adb
 ./Ada95/src/terminal_interface-curses-forms-field_types-alpha.adb
 ./Ada95/src/terminal_interface-curses-forms-field_types-alpha.ads
@@ -320,6 +323,7 @@
 ./doc/html/announce.html
 ./doc/html/hackguide.html
 ./doc/html/index.html
+./doc/html/man/adacurses-config.1.html
 ./doc/html/man/captoinfo.1m.html
 ./doc/html/man/clear.1.html
 ./doc/html/man/curs_add_wch.3x.html
@@ -437,6 +441,7 @@
 ./doc/html/man/mitem_value.3x.html
 ./doc/html/man/mitem_visible.3x.html
 ./doc/html/man/ncurses.3x.html
+./doc/html/man/ncurses5-config.1.html
 ./doc/html/man/panel.3x.html
 ./doc/html/man/resizeterm.3x.html
 ./doc/html/man/tabs.1.html
@@ -597,6 +602,7 @@
 ./man/curs_touch.3x
 ./man/curs_trace.3x
 ./man/curs_util.3x
+./man/curs_variables.3x
 ./man/curs_window.3x
 ./man/default_colors.3x
 ./man/define_key.3x
@@ -622,6 +628,7 @@
 ./man/form_post.3x
 ./man/form_requestname.3x
 ./man/form_userptr.3x
+./man/form_variables.3x
 ./man/form_win.3x
 ./man/infocmp.1m
 ./man/infotocap.1m
@@ -661,6 +668,7 @@
 ./man/tabs.1
 ./man/term.5
 ./man/term.7
+./man/term_variables.3x
 ./man/terminfo.head
 ./man/terminfo.tail
 ./man/tic.1m
@@ -742,7 +750,6 @@
 ./mk-2nd.awk
 ./mk-dlls.sh
 ./mk-hdr.awk
-./mkdirs.sh
 ./ncurses/Makefile.in
 ./ncurses/README
 ./ncurses/README.IZ
@@ -837,6 +844,7 @@
 ./ncurses/base/version.c
 ./ncurses/base/vsscanf.c
 ./ncurses/base/wresize.c
+./ncurses/build.priv.h
 ./ncurses/curses.priv.h
 ./ncurses/fifo_defs.h
 ./ncurses/llib-lncurses
@@ -922,6 +930,7 @@
 ./ncurses/tty/tty_display.h
 ./ncurses/tty/tty_input.h
 ./ncurses/tty/tty_update.c
+./ncurses/wcwidth.h
 ./ncurses/widechar/charable.c
 ./ncurses/widechar/lib_add_wch.c
 ./ncurses/widechar/lib_box_set.c
@@ -943,6 +952,7 @@
 ./ncurses/widechar/lib_wacs.c
 ./ncurses/widechar/lib_wunctrl.c
 ./ncurses/win32con/gettimeofday.c
+./ncurses/win32con/wcwidth.c
 ./ncurses/win32con/win_driver.c
 ./panel/Makefile.in
 ./panel/headers
@@ -984,7 +994,6 @@
 ./progs/tput.c
 ./progs/transform.c
 ./progs/tset.c
-./tar-copy.sh
 ./test/Makefile.in
 ./test/README
 ./test/aclocal.m4

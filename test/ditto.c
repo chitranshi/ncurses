@@ -29,7 +29,7 @@
 /*
  * Author: Thomas E. Dickey (1998-on)
  *
- * $Id: ditto.c,v 1.36 2010/01/30 23:39:09 tom Exp $
+ * $Id: ditto.c,v 1.39 2010/07/03 19:41:04 tom Exp $
  *
  * The program illustrates how to set up multiple screens from a single
  * program.
@@ -50,10 +50,6 @@
 
 #ifdef USE_XTERM_PTY
 #include USE_OPENPTY_HEADER
-#endif
-
-#ifdef HAVE_VFORK_H
-#include <vfork.h>
 #endif
 
 #define MAX_FIFO 256
@@ -155,17 +151,16 @@ open_tty(char *path)
     int aslave;
     char slave_name[1024];
     char s_option[sizeof(slave_name) + 80];
-    char *leaf;
 
     if (openpty(&amaster, &aslave, slave_name, 0, 0) != 0
 	|| strlen(slave_name) > sizeof(slave_name) - 1)
 	failed("openpty");
-    if ((leaf = strrchr(slave_name, '/')) == 0) {
+    if (strrchr(slave_name, '/') == 0) {
 	errno = EISDIR;
 	failed(slave_name);
     }
     sprintf(s_option, "-S%s/%d", slave_name, aslave);
-    if (vfork()) {
+    if (fork()) {
 	execlp("xterm", "xterm", s_option, "-title", path, (char *) 0);
 	_exit(0);
     }
@@ -216,7 +211,7 @@ init_screen(
 	WINDOW *inner = derwin(outer, high - 2, wide - 2, 1, 1);
 
 	box(outer, 0, 0);
-	mvwaddstr(outer, 0, 2, target->titles[k]);
+	MvWAddStr(outer, 0, 2, target->titles[k]);
 	wnoutrefresh(outer);
 
 	scrollok(inner, TRUE);
@@ -385,6 +380,8 @@ main(int argc, char *argv[])
 
     if ((data = typeCalloc(DITTO, (size_t) argc)) == 0)
 	failed("calloc data");
+
+    assert(data != 0);
 
     for (j = 0; j < argc; j++) {
 	open_screen(&data[j], argv, argc, j);

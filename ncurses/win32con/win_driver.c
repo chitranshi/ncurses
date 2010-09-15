@@ -37,8 +37,9 @@
  */
 
 #include <curses.priv.h>
+#define CUR my_term.type.
 
-MODULE_ID("$Id: win_driver.c,v 1.6 2010/02/06 19:55:44 tom Exp $")
+MODULE_ID("$Id: win_driver.c,v 1.9 2010/07/31 23:43:21 tom Exp $")
 
 #define WINMAGIC NCDRV_MAGIC(NCDRV_WINCONSOLE)
 
@@ -110,7 +111,7 @@ MapAttr(TERMINAL_CONTROL_BLOCK * TCB, WORD res, chtype ch)
 
 	AssertTCB();
 	SetSP();
-	p = PAIR_NUMBER(ch);
+	p = PairNumber(ch);
 	if (p > 0 && p < NUMPAIRS && TCB != 0 && sp != 0) {
 	    WORD a;
 	    a = PropOf(TCB)->pairs[p];
@@ -262,14 +263,41 @@ drv_CanHandle(TERMINAL_CONTROL_BLOCK * TCB,
 {
     bool code = FALSE;
 
-    T((T_CALLED("drv_CanHandle(%p)"), TCB));
+    T((T_CALLED("win32con::drv_CanHandle(%p)"), TCB));
 
     assert(TCB != 0);
     assert(tname != 0);
 
     TCB->magic = WINMAGIC;
-    if (*tname == 0 || *tname == 0 || strcmp(tname, "unknown") == 0) {
+    if (*tname == 0 || *tname == 0) {
 	code = TRUE;
+    } else {
+	TERMINAL my_term;
+	int status;
+
+	code = FALSE;
+#if (USE_DATABASE || USE_TERMCAP)
+	status = _nc_setup_tinfo(tname, &my_term.type);
+#else
+	status = TGETENT_NO;
+#endif
+	if (status != TGETENT_YES) {
+	    const TERMTYPE *fallback = _nc_fallback(tname);
+
+	    if (fallback) {
+		my_term.type = *fallback;
+		status = TGETENT_YES;
+	    } else if (!strcmp(tname, "unknown")) {
+		code = TRUE;
+	    }
+	}
+	if (status == TGETENT_YES) {
+	    if (generic_type || hard_copy)
+		code = TRUE;
+	}
+    }
+
+    if (code) {
 	if ((TCB->term.type.Booleans) == 0) {
 	    _nc_init_entry(&(TCB->term.type));
 	}
@@ -556,7 +584,7 @@ MapKey(TERMINAL_CONTROL_BLOCK * TCB, WORD vKey)
 static void
 drv_release(TERMINAL_CONTROL_BLOCK * TCB)
 {
-    T((T_CALLED("drv_release(%p)"), TCB));
+    T((T_CALLED("win32con::drv_release(%p)"), TCB));
 
     AssertTCB();
     if (TCB->prop)
@@ -568,7 +596,9 @@ drv_release(TERMINAL_CONTROL_BLOCK * TCB)
 static void
 drv_init(TERMINAL_CONTROL_BLOCK * TCB)
 {
-    T((T_CALLED("drv_init(%p)"), TCB));
+    DWORD num_buttons;
+
+    T((T_CALLED("win32con::drv_init(%p)"), TCB));
 
     AssertTCB();
 
@@ -609,6 +639,13 @@ drv_init(TERMINAL_CONTROL_BLOCK * TCB)
 	TCB->info.labelheight = 0;
 	TCB->info.nocolorvideo = 1;
 	TCB->info.tabsize = 8;
+
+	if (GetNumberOfConsoleMouseButtons(&num_buttons)) {
+	    T(("mouse has %ld buttons", num_buttons));
+	    TCB->info.numbuttons = num_buttons;
+	} else {
+	    TCB->info.numbuttons = 1;
+	}
 
 	TCB->info.defaultPalette = _nc_cga_palette;
 
@@ -688,6 +725,28 @@ drv_initmouse(TERMINAL_CONTROL_BLOCK * TCB)
     SetSP();
 
     sp->_mouse_type = M_TERM_DRIVER;
+}
+
+static int
+drv_testmouse(TERMINAL_CONTROL_BLOCK * TCB, int delay)
+{
+    int rc = 0;
+    SCREEN *sp;
+
+    AssertTCB();
+    SetSP();
+
+    if (sp->_drv_mouse_head < sp->_drv_mouse_tail) {
+	rc = TW_MOUSE;
+    } else {
+	rc = TCBOf(sp)->drv->twait(TCBOf(sp),
+				   TWAIT_MASK,
+				   delay,
+				   (int *) 0
+				   EVENTLIST_2nd(evl));
+    }
+
+    return rc;
 }
 
 static int
@@ -818,6 +877,50 @@ Adjust(int milliseconds, int diff)
     return milliseconds;
 }
 
+#define BUTTON_MASK (FROM_LEFT_1ST_BUTTON_PRESSED | \
+		     FROM_LEFT_2ND_BUTTON_PRESSED | \
+		     FROM_LEFT_3RD_BUTTON_PRESSED | \
+		     FROM_LEFT_4TH_BUTTON_PRESSED | \
+		     RIGHTMOST_BUTTON_PRESSED)
+
+static int
+decode_mouse(TERMINAL_CONTROL_BLOCK * TCB, int mask)
+{
+    SCREEN *sp;
+    int result = 0;
+
+    AssertTCB();
+    SetSP();
+
+    if (mask & FROM_LEFT_1ST_BUTTON_PRESSED)
+	result |= BUTTON1_PRESSED;
+    if (mask & FROM_LEFT_2ND_BUTTON_PRESSED)
+	result |= BUTTON2_PRESSED;
+    if (mask & FROM_LEFT_3RD_BUTTON_PRESSED)
+	result |= BUTTON3_PRESSED;
+    if (mask & FROM_LEFT_4TH_BUTTON_PRESSED)
+	result |= BUTTON4_PRESSED;
+
+    if (mask & RIGHTMOST_BUTTON_PRESSED) {
+	switch (TCB->info.numbuttons) {
+	case 1:
+	    result |= BUTTON1_PRESSED;
+	    break;
+	case 2:
+	    result |= BUTTON2_PRESSED;
+	    break;
+	case 3:
+	    result |= BUTTON3_PRESSED;
+	    break;
+	case 4:
+	    result |= BUTTON4_PRESSED;
+	    break;
+	}
+    }
+
+    return result;
+}
+
 static int
 drv_twait(TERMINAL_CONTROL_BLOCK * TCB,
 	  int mode,
@@ -839,6 +942,9 @@ drv_twait(TERMINAL_CONTROL_BLOCK * TCB,
 
     AssertTCB();
     SetSP();
+
+    TR(TRACE_IEVENT, ("start twait: %d milliseconds, mode: %d",
+		      milliseconds, mode));
 
     if (milliseconds < 0)
 	milliseconds = INFINITY;
@@ -883,11 +989,15 @@ drv_twait(TERMINAL_CONTROL_BLOCK * TCB,
 			    }
 			    continue;
 			case MOUSE_EVENT:
-			    if (0 && mode & TW_MOUSE) {
+			    if (decode_mouse(TCB,
+					     (inp.Event.MouseEvent.dwButtonState
+					      & BUTTON_MASK)) == 0) {
+				CONSUME();
+			    } else if (mode & TW_MOUSE) {
 				code = TW_MOUSE;
 				goto end;
-			    } else
-				continue;
+			    }
+			    continue;
 			default:
 			    SetConsoleActiveScreenBuffer(!PropOf(TCB)->progMode ?
 							 TCB->hdl : TCB->out);
@@ -908,21 +1018,25 @@ drv_twait(TERMINAL_CONTROL_BLOCK * TCB,
 	}
     }
   end:
+
+    TR(TRACE_IEVENT, ("end twait: returned %d (%d), remaining time %d msec",
+		      code, errno, milliseconds));
+
     if (timeleft)
 	*timeleft = milliseconds;
 
     return code;
 }
 
-#define BUTTON_MASK (FROM_LEFT_1ST_BUTTON_PRESSED | \
-		     FROM_LEFT_2ND_BUTTON_PRESSED | \
-		     FROM_LEFT_3RD_BUTTON_PRESSED)
-
 static bool
-handle_mouse(SCREEN *sp, MOUSE_EVENT_RECORD mer)
+handle_mouse(TERMINAL_CONTROL_BLOCK * TCB, MOUSE_EVENT_RECORD mer)
 {
+    SCREEN *sp;
     MEVENT work;
     bool result = FALSE;
+
+    AssertTCB();
+    SetSP();
 
     sp->_drv_mouse_old_buttons = sp->_drv_mouse_new_buttons;
     sp->_drv_mouse_new_buttons = mer.dwButtonState & BUTTON_MASK;
@@ -937,25 +1051,12 @@ handle_mouse(SCREEN *sp, MOUSE_EVENT_RECORD mer)
 
 	if (sp->_drv_mouse_new_buttons) {
 
-	    if (sp->_drv_mouse_new_buttons & FROM_LEFT_1ST_BUTTON_PRESSED)
-		work.bstate |= BUTTON1_PRESSED;
-	    if (sp->_drv_mouse_new_buttons & FROM_LEFT_2ND_BUTTON_PRESSED)
-		work.bstate |= BUTTON2_PRESSED;
-	    if (sp->_drv_mouse_new_buttons & FROM_LEFT_3RD_BUTTON_PRESSED)
-		work.bstate |= BUTTON3_PRESSED;
-	    if (sp->_drv_mouse_new_buttons & FROM_LEFT_4TH_BUTTON_PRESSED)
-		work.bstate |= BUTTON4_PRESSED;
+	    work.bstate |= decode_mouse(TCB, sp->_drv_mouse_new_buttons);
 
 	} else {
 
-	    if (sp->_drv_mouse_old_buttons & FROM_LEFT_1ST_BUTTON_PRESSED)
-		work.bstate |= BUTTON1_RELEASED;
-	    if (sp->_drv_mouse_old_buttons & FROM_LEFT_2ND_BUTTON_PRESSED)
-		work.bstate |= BUTTON2_RELEASED;
-	    if (sp->_drv_mouse_old_buttons & FROM_LEFT_3RD_BUTTON_PRESSED)
-		work.bstate |= BUTTON3_RELEASED;
-	    if (sp->_drv_mouse_old_buttons & FROM_LEFT_4TH_BUTTON_PRESSED)
-		work.bstate |= BUTTON4_RELEASED;
+	    /* cf: BUTTON_PRESSED, BUTTON_RELEASED */
+	    work.bstate |= (decode_mouse(TCB, sp->_drv_mouse_old_buttons) >> 1);
 
 	    result = TRUE;
 	}
@@ -987,7 +1088,7 @@ drv_read(TERMINAL_CONTROL_BLOCK * TCB, int *buf)
 
     memset(&inp, 0, sizeof(inp));
 
-    T((T_CALLED("drv_read(%p)"), TCB));
+    T((T_CALLED("win32con::drv_read(%p)"), TCB));
     while ((b = ReadConsoleInput(TCB->inp, &inp, 1, &nRead))) {
 	if (b && nRead > 0) {
 	    if (inp.EventType == KEY_EVENT) {
@@ -1009,7 +1110,7 @@ drv_read(TERMINAL_CONTROL_BLOCK * TCB, int *buf)
 		    break;
 		}
 	    } else if (inp.EventType == MOUSE_EVENT) {
-		if (handle_mouse(sp, inp.Event.MouseEvent)) {
+		if (handle_mouse(TCB, inp.Event.MouseEvent)) {
 		    *buf = KEY_MOUSE;
 		    break;
 		}
@@ -1119,6 +1220,7 @@ NCURSES_EXPORT_VAR (TERM_DRIVER) _nc_WIN_DRIVER = {
 	drv_initcolor,		/* initcolor */
 	drv_do_color,		/* docolor */
 	drv_initmouse,		/* initmouse */
+	drv_testmouse,		/* testmouse */
 	drv_setfilter,		/* setfilter */
 	drv_hwlabel,		/* hwlabel */
 	drv_hwlabelOnOff,	/* hwlabelOnOff */

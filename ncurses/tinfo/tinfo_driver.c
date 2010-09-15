@@ -50,7 +50,7 @@
 # endif
 #endif
 
-MODULE_ID("$Id: tinfo_driver.c,v 1.7 2010/01/16 16:56:16 tom Exp $")
+MODULE_ID("$Id: tinfo_driver.c,v 1.12 2010/07/31 22:16:38 tom Exp $")
 
 /*
  * SCO defines TIOCGSIZE and the corresponding struct.  Other systems (SunOS,
@@ -122,38 +122,6 @@ drv_doupdate(TERMINAL_CONTROL_BLOCK * TCB)
 					    exit(EXIT_FAILURE);\
 					}
 
-#if USE_DATABASE || USE_TERMCAP
-/*
- * Return 1 if entry found, 0 if not found, -1 if database not accessible,
- * just like tgetent().
- */
-static int
-grab_entry(const char *const tn, TERMTYPE *const tp)
-{
-    char filename[PATH_MAX];
-    int status = _nc_read_entry(tn, filename, tp);
-
-    /*
-     * If we have an entry, force all of the cancelled strings to null
-     * pointers so we don't have to test them in the rest of the library.
-     * (The terminfo compiler bypasses this logic, since it must know if
-     * a string is cancelled, for merging entries).
-     */
-    if (status == TGETENT_YES) {
-	unsigned n;
-	for_each_boolean(n, tp) {
-	    if (!VALID_BOOLEAN(tp->Booleans[n]))
-		tp->Booleans[n] = FALSE;
-	}
-	for_each_string(n, tp) {
-	    if (tp->Strings[n] == CANCELLED_STRING)
-		tp->Strings[n] = ABSENT_STRING;
-	}
-    }
-    return (status);
-}
-#endif
-
 static bool
 drv_CanHandle(TERMINAL_CONTROL_BLOCK * TCB, const char *tname, int *errret)
 {
@@ -168,7 +136,7 @@ drv_CanHandle(TERMINAL_CONTROL_BLOCK * TCB, const char *tname, int *errret)
     TCB->magic = TCBMAGIC;
 
 #if (USE_DATABASE || USE_TERMCAP)
-    status = grab_entry(tname, &termp->type);
+    status = _nc_setup_tinfo(tname, &termp->type);
 #else
     status = TGETENT_NO;
 #endif
@@ -392,25 +360,14 @@ drv_size(TERMINAL_CONTROL_BLOCK * TCB, int *linep, int *colp)
     /* figure out the size of the screen */
     T(("screen size: terminfo lines = %d columns = %d", lines, columns));
 
-    if (!useEnv) {
-	*linep = (int) lines;
-	*colp = (int) columns;
-    } else {			/* usually want to query LINES and COLUMNS from environment */
+    *linep = (int) lines;
+    *colp = (int) columns;
+
+    if (useEnv) {
 	int value;
 
-	*linep = *colp = 0;
-
-	/* first, look for environment variables */
-	if ((value = _nc_getenv_num("LINES")) > 0) {
-	    *linep = value;
-	}
-	if ((value = _nc_getenv_num("COLUMNS")) > 0) {
-	    *colp = value;
-	}
-	T(("screen size: environment LINES = %d COLUMNS = %d", *linep, *colp));
-
 #ifdef __EMX__
-	if (*linep <= 0 || *colp <= 0) {
+	{
 	    int screendata[2];
 	    _scrsize(screendata);
 	    *colp = screendata[0];
@@ -420,33 +377,43 @@ drv_size(TERMINAL_CONTROL_BLOCK * TCB, int *linep, int *colp)
 	}
 #endif
 #if HAVE_SIZECHANGE
-	/* if that didn't work, maybe we can try asking the OS */
-	if (*linep <= 0 || *colp <= 0) {
+	/* try asking the OS */
+	{
 	    TERMINAL *termp = (TERMINAL *) TCB;
 	    if (isatty(termp->Filedes)) {
 		STRUCT_WINSIZE size;
 
 		errno = 0;
 		do {
-		    if (ioctl(termp->Filedes, IOCTL_WINSIZE, &size) < 0
-			&& errno != EINTR)
-			goto failure;
+		    if (ioctl(termp->Filedes, IOCTL_WINSIZE, &size) >= 0) {
+			*linep = ((sp != 0 && sp->_filtered)
+				  ? 1
+				  : WINSIZE_ROWS(size));
+			*colp = WINSIZE_COLS(size);
+			T(("SYS screen size: environment LINES = %d COLUMNS = %d",
+			   *linep, *colp));
+			break;
+		    }
 		} while
 		    (errno == EINTR);
-
-		/*
-		 * Solaris lets users override either dimension with an
-		 * environment variable.
-		 */
-		if (*linep <= 0)
-		    *linep = (sp != 0 && sp->_filtered) ? 1 : WINSIZE_ROWS(size);
-		if (*colp <= 0)
-		    *colp = WINSIZE_COLS(size);
 	    }
-	    /* FALLTHRU */
-	  failure:;
 	}
 #endif /* HAVE_SIZECHANGE */
+
+	/*
+	 * Finally, look for environment variables.
+	 *
+	 * Solaris lets users override either dimension with an environment
+	 * variable.
+	 */
+	if ((value = _nc_getenv_num("LINES")) > 0) {
+	    *linep = value;
+	    T(("screen size: environment LINES = %d", *linep));
+	}
+	if ((value = _nc_getenv_num("COLUMNS")) > 0) {
+	    *colp = value;
+	    T(("screen size: environment COLUMNS = %d", *colp));
+	}
 
 	/* if we can't get dynamic info about the size, use static */
 	if (*linep <= 0) {
@@ -878,6 +845,39 @@ drv_initmouse(TERMINAL_CONTROL_BLOCK * TCB)
 }
 
 static int
+drv_testmouse(TERMINAL_CONTROL_BLOCK * TCB, int delay)
+{
+    int rc = 0;
+    SCREEN *sp;
+
+    AssertTCB();
+    SetSP();
+
+#if USE_SYSMOUSE
+    if ((sp->_mouse_type == M_SYSMOUSE)
+	&& (sp->_sysmouse_head < sp->_sysmouse_tail)) {
+	rc = TW_MOUSE;
+    } else
+#endif
+    {
+	rc = TCBOf(sp)->drv->twait(TCBOf(sp),
+				   TWAIT_MASK,
+				   delay,
+				   (int *) 0
+				   EVENTLIST_2nd(evl));
+#if USE_SYSMOUSE
+	if ((sp->_mouse_type == M_SYSMOUSE)
+	    && (sp->_sysmouse_head < sp->_sysmouse_tail)
+	    && (rc == 0)
+	    && (errno == EINTR)) {
+	    rc |= TW_MOUSE;
+	}
+#endif
+    }
+    return rc;
+}
+
+static int
 drv_mvcur(TERMINAL_CONTROL_BLOCK * TCB, int yold, int xold, int ynew, int xnew)
 {
     SCREEN *sp = TCB->csp;
@@ -1172,7 +1172,14 @@ drv_read(TERMINAL_CONTROL_BLOCK * TCB, int *buf)
     assert(buf);
     SetSP();
 
+# if USE_PTHREADS_EINTR
+    if ((pthread_self) && (pthread_kill) && (pthread_equal))
+	_nc_globals.read_thread = pthread_self();
+# endif
     n = read(sp->_ifd, &c2, 1);
+#if USE_PTHREADS_EINTR
+    _nc_globals.read_thread = 0;
+#endif
     *buf = (int) c2;
     return n;
 }
@@ -1309,6 +1316,7 @@ NCURSES_EXPORT_VAR (TERM_DRIVER) _nc_TINFO_DRIVER = {
 	drv_initcolor,		/* initcolor */
 	drv_do_color,		/* docolor */
 	drv_initmouse,		/* initmouse */
+	drv_testmouse,		/* testmouse */
 	drv_setfilter,		/* setfilter */
 	drv_hwlabel,		/* hwlabel */
 	drv_hwlabelOnOff,	/* hwlabelOnOff */

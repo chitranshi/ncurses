@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2008,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -43,7 +43,7 @@
 #define CUR SP_TERMTYPE
 #endif
 
-MODULE_ID("$Id: lib_traceatr.c,v 1.68 2009/12/12 21:37:37 tom Exp $")
+MODULE_ID("$Id: lib_traceatr.c,v 1.71 2010/08/28 21:05:25 tom Exp $")
 
 #define COLOR_OF(c) ((c < 0) ? "default" : (c > 7 ? color_of(c) : colors[c].name))
 
@@ -132,11 +132,11 @@ _traceattr2(int bufnum, chtype newmode)
 	for (n = 0; n < SIZEOF(names); n++) {
 	    if ((newmode & names[n].val) != 0) {
 		if (result[1] != '\0')
-		    result = _nc_trace_bufcat(bufnum, "|");
+		    (void) _nc_trace_bufcat(bufnum, "|");
 		result = _nc_trace_bufcat(bufnum, names[n].name);
 
 		if (names[n].val == A_COLOR) {
-		    short pairnum = PAIR_NUMBER(newmode);
+		    short pairnum = (short) PairNumber(newmode);
 #ifdef USE_TERMLIB
 		    /* pair_content lives in libncurses */
 		    (void) sprintf(temp, "{%d}", pairnum);
@@ -327,7 +327,7 @@ _tracecchar_t2(int bufnum, const cchar_t *ch)
 		    PUTC_ch = ch->chars[PUTC_i];
 		    if (PUTC_ch == L'\0') {
 			if (PUTC_i == 0)
-			    result = _nc_trace_bufcat(bufnum, "\\000");
+			    (void) _nc_trace_bufcat(bufnum, "\\000");
 			break;
 		    }
 		    PUTC_n = wcrtomb(PUTC_buf, ch->chars[PUTC_i], &PUT_st);

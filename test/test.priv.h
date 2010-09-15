@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2008,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -29,7 +29,7 @@
 /****************************************************************************
  *  Author: Thomas E. Dickey                    1996-on                     *
  ****************************************************************************/
-/* $Id: test.priv.h,v 1.93 2009/10/24 21:30:13 tom Exp $ */
+/* $Id: test.priv.h,v 1.95 2010/05/01 19:03:04 tom Exp $ */
 
 #ifndef __TEST_PRIV_H
 #define __TEST_PRIV_H 1
@@ -319,7 +319,7 @@ extern int optind;
 #endif
 
 #ifndef USE_WIDEC_SUPPORT
-#if defined(_XOPEN_SOURCE_EXTENDED) && defined(WACS_ULCORNER)
+#if (defined(_XOPEN_SOURCE_EXTENDED) || defined(_XPG5)) && defined(WACS_ULCORNER)
 #define USE_WIDEC_SUPPORT 1
 #else
 #define USE_WIDEC_SUPPORT 0
@@ -643,6 +643,18 @@ typedef int (*NCURSES_SCREEN_CB)(SCREEN *, void *);
 #define Trace(p)		/* nothing */
 #define USE_TRACE 0
 #endif
+
+#define MvAddCh         (void) mvaddch
+#define MvWAddCh        (void) mvwaddch
+#define MvAddStr        (void) mvaddstr
+#define MvWAddStr       (void) mvwaddstr
+#define MvWAddChStr     (void) mvwaddchstr
+#define MvPrintw        (void) mvprintw
+#define MvWPrintw       (void) mvwprintw
+#define MvHLine         (void) mvhline
+#define MvWHLine        (void) mvwhline
+#define MvVLine         (void) mvvline
+#define MvWVLine        (void) mvwvline
 
 /*
  * Workaround for defective implementation of gcc attribute warn_unused_result

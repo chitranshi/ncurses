@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2002-2008,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 2002-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -40,7 +40,7 @@
 #include <curses.priv.h>
 #include <ctype.h>
 
-MODULE_ID("$Id: lib_get_wch.c,v 1.20 2009/10/24 22:42:25 tom Exp $")
+MODULE_ID("$Id: lib_get_wch.c,v 1.22 2010/08/28 21:00:35 tom Exp $")
 
 NCURSES_EXPORT(int)
 wget_wch(WINDOW *win, wint_t *result)
@@ -50,7 +50,7 @@ wget_wch(WINDOW *win, wint_t *result)
     char buffer[(MB_LEN_MAX * 9) + 1];	/* allow some redundant shifts */
     int status;
     size_t count = 0;
-    unsigned long value;
+    int value = 0;
     wchar_t wch;
 #ifndef state_unused
     mbstate_t state;
@@ -80,12 +80,12 @@ wget_wch(WINDOW *win, wint_t *result)
 		 * whether the improvement would be worth the effort.
 		 */
 		if (count != 0) {
-		    safe_ungetch(SP_PARM, (int) value);
+		    safe_ungetch(SP_PARM, value);
 		    code = ERR;
 		}
 		break;
 	    } else if (count + 1 >= sizeof(buffer)) {
-		safe_ungetch(SP_PARM, (int) value);
+		safe_ungetch(SP_PARM, value);
 		code = ERR;
 		break;
 	    } else {
@@ -96,7 +96,7 @@ wget_wch(WINDOW *win, wint_t *result)
 		    reset_mbytes(state);
 		    if (check_mbytes(wch, buffer, count, state) != status) {
 			code = ERR;	/* the two calls should match */
-			safe_ungetch(SP_PARM, (int) value);
+			safe_ungetch(SP_PARM, value);
 		    }
 		    value = wch;
 		    break;
@@ -106,8 +106,8 @@ wget_wch(WINDOW *win, wint_t *result)
     } else {
 	code = ERR;
     }
-    *result = value;
+    *result = (wint_t) value;
     _nc_unlock_global(curses);
-    T(("result %#lo", value));
+    T(("result %#o", value));
     returnCode(code);
 }

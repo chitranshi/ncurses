@@ -28,14 +28,14 @@ dnl***************************************************************************
 dnl
 dnl Author: Thomas E. Dickey 1995-on
 dnl
-dnl $Id: configure.in,v 1.487 2010/03/06 21:29:37 tom Exp $
+dnl $Id: configure.in,v 1.507 2010/09/11 16:50:32 tom Exp $
 dnl Process this file with autoconf to produce a configure script.
 dnl
 dnl See http://invisible-island.net/autoconf/ for additional information.
 dnl
 dnl ---------------------------------------------------------------------------
 AC_PREREQ(2.13.20020210)
-AC_REVISION($Revision: 1.487 $)
+AC_REVISION($Revision: 1.507 $)
 AC_INIT(ncurses/base/lib_initscr.c)
 AC_CONFIG_HEADER(include/ncurses_cfg.h:include/ncurses_cfg.hin)
 
@@ -136,6 +136,13 @@ AC_ARG_WITH(progs,
 	[cf_with_progs=yes])
 AC_MSG_RESULT($cf_with_progs)
 
+AC_MSG_CHECKING(if you want to build test-programs)
+AC_ARG_WITH(tests,
+	[  --without-tests         suppress build with test-programs],
+	[cf_with_tests=$withval],
+	[cf_with_tests=yes])
+AC_MSG_RESULT($cf_with_tests)
+
 AC_MSG_CHECKING(if you wish to install curses.h)
 AC_ARG_WITH(curses-h,
 	[  --without-curses-h      install curses.h as ncurses.h only],
@@ -155,7 +162,7 @@ CF_PROG_AWK
 CF_PROG_EGREP
 CF_PROG_INSTALL
 CF_PROG_LINT
-AC_PROG_LN_S
+CF_PROG_LN_S
 
 AC_SYS_LONG_FILE_NAMES
 
@@ -359,7 +366,7 @@ if test "$with_gpm" != no ; then
 		SHLIB_LIST="-ldl $SHLIB_LIST"
 	else
 		SHLIB_LIST="-lgpm $SHLIB_LIST"
-		TEST_LIBS="-lgpm $TEST_LIBS"
+		CF_ADD_LIB(gpm,TEST_LIBS)
 	fi
 	AC_DEFINE(HAVE_LIBGPM)
 	CF_CHECK_GPM_WGETCH
@@ -411,6 +418,11 @@ if test "$CC_SHARED_OPTS" = "unknown"; then
 			AC_ERROR(Shared libraries are not supported in this version)
 		fi
 	done
+fi
+
+### If we're building with rpath, try to link non-standard libs that way too.
+if test "$DFT_LWR_MODEL" = "shared"; then
+	CF_DISABLE_RPATH_HACK
 fi
 
 ###############################################################################
@@ -688,7 +700,7 @@ NCURSES_WCHAR_T=0
 NCURSES_WINT_T=0
 
 # Check to define _XOPEN_SOURCE "automatically"
-CF_XOPEN_SOURCE
+CF_XOPEN_SOURCE(500)
 
 # Work around breakage on OS X
 CF_SIGWINCH
@@ -709,7 +721,15 @@ AC_MSG_RESULT($with_widec)
 if test "$with_widec" = yes ; then
 	LIB_SUFFIX="w${LIB_SUFFIX}"
 	AC_DEFINE(USE_WIDEC_SUPPORT)
-	CF_PREDEFINE(_XOPEN_SOURCE_EXTENDED)
+
+	case "$CFLAGS $CPPFLAGS" in #(vi
+	*-D_XOPEN_SOURCE=500) #(vi
+		;;
+	*)
+		CF_PREDEFINE(_XOPEN_SOURCE_EXTENDED)
+		;;
+	esac
+
 	# with_overwrite=no
 	NCURSES_CH_T=cchar_t
 	AC_CHECK_FUNCS(putwc btowc wctob mbtowc wctomb mblen mbrlen mbrtowc wcsrtombs mbsrtowcs wcstombs mbstowcs)
@@ -1070,20 +1090,33 @@ AC_SUBST(NCURSES_INTEROP_FUNCS)
 # the script-block --with-normal, etc.
 CF_WITH_PTHREAD
 
-AC_MSG_CHECKING(if you want to use weak-symbols for pthreads)
-AC_ARG_ENABLE(weak-symbols,
-    [  --enable-weak-symbols   enable weak-symbols for pthreads],
-    [use_weak_symbols=$withval],
-    [use_weak_symbols=no])
-AC_MSG_RESULT($use_weak_symbols)
-if test "$use_weak_symbols" = yes ; then
-    CF_WEAK_SYMBOLS
-else
-    cf_cv_weak_symbols=no
-fi
+if test "x$with_pthread" != xno; then
+	AC_CHECK_FUNC(pthread_kill,[
+		AC_MSG_CHECKING(if you want to allow EINTR in wgetch with pthreads)
+		AC_ARG_ENABLE(pthreads-eintr,
+			[  --enable-pthreads-eintr enable EINTR in wgetch with pthreads],
+			[use_pthreads_eintr=$enableval],
+			[use_pthreads_eintr=no])
+		AC_MSG_RESULT($use_pthreads_eintr)
+		if test $use_pthreads_eintr = yes ; then
+			AC_DEFINE(USE_PTHREADS_EINTR)
+		fi])
 
-if test $cf_cv_weak_symbols = yes ; then
-    AC_DEFINE(USE_WEAK_SYMBOLS)
+	AC_MSG_CHECKING(if you want to use weak-symbols for pthreads)
+	AC_ARG_ENABLE(weak-symbols,
+		[  --enable-weak-symbols   enable weak-symbols for pthreads],
+		[use_weak_symbols=$enableval],
+		[use_weak_symbols=no])
+	AC_MSG_RESULT($use_weak_symbols)
+	if test "$use_weak_symbols" = yes ; then
+		CF_WEAK_SYMBOLS
+	else
+		cf_cv_weak_symbols=no
+	fi
+
+	if test $cf_cv_weak_symbols = yes ; then
+		AC_DEFINE(USE_WEAK_SYMBOLS)
+	fi
 fi
 
 PTHREAD=
@@ -1113,9 +1146,10 @@ if test "$with_reentrant" = yes ; then
 	NCURSES_SIZE_T=int
 	if test $cf_cv_weak_symbols = yes ; then
 		CF_REMOVE_LIB(LIBS,$LIBS,pthread)
-	else
-		LIB_SUFFIX="t${LIB_SUFFIX}"
+		CF_ADD_LIB(pthread,TEST_LIBS)
+		CF_ADD_LIB(pthread,TEST_LIBS2)
 	fi
+	LIB_SUFFIX="t${LIB_SUFFIX}"
 	AC_DEFINE(USE_REENTRANT)
 	CF_NCURSES_ABI_6
 else
@@ -1198,7 +1232,7 @@ AC_ARG_ENABLE(warnings,
 AC_MSG_RESULT($with_warnings)
 
 if test "x$with_warnings" = "xyes"; then
- 	ADAFLAGS="$ADAFLAGS -gnatg"
+ 	CF_ADD_ADAFLAGS(-gnatg)
 	CF_GCC_WARNINGS(Wdeclaration-after-statement Wextra Wno-unknown-pragmas Wswitch-enum)
 	if test "$cf_with_cxx" = yes ; then
 		CF_GXX_WARNINGS(Wno-unused)
@@ -1220,7 +1254,7 @@ then
 		AC_DEFINE(NDEBUG)
 		CPPFLAGS="$CPPFLAGS -DNDEBUG"
 	else
-		ADAFLAGS="$ADAFLAGS -gnata"
+		CF_ADD_ADAFLAGS(-gnata)
 	fi
 fi
 
@@ -1275,7 +1309,7 @@ AC_CHECK_FUNC(gettimeofday,
 
 AC_CHECK_LIB(bsd, gettimeofday,
 	AC_DEFINE(HAVE_GETTIMEOFDAY)
-	LIBS="$LIBS -lbsd")])dnl CLIX: bzero, select, gettimeofday
+	CF_ADD_LIB(bsd))])dnl CLIX: bzero, select, gettimeofday
 	;;
 esac
 
@@ -1311,7 +1345,7 @@ wctype.h \
 # Note: even non-Posix ISC needs <sys/bsdtypes.h> to declare fd_set
 if test "$ISC" = yes ; then
 	AC_CHECK_LIB(cposix,main)
-	AC_CHECK_LIB(inet,bzero,LIBS="$LIBS -linet")dnl also 'select()'
+	AC_CHECK_LIB(inet,bzero,CF_ADD_LIB(inet))dnl also 'select()'
 fi
 
 CF_SYS_TIME_SELECT
@@ -1403,10 +1437,11 @@ if test "$cf_cv_func_openpty" != no ; then
     AC_DEFINE_UNQUOTED(USE_OPENPTY_HEADER,<$cf_cv_func_openpty>)
     AC_DEFINE(USE_XTERM_PTY)
     if test "$cf_cv_lib_util" = yes ; then
-        TEST_LIBS="-lutil $TEST_LIBS"
+        CF_ADD_LIB(util,TEST_LIBS)
     fi
 fi
 AC_SUBST(TEST_LIBS)
+AC_SUBST(TEST_LIBS2)
 
 if test "$with_hashed_db" != no ; then
 	AC_DEFINE(USE_HASHED_DB)
@@ -1544,99 +1579,34 @@ if test -f "${srcdir}/Ada95/Makefile.in" ; then
 dnl libtool does not know anything about GNAT, though a change made in 1998
 dnl provided for it "someday".  Disable the ada subtree if we are using
 dnl libtool -TD 20070714
-if test "$cf_with_ada" != "no" ; then
-    if test "$with_libtool" != "no"; then
-	AC_MSG_WARN(libtool does not support Ada - disabling feature)
-	cf_with_ada=no
-    fi
-fi
+	if test "$cf_with_ada" != "no" ; then
+		if test "$with_libtool" != "no"; then
+			AC_MSG_WARN(libtool does not support Ada - disabling feature)
+			cf_with_ada=no
+		fi
+	fi
 
 dnl Check for availability of GNU Ada Translator (GNAT).
 dnl At the moment we support no other Ada95 compiler.
-if test "$cf_with_ada" != "no" ; then
-cf_ada_make=gnatmake
-AC_CHECK_PROG(gnat_exists, $cf_ada_make, yes, no)
-if test "$ac_cv_prog_gnat_exists" = no; then
-   cf_ada_make=
+	if test "$cf_with_ada" != "no" ; then
+		CF_PROG_GNAT
+		if test	"$cf_cv_prog_gnat_correct" = yes; then
+			CF_ADD_ADAFLAGS(-O3 -gnatpn)
+
+			CF_GNAT_PRAGMA_UNREF
+
+			CF_WITH_ADA_COMPILER
+
+			cf_ada_package=terminal_interface
+			AC_SUBST(cf_ada_package)
+
+			CF_WITH_ADA_INCLUDE
+			CF_WITH_ADA_OBJECTS
+			CF_WITH_ADA_SHAREDLIB
+		fi
+	fi
 else
-   CF_GNAT_VERSION
-   AC_CHECK_PROG(M4_exists, m4, yes, no)
-   if test "$ac_cv_prog_M4_exists" = no; then
-      cf_cv_prog_gnat_correct=no
-      echo Ada95 binding required program m4 not found. Ada95 binding disabled.
-   fi
-   if test "$cf_cv_prog_gnat_correct" = yes; then
-      AC_MSG_CHECKING(if GNAT works)
-      CF_GNAT_TRY_RUN([procedure conftest;],
-[with Text_IO;
-with GNAT.OS_Lib;
-procedure conftest is
-begin
-   Text_IO.Put ("Hello World");
-   Text_IO.New_Line;
-   GNAT.OS_Lib.OS_Exit (0);
-end conftest;],[cf_cv_prog_gnat_correct=yes],[cf_cv_prog_gnat_correct=no])
-      AC_MSG_RESULT($cf_cv_prog_gnat_correct)
-   fi
-fi
-if test	"$cf_cv_prog_gnat_correct" = yes; then
-   ADAFLAGS="-O3 -gnatpn $ADAFLAGS"
-
-   AC_MSG_CHECKING(if GNAT pragma Unreferenced works)
-   CF_GNAT_TRY_LINK([procedure conftest;],
-[with Text_IO;
-with GNAT.OS_Lib;
-procedure conftest is
-   test : Integer;
-   pragma Unreferenced (test);
-begin
-   test := 1;
-   Text_IO.Put ("Hello World");
-   Text_IO.New_Line;
-   GNAT.OS_Lib.OS_Exit (0);
-end conftest;],[cf_cv_pragma_unreferenced=yes],[cf_cv_pragma_unreferenced=no])
-   AC_MSG_RESULT($cf_cv_pragma_unreferenced)
-
-   # if the pragma is supported, use it (needed in the Trace code).
-   if test $cf_cv_pragma_unreferenced = yes ; then
-      PRAGMA_UNREF=TRUE
-   else
-      PRAGMA_UNREF=FALSE
-   fi
-
-   AC_ARG_WITH(ada-compiler,
-	[  --with-ada-compiler=CMD specify Ada95 compiler command (default gnatmake)],
-	[cf_ada_compiler=$withval],
-	[cf_ada_compiler=gnatmake])
-
-   cf_ada_package=terminal_interface
-
-   AC_SUBST(cf_ada_make)
-   AC_SUBST(cf_ada_compiler)
-   AC_SUBST(cf_ada_package)
-   AC_SUBST(ADAFLAGS)
-   AC_SUBST(cf_compile_generics)
-   AC_SUBST(cf_generic_objects)
-   AC_SUBST(PRAGMA_UNREF)
-
-   CF_WITH_PATH(ada-include,
-       [  --with-ada-include=DIR  Ada includes are in DIR],
-       ADA_INCLUDE,
-       PREFIX/lib/ada/adainclude,
-       [$]prefix/lib/ada/adainclude)
-   AC_SUBST(ADA_INCLUDE)
-
-   CF_WITH_PATH(ada-objects,
-       [  --with-ada-objects=DIR  Ada objects are in DIR],
-       ADA_OBJECTS,
-       PREFIX/lib/ada/adalib,
-       [$]prefix/lib/ada/adalib)
-   AC_SUBST(ADA_OBJECTS)
-
-fi
-fi
-else
-   cf_with_ada=no
+	cf_with_ada=no
 fi
 
 ### Construct the ncurses library-subsets, if any, from this set of keywords:
@@ -1880,9 +1850,6 @@ CF_DIRS_TO_MAKE
 NCURSES_SHLIB2='sh $(top_srcdir)/misc/shlib'
 AC_SUBST(NCURSES_SHLIB2)
 
-NCURSES_COPY2='sh $(top_srcdir)/tar-copy.sh'
-AC_SUBST(NCURSES_COPY2)
-
 # values to use as strings
 AC_DEFINE_UNQUOTED(NCURSES_PATHSEP,'$PATH_SEPARATOR')
 
@@ -1890,11 +1857,6 @@ AC_DEFINE_UNQUOTED(NCURSES_VERSION_STRING, "${NCURSES_MAJOR}.${NCURSES_MINOR}.${
 
 ### Now that we're done running tests, add the compiler-warnings, if any
 CF_ADD_CFLAGS($EXTRA_CFLAGS)
-
-### If we're building with rpath, try to link non-standard libs that way too.
-if test "$DFT_LWR_MODEL" = "shared"; then
-  CF_RPATH_HACK
-fi
 
 ### Define substitutions for header files to avoid name-pollution
 CF_SUBST_IF(["$cf_cv_have_tcgetattr" = yes], HAVE_TCGETATTR, 1, 0)
@@ -1917,6 +1879,23 @@ fi
 AC_SUBST(MAKE_PC_FILES)
 AC_SUBST(cross_compiling)
 
+AC_PATH_PROG(TIC_PATH,tic,unknown,$PATH:/usr/local/ncurses/bin)
+if test -n "$FALLBACK_LIST"
+then
+	if test "$TIC_PATH" = unknown
+	then
+		AC_MSG_ERROR(no tic program found for fallbacks)
+	fi
+fi
+AC_SUBST(TIC_PATH)
+
+if test "x$cf_with_tests" != xno ; then
+	MAKE_TESTS=
+else
+	MAKE_TESTS="#"
+fi
+AC_SUBST(MAKE_TESTS)
+
 AC_OUTPUT( \
 	include/MKterm.h.awk \
 	include/curses.head:include/curses.h.in \
@@ -1925,8 +1904,16 @@ AC_OUTPUT( \
 	include/unctrl.h \
 	$SUB_MAKEFILES \
 	Makefile,[
-CF_PRG_RULES([$srcdir/test/mk-test.awk ECHO_LINK="$ECHO_LINK"], test)
+if test "x$cf_with_tests" != xno ; then
+	CF_PRG_RULES([$srcdir/test/mk-test.awk ECHO_LINK="$ECHO_LINK"], test)
+fi
 CF_LIB_RULES($SRC_SUBDIRS)
+
+if test "x$cf_with_ada" != xno ; then
+if test -z "$USE_OLD_MAKERULES" ; then
+	$AWK -f $srcdir/Ada95/mk-1st.awk <$srcdir/Ada95/src/modules >>Ada95/src/Makefile
+fi
+fi
 ],[
 ### Special initialization commands, used to pass information from the
 ### configuration-run into config.status
@@ -1936,10 +1923,12 @@ DFT_ARG_SUFFIX="$DFT_ARG_SUFFIX"
 DFT_LWR_MODEL="$DFT_LWR_MODEL"
 ECHO_LINK="$ECHO_LINK"
 LDCONFIG="$LDCONFIG"
+LIBTOOL_VERSION="$LIBTOOL_VERSION"
 LIB_NAME="$LIB_NAME"
 LIB_SUBSETS="$LIB_SUBSETS"
 LIB_SUFFIX="$LIB_SUFFIX"
 LIB_TRACING="$LIB_TRACING"
+LN_S="$LN_S"
 MAKE_TERMINFO="$MAKE_TERMINFO"
 NCURSES_MAJOR="$NCURSES_MAJOR"
 NCURSES_MINOR="$NCURSES_MINOR"
@@ -1950,10 +1939,12 @@ TERMINFO="$TERMINFO"
 TICS_ARG_SUFFIX="$TICS_ARG_SUFFIX"
 TICS_LIB_SUFFIX="$TICS_LIB_SUFFIX"
 TICS_NAME="$TICS_NAME"
+TIC_PATH="$TIC_PATH"
 TINFO_ARG_SUFFIX="$TINFO_ARG_SUFFIX"
 TINFO_LIB_SUFFIX="$TINFO_LIB_SUFFIX"
 TINFO_NAME="$TINFO_NAME"
 TINFO_SUFFIX="$TINFO_SUFFIX"
+USE_OLD_MAKERULES="$USE_OLD_MAKERULES"
 WITH_CURSES_H="$with_curses_h"
 WITH_ECHO="$with_echo"
 WITH_OVERWRITE="$with_overwrite"
@@ -1971,8 +1962,10 @@ cf_cv_shared_soname='$cf_cv_shared_soname'
 cf_cv_shlib_version="$cf_cv_shlib_version"
 cf_cv_shlib_version_infix="$cf_cv_shlib_version_infix"
 cf_cv_system_name="$cf_cv_system_name"
+cf_with_ada="$cf_with_ada"
 cf_with_cxx_binding="$cf_with_cxx_binding"
 cf_with_manpages="$cf_with_manpages"
+cf_with_tests="$cf_with_tests"
 host="$host"
 target="$target"
 

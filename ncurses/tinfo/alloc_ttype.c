@@ -42,7 +42,7 @@
 
 #include <tic.h>
 
-MODULE_ID("$Id: alloc_ttype.c,v 1.19 2010/01/23 17:57:43 tom Exp $")
+MODULE_ID("$Id: alloc_ttype.c,v 1.21 2010/05/01 19:32:33 tom Exp $")
 
 #if NCURSES_XNAMES
 /*
@@ -111,7 +111,7 @@ realign_data(TERMTYPE *to, char **ext_Names,
 		to->Booleans[base + m] = FALSE;
 	    }
 	}
-	to->ext_Booleans = ext_Booleans;
+	to->ext_Booleans = UShort(ext_Booleans);
     }
     if (to->ext_Numbers != ext_Numbers) {
 	to->num_Numbers += (ext_Numbers - to->ext_Numbers);
@@ -125,7 +125,7 @@ realign_data(TERMTYPE *to, char **ext_Names,
 		to->Numbers[base + m] = ABSENT_NUMERIC;
 	    }
 	}
-	to->ext_Numbers = ext_Numbers;
+	to->ext_Numbers = UShort(ext_Numbers);
     }
     if (to->ext_Strings != ext_Strings) {
 	to->num_Strings += (ext_Strings - to->ext_Strings);
@@ -139,7 +139,7 @@ realign_data(TERMTYPE *to, char **ext_Names,
 		to->Strings[base + m] = ABSENT_STRING;
 	    }
 	}
-	to->ext_Strings = ext_Strings;
+	to->ext_Strings = UShort(ext_Strings);
     }
 }
 
@@ -302,32 +302,32 @@ _nc_ins_ext_name(TERMTYPE *tp, char *name, int token_type)
     for (k = total - 1; k > j; k--)
 	tp->ext_Names[k] = tp->ext_Names[k - 1];
     tp->ext_Names[j] = name;
-    j = _nc_ext_data_index(tp, (int) j, token_type);
+    j = (unsigned) _nc_ext_data_index(tp, (int) j, token_type);
 
     switch (token_type) {
     case BOOLEAN:
 	tp->ext_Booleans++;
 	tp->num_Booleans++;
 	tp->Booleans = typeRealloc(NCURSES_SBOOL, tp->num_Booleans, tp->Booleans);
-	for (k = tp->num_Booleans - 1; k > j; k--)
+	for (k = (unsigned) (tp->num_Booleans - 1); k > j; k--)
 	    tp->Booleans[k] = tp->Booleans[k - 1];
 	break;
     case NUMBER:
 	tp->ext_Numbers++;
 	tp->num_Numbers++;
 	tp->Numbers = typeRealloc(short, tp->num_Numbers, tp->Numbers);
-	for (k = tp->num_Numbers - 1; k > j; k--)
+	for (k = (unsigned) (tp->num_Numbers - 1); k > j; k--)
 	    tp->Numbers[k] = tp->Numbers[k - 1];
 	break;
     case STRING:
 	tp->ext_Strings++;
 	tp->num_Strings++;
 	tp->Strings = typeRealloc(char *, tp->num_Strings, tp->Strings);
-	for (k = tp->num_Strings - 1; k > j; k--)
+	for (k = (unsigned) (tp->num_Strings - 1); k > j; k--)
 	    tp->Strings[k] = tp->Strings[k - 1];
 	break;
     }
-    return j;
+    return (int) j;
 }
 
 /*
@@ -347,7 +347,7 @@ adjust_cancels(TERMTYPE *to, TERMTYPE *from)
 	int j_str = to->num_Strings - first - to->ext_Strings;
 
 	if (to->Strings[j + j_str] == CANCELLED_STRING) {
-	    if ((k = _nc_find_ext_name(from, to->ext_Names[j], BOOLEAN)) >= 0) {
+	    if (_nc_find_ext_name(from, to->ext_Names[j], BOOLEAN) >= 0) {
 		if (_nc_del_ext_name(to, name, STRING)
 		    || _nc_del_ext_name(to, name, NUMBER)) {
 		    k = _nc_ins_ext_name(to, name, BOOLEAN);
@@ -355,8 +355,7 @@ adjust_cancels(TERMTYPE *to, TERMTYPE *from)
 		} else {
 		    j++;
 		}
-	    } else if ((k = _nc_find_ext_name(from, to->ext_Names[j],
-					      NUMBER)) >= 0) {
+	    } else if (_nc_find_ext_name(from, to->ext_Names[j], NUMBER) >= 0) {
 		if (_nc_del_ext_name(to, name, STRING)
 		    || _nc_del_ext_name(to, name, BOOLEAN)) {
 		    k = _nc_ins_ext_name(to, name, NUMBER);
@@ -364,8 +363,7 @@ adjust_cancels(TERMTYPE *to, TERMTYPE *from)
 		} else {
 		    j++;
 		}
-	    } else if ((k = _nc_find_ext_name(from, to->ext_Names[j],
-					      STRING)) >= 0) {
+	    } else if (_nc_find_ext_name(from, to->ext_Names[j], STRING) >= 0) {
 		if (_nc_del_ext_name(to, name, NUMBER)
 		    || _nc_del_ext_name(to, name, BOOLEAN)) {
 		    k = _nc_ins_ext_name(to, name, STRING);
@@ -385,8 +383,8 @@ adjust_cancels(TERMTYPE *to, TERMTYPE *from)
 NCURSES_EXPORT(void)
 _nc_align_termtype(TERMTYPE *to, TERMTYPE *from)
 {
-    int na = NUM_EXT_NAMES(to);
-    int nb = NUM_EXT_NAMES(from);
+    int na = (int) NUM_EXT_NAMES(to);
+    int nb = (int) NUM_EXT_NAMES(from);
     int n;
     bool same;
     char **ext_Names;
@@ -416,7 +414,7 @@ _nc_align_termtype(TERMTYPE *to, TERMTYPE *from)
 	 * into it, updating to's counts for booleans, etc.  Fortunately we do
 	 * this only for the terminfo compiler (tic) and comparer (infocmp).
 	 */
-	ext_Names = typeMalloc(char *, na + nb);
+	ext_Names = typeMalloc(char *, (size_t)(na + nb));
 
 	if (to->ext_Strings && (from->ext_Booleans + from->ext_Numbers))
 	    adjust_cancels(to, from);
@@ -460,8 +458,8 @@ _nc_align_termtype(TERMTYPE *to, TERMTYPE *from)
 	if (nb != (ext_Booleans + ext_Numbers + ext_Strings)) {
 	    nb = (ext_Booleans + ext_Numbers + ext_Strings);
 	    realign_data(from, ext_Names, ext_Booleans, ext_Numbers, ext_Strings);
-	    from->ext_Names = typeRealloc(char *, nb, from->ext_Names);
-	    memcpy(from->ext_Names, ext_Names, sizeof(char *) * nb);
+	    from->ext_Names = typeRealloc(char *, (size_t) nb, from->ext_Names);
+	    memcpy(from->ext_Names, ext_Names, sizeof(char *) * (size_t) nb);
 	    DEBUG(2, ("realigned %d extended names for '%s' (from)",
 		      NUM_EXT_NAMES(from), from->term_names));
 	}

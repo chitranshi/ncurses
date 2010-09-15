@@ -50,7 +50,7 @@
 #include <ctype.h>
 #include <tic.h>
 
-MODULE_ID("$Id: comp_scan.c,v 1.86 2010/01/23 17:13:15 tom Exp $")
+MODULE_ID("$Id: comp_scan.c,v 1.88 2010/08/28 19:26:09 tom Exp $")
 
 /*
  * Maximum length of string capability we'll accept before raising an error.
@@ -203,6 +203,10 @@ next_char(void)
 		if (fgets(result + used, (int) (allocated - used), yyin) != 0) {
 		    bufstart = result;
 		    if (used == 0) {
+			if (_nc_curr_line == 0
+			    && IS_TIC_MAGIC(result)) {
+			    _nc_err_abort("This is a compiled terminal description, not a source");
+			}
 			_nc_curr_line++;
 			_nc_curr_col = 0;
 		    }
@@ -479,7 +483,6 @@ _nc_get_token(bool silent)
 		if (OkToAdd()) {
 		    AddCh(ch);
 		} else {
-		    ch = EOF;
 		    break;
 		}
 	    }

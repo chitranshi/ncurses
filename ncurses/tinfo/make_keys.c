@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2007,2008 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2008,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -37,13 +37,13 @@
  */
 
 #define USE_TERMLIB 1
-#include <curses.priv.h>
+#include <build.priv.h>
 
-MODULE_ID("$Id: make_keys.c,v 1.15 2008/11/16 00:19:59 juergen Exp $")
+MODULE_ID("$Id: make_keys.c,v 1.19 2010/06/05 22:08:00 tom Exp $")
 
 #include <names.c>
 
-#define UNKNOWN (SIZEOF(strnames) + SIZEOF(strfnames))
+#define UNKNOWN (unsigned) (SIZEOF(strnames) + SIZEOF(strfnames))
 
 static unsigned
 lookup(const char *name)
@@ -89,10 +89,10 @@ make_keys(FILE *ifp, FILE *ofp)
 	    if (code == UNKNOWN)
 		continue;
 	    if (strlen(from) > maxlen)
-		maxlen = strlen(from);
-	    fprintf(ofp, "\t{ %4d, %-*.*s },\t/* %s */\n",
+		maxlen = (unsigned) strlen(from);
+	    fprintf(ofp, "\t{ %4u, %-*.*s },\t/* %s */\n",
 		    code,
-		    maxlen, maxlen,
+		    (int) maxlen, (int) maxlen,
 		    to,
 		    from);
 	}

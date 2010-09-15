@@ -25,7 +25,7 @@
 -- sale, use or other dealings in this Software without prior written        --
 -- authorization.                                                            --
 -------------------------------------------------------------------------------
--- $Id: NEWS,v 1.1513 2010/03/13 20:30:34 tom Exp $
+-- $Id: NEWS,v 1.1590 2010/09/11 21:41:14 tom Exp $
 -------------------------------------------------------------------------------
 
 This is a log of changes that ncurses has gone through since Zeyd started
@@ -44,6 +44,211 @@ See the AUTHORS file for the corresponding full names.
 
 Changes through 1.9.9e did not credit all contributions;
 it is not possible to add this information.
+
+20100911
+	+ add manpages for summarizing public variables of curses-, terminfo-
+	  and form-libraries.
+	+ minor fixes to manpages for consistency (patch by Jason McIntyre).
+	+ modify tic's -I/-C dump to reformat acsc strings into canonical form
+	  (sorted, unique mapping) (cf: 971004).
+	+ add configure check for pthread_kill(), needed for some old
+	  platforms.
+
+20100904
+	+ add configure option --without-tests, to suppress building test
+	  programs (request by Frederic L W Meunier).
+
+20100828
+	+ modify nsterm, xnuppc and tek4115 to make sgr/sgr0 consistent -TD
+	+ add check in terminfo source-reader to provide more informative
+	  message when someone attempts to run tic on a compiled terminal
+	  description (prompted by Debian #593920).
+	+ note in infotocap and captoinfo manpages that they read terminal
+	  descriptions from text-files (Debian #593920).
+	+ improve acsc string for vt52, show arrow keys (patch by Benjamin
+	  Sittler).
+
+20100814
+	+ document in manpages that "mv" functions first use wmove() to check
+	  the window pointer and whether the position lies within the window
+	  (suggested by Poul-Henning Kamp).
+	+ fixes to curs_color.3x, curs_kernel.3x and wresize.3x manpages (patch
+	  by Tim van der Molen).
+	+ modify configure script to transform library names for tic- and
+	  tinfo-libraries so that those build properly with Mac OS X shared
+	  library configuration.
+	+ modify configure script to ensure that it removes conftest.dSYM
+	  directory leftover on checks with Mac OS X.
+	+ modify configure script to cleanup after check for symbolic links.
+
+20100807
+	+ correct a typo in mk-1st.awk (patch by Gabriele Balducci)
+	  (cf: 20100724)
+	+ improve configure checks for location of tic and infocmp programs
+	  used for installing database and for generating fallback data,
+	  e.g., for cross-compiling.
+	+ add Markus Kuhn's wcwidth function for compiling MinGW
+	+ add special case to CF_REGEX for cross-compiling to MinGW target.
+
+20100731
+	+ modify initialization check for win32con driver to eliminate need for
+	  special case for TERM "unknown", using terminal database if available
+	  (prompted by discussion with Roumen Petrov).
+	+ for MinGW port, ensure that terminal driver is setup if tgetent()
+	  is called (patch by Roumen Petrov).
+	+ document tabs "-0" and "-8" options in manpage.
+	+ fix Debian "lintian" issues with manpages reported in
+	  http://lintian.debian.org/full/csmall@debian.org.html#ncurses
+
+20100724
+	+ add a check in tic for missing set_tab if clear_all_tabs given.
+	+ improve use of symbolic links in makefiles by using "-f" option if
+	  it is supported, to eliminate temporary removal of the target
+	  (prompted by http://www.t2-project.org/packages/ncurses.html)
+	+ minor improvement to test/ncurses.c, reset color pairs in 'd' test
+	  after exit from 'm' main-menu command.
+	+ improved ncu-indent, from mawk changes, allows more than one of
+	  GCC_NORETURN, GCC_PRINTFLIKE and GCC_SCANFLIKE on a single line.
+
+20100717
+	+ add hard-reset for rs2 to wsvt25 to help ensure that reset ends
+	  the alternate character set (patch by Nicholas Marriott)
+	+ remove tar-copy.sh and related configure/Makefile chunks, since the
+	  Ada95 binding is now installed using rules in Ada95/src.
+
+20100703
+	+ continue integrating changes to use gnatmake project files in Ada95
+	  + add/use configure check to turn on project rules for Ada95/src.
+	+ revert the vfork change from 20100130, since it does not work.
+
+20100626
+	+ continue integrating changes to use gnatmake project files in Ada95
+	  + old gnatmake (3.15) does not produce libraries using project-file;
+	    work around by adding script to generate alternate makefile.
+
+20100619
+	+ continue integrating changes to use gnatmake project files in Ada95
+	  + add configure --with-ada-sharedlib option, for the test_make rule.
+	  + move Ada95-related logic into aclocal.m4, since additional checks
+	    will be needed to distinguish old/new implementations of gnat.
+
+20100612
+	+ start integrating changes to use gnatmake project files in Ada95 tree
+	  + add test_make / test_clean / test_install rules in Ada95/src
+	  + change install-path for adainclude directory to /usr/share/ada (was
+	    /usr/lib/ada).
+	+ update Ada95/configure.
+	+ add mlterm+256color entry, for mlterm 3.0.0 -TD
+	+ modify test/configure to use macros to ensure consistent order
+	  of updating LIBS variable.
+
+20100605
+	+ change search order of options for Solaris in CF_SHARED_OPTS, to
+	  work with 64-bit compiles.
+	+ correct quoting of assignment in CF_SHARED_OPTS case for aix
+	  (cf: 20081227)
+
+20100529
+	+ regenerated html documentation.
+	+ modify test/configure to support pkg-config for checking X libraries
+	  used by PDCurses.
+	+ add/use configure macro CF_ADD_LIB to force consistency of
+	  assignments to $LIBS, etc.
+	+ fix configure script for combining --with-pthread
+	  and --enable-weak-symbols options.
+
+20100522
+	+ correct cross-compiling configure check for CF_MKSTEMP macro, by
+	  adding a check cache variable set by AC_CHECK_FUNC (report by
+	  Pierre Labastie).
+	+ simplify include-dependencies of make_hash and make_keys, to reduce
+	  the need for setting BUILD_CPPFLAGS in cross-compiling when the
+	  build- and target-machines differ.
+	+ repair broken-linker configuration by restoring a definition of SP
+	  variable to curses.priv.h, and adjusting for cases where sp-funcs
+	  are used.
+	+ improve configure macro CF_AR_FLAGS, allowing ARFLAGS environment
+	  variable to override (prompted by report by Pablo Cazallas).
+
+20100515
+	+ add configure option --enable-pthreads-eintr to control whether the
+	  new EINTR feature is enabled.
+	+ modify logic in pthread configuration to allow EINTR to interrupt
+	  a read operation in wgetch() (Novell #540571, patch by Werner Fink).
+	+ drop mkdirs.sh, use "mkdir -p".
+	+ add configure option --disable-libtool-version, to use the
+	  "-version-number" feature which was added in libtool 1.5 (report by
+	  Peter Haering).  The default value for the option uses the newer
+	  feature, which makes libraries generated using libtool compatible
+	  with the standard builds of ncurses.
+	+ updated test/configure to match configure script macros.
+	+ fixes for configure script from lynx changes:
+	  + improve CF_FIND_LINKAGE logic for the case where a function is
+	    found in predefined libraries.
+	  + revert part of change to CF_HEADER (cf: 20100424)
+
+20100501
+	+ correct limit-check in wredrawln, accounting for begy/begx values
+	  (patch by David Benjamin).
+	+ fix most compiler warnings from clang.
+	+ amend build-fix for OpenSolaris, to ensure that a system header is
+	  included in curses.h before testing feature symbols, since they
+	  may be defined by that route.
+
+20100424
+	+ fix some strict compiler warnings in ncurses library.
+	+ modify configure macro CF_HEADER_PATH to not look for variations in
+	  the predefined include directories.
+	+ improve configure macros CF_GCC_VERSION and CF_GCC_WARNINGS to work
+	  with gcc 4.x's c89 alias, which gives warning messages for cases
+	  where older versions would produce an error.
+
+20100417
+	+ modify _nc_capcmp() to work with cancelled strings.
+	+ correct translation of "^" in _nc_infotocap(), used to transform
+	  terminfo to termcap strings 
+	+ add configure --disable-rpath-hack, to allow disabling the feature
+	  which adds rpath options for libraries in unusual places.
+	+ improve CF_RPATH_HACK_2 by checking if the rpath option for a given
+	  directory was already added.
+	+ improve CF_RPATH_HACK_2 by using ldd to provide a standard list of
+	  directories (which will be ignored).
+
+20100410
+	+ improve win_driver.c handling of mouse:
+	  + discard motion events
+	  + avoid calling _nc_timed_wait when there is a mouse event
+	  + handle 4th and "rightmost" buttons.
+	+ quote substitutions in CF_RPATH_HACK_2 configure macro, needed for
+	  cases where there are embedded blanks in the rpath option.
+
+20100403
+	+ add configure check for exctags vs ctags, to work around pkgsrc.
+	+ simplify logic in _nc_get_screensize() to make it easier to see how
+	  environment variables may override system- and terminfo-values
+	  (prompted by discussion with Igor Bujna).
+	+ make debug-traces for COLOR_PAIR and PAIR_NUMBER less verbose.
+	+ improve handling of color-pairs embedded in attributes for the
+	  extended-colors configuration.
+	+ modify MKlib_gen.sh to build link_test with sp-funcs.
+	+ build-fixes for OpenSolaris aka Solaris 11, for wide-character
+	  configuration as well as for rpath feature in *-config scripts.
+
+20100327
+	+ refactor CF_SHARED_OPTS configure macro, making CF_RPATH_HACK more
+	  reusable.
+	+ improve configure CF_REGEX, similar fixes.
+	+ improve configure CF_FIND_LINKAGE, adding add check between system
+	  (default) and explicit paths, where we can find the entrypoint in the
+	  given library.
+	+ add check if Gpm_Open() returns a -2, e.g., for "xterm".  This is
+	  normally suppressed but can be overridden using $NCURSES_GPM_TERMS.
+	  Ensure that Gpm_Close() is called in this case.
+
+20100320
+	+ rename atari and st52 terminfo entries to atari-old, st52-old, use
+	  newer entries from FreeMiNT by Guido Flohr (from patch/report by Alan
+	  Hourihane).
 
 20100313
 	+ modify install-rule for manpages so that *-config manpages will
@@ -253,7 +458,7 @@ it is not possible to add this information.
 	+ move leak-checking for comp_captab.c into _nc_leaks_tinfo() since
 	  that module since 20090711 is in libtinfo.
 	+ add configure option --enable-term-driver, to allow compiling with
-	  terminal-driver.  That is used in mingw port, and (being somewhat
+	  terminal-driver.  That is used in MinGW port, and (being somewhat
 	  more complicated) is an experimental alternative to the conventional
 	  termlib internals.  Currently, it requires the sp-funcs feature to
 	  be enabled.
@@ -670,7 +875,7 @@ it is not possible to add this information.
 	  overlooked til now.
 
 20081011
-	+ update html documentation.
+	+ regenerated html documentation.
 	+ add -m and -s options to test/keynames.c and test/key_names.c to test
 	  the meta() function with keyname() or key_name(), respectively.
 	+ correct return value of key_name() on error; it is null.
@@ -2797,7 +3002,7 @@ it is not possible to add this information.
 	  (request by Mike Aubury).
 	+ add symbol to curses.h which can be used to suppress include of
 	  stdbool.h, e.g.,
-	  	#define NCURSES_ENABLE_STDBOOL_H 0
+		#define NCURSES_ENABLE_STDBOOL_H 0
 		#include <curses.h>
 	  (discussion on XFree86 mailing list).
 

@@ -44,7 +44,7 @@
 #include <dump_entry.h>
 #include <transform.h>
 
-MODULE_ID("$Id: tic.c,v 1.140 2010/01/02 22:54:01 tom Exp $")
+MODULE_ID("$Id: tic.c,v 1.143 2010/09/11 17:56:42 tom Exp $")
 
 const char *_nc_progname = "tic";
 
@@ -347,6 +347,9 @@ stripped(char *src)
 
 	if ((dst = strdup(src)) == NULL)
 	    failed("strdup");
+
+	assert(dst != 0);
+
 	len = strlen(dst);
 	while (--len != 0 && isspace(UChar(dst[len])))
 	    dst[len] = '\0';
@@ -761,6 +764,7 @@ main(int argc, char *argv[])
 			    put_translate(fgetc(tmp_fp));
 		    }
 
+		    repair_acsc(&qp->tterm);
 		    dump_entry(&qp->tterm, suppress_untranslatable,
 			       limited, numbers, NULL);
 		    for (j = 0; j < (int) qp->nuses; j++)
@@ -1437,6 +1441,11 @@ check_termtype(TERMTYPE *tp, bool literal)
      */
     ANDMISSING(change_scroll_region, save_cursor);
     ANDMISSING(change_scroll_region, restore_cursor);
+
+    /*
+     * If we can clear tabs, we should be able to initialize them.
+     */
+    ANDMISSING(clear_all_tabs, set_tab);
 
     if (PRESENT(set_attributes)) {
 	char *zero = 0;

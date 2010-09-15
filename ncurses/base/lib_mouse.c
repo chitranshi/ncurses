@@ -84,7 +84,7 @@
 #define CUR SP_TERMTYPE
 #endif
 
-MODULE_ID("$Id: lib_mouse.c,v 1.112 2010/02/06 19:54:08 tom Exp $")
+MODULE_ID("$Id: lib_mouse.c,v 1.119 2010/05/22 20:00:55 tom Exp $")
 
 #include <tic.h>
 
@@ -122,12 +122,12 @@ make an error
 
 #define MY_TRACE TRACE_ICALLS|TRACE_IEVENT
 
-#define	MASK_RELEASE(x)		NCURSES_MOUSE_MASK(x, 001)
-#define	MASK_PRESS(x)		NCURSES_MOUSE_MASK(x, 002)
-#define	MASK_CLICK(x)		NCURSES_MOUSE_MASK(x, 004)
-#define	MASK_DOUBLE_CLICK(x)	NCURSES_MOUSE_MASK(x, 010)
-#define	MASK_TRIPLE_CLICK(x)	NCURSES_MOUSE_MASK(x, 020)
-#define	MASK_RESERVED_EVENT(x)	NCURSES_MOUSE_MASK(x, 040)
+#define	MASK_RELEASE(x)		(mmask_t) NCURSES_MOUSE_MASK(x, 001)
+#define	MASK_PRESS(x)		(mmask_t) NCURSES_MOUSE_MASK(x, 002)
+#define	MASK_CLICK(x)		(mmask_t) NCURSES_MOUSE_MASK(x, 004)
+#define	MASK_DOUBLE_CLICK(x)	(mmask_t) NCURSES_MOUSE_MASK(x, 010)
+#define	MASK_TRIPLE_CLICK(x)	(mmask_t) NCURSES_MOUSE_MASK(x, 020)
+#define	MASK_RESERVED_EVENT(x)	(mmask_t) NCURSES_MOUSE_MASK(x, 040)
 
 #if NCURSES_MOUSE_VERSION == 1
 #define BUTTON_CLICKED        (BUTTON1_CLICKED        | BUTTON2_CLICKED        | BUTTON3_CLICKED        | BUTTON4_CLICKED)
@@ -189,7 +189,7 @@ _trace_slot(SCREEN *sp, const char *tag)
 {
     MEVENT *ep;
 
-    _tracef(tag);
+    _tracef("%s", tag);
 
     for (ep = FirstEV(sp); ep <= LastEV(sp); ep++)
 	_tracef("mouse event queue slot %ld = %s",
@@ -450,6 +450,8 @@ enable_gpm_mouse(SCREEN *sp, bool enable)
 	}
 #endif
 	if (sp->_mouse_gpm_loaded) {
+	    int code;
+
 	    /* GPM: initialize connection to gpm server */
 	    sp->_mouse_gpm_connect.eventMask = GPM_DOWN | GPM_UP;
 	    sp->_mouse_gpm_connect.defaultMask =
@@ -464,7 +466,16 @@ enable_gpm_mouse(SCREEN *sp, bool enable)
 	     * The former is recognized by wscons (SunOS), and the latter by
 	     * xterm.  Those will not show up in ncurses' traces.
 	     */
-	    result = (my_Gpm_Open(&sp->_mouse_gpm_connect, 0) >= 0);
+	    code = my_Gpm_Open(&sp->_mouse_gpm_connect, 0);
+	    result = (code >= 0);
+
+	    /*
+	     * GPM can return a -2 if it is trying to do something with xterm.
+	     * Ignore that, since it conflicts with our use of stdin.
+	     */
+	    if (code == -2) {
+		my_Gpm_Close();
+	    }
 	} else {
 	    result = FALSE;
 	}
@@ -747,7 +758,7 @@ _nc_mouse_event(SCREEN *sp)
 		eventp->z = 0;
 
 		/* bump the next-free pointer into the circular list */
-		sp->_mouse_eventp = eventp = NEXT(eventp);
+		sp->_mouse_eventp = NEXT(eventp);
 		result = TRUE;
 		break;
 	    }
@@ -855,17 +866,26 @@ _nc_mouse_inline(SCREEN *sp)
 	 * Wheel mice may return buttons 4 and 5 when the wheel is turned.
 	 * We encode those as button presses.
 	 */
+# if USE_PTHREADS_EINTR
+#  if USE_WEAK_SYMBOLS
+	if ((pthread_self) && (pthread_kill) && (pthread_equal))
+#  endif
+	    _nc_globals.read_thread = pthread_self();
+# endif
 	for (grabbed = 0; grabbed < 3; grabbed += (size_t) res) {
 
 	    /* For VIO mouse we add extra bit 64 to disambiguate button-up. */
 #if USE_EMX_MOUSE
-	    res = read(M_FD(sp) >= 0 ? M_FD(sp) : sp->_ifd, &kbuf, 3);
+	    res = (int) read(M_FD(sp) >= 0 ? M_FD(sp) : sp->_ifd, &kbuf, 3);
 #else
-	    res = read(sp->_ifd, kbuf + grabbed, 3 - grabbed);
+	    res = (int) read(sp->_ifd, kbuf + grabbed, 3 - grabbed);
 #endif
 	    if (res == -1)
 		break;
 	}
+#if USE_PTHREADS_EINTR
+	_nc_globals.read_thread = 0;
+#endif
 	kbuf[3] = '\0';
 
 	TR(TRACE_IEVENT,

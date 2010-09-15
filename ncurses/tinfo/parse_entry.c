@@ -47,7 +47,7 @@
 #include <ctype.h>
 #include <tic.h>
 
-MODULE_ID("$Id: parse_entry.c,v 1.72 2010/01/23 17:57:43 tom Exp $")
+MODULE_ID("$Id: parse_entry.c,v 1.75 2010/05/01 19:35:09 tom Exp $")
 
 #ifdef LINT
 static short const parametrized[] =
@@ -511,9 +511,9 @@ NCURSES_EXPORT(int)
 _nc_capcmp(const char *s, const char *t)
 /* compare two string capabilities, stripping out padding */
 {
-    if (!s && !t)
+    if (!VALID_STRING(s) && !VALID_STRING(t))
 	return (0);
-    else if (!s || !t)
+    else if (!VALID_STRING(s) || !VALID_STRING(t))
 	return (1);
 
     for (;;) {
@@ -668,7 +668,7 @@ postprocess_termcap(TERMTYPE *tp, bool has_base)
 	    else if (PRESENT(backspace_if_not_bs))
 		cursor_left = backspace_if_not_bs;
 	}
-	/* vi doesn't use "do", but it does seems to use nl (or '\n') instead */
+	/* vi doesn't use "do", but it does seem to use nl (or '\n') instead */
 	if (WANTED(cursor_down)) {
 	    if (PRESENT(linefeed_if_not_lf))
 		cursor_down = linefeed_if_not_lf;
@@ -773,7 +773,7 @@ postprocess_termcap(TERMTYPE *tp, bool has_base)
      * isn't from mytinfo...
      */
     if (PRESENT(other_non_function_keys)) {
-	char *base = other_non_function_keys;
+	char *base;
 	char *bp, *cp, *dp;
 	struct name_table_entry const *from_ptr;
 	struct name_table_entry const *to_ptr;
@@ -841,7 +841,7 @@ postprocess_termcap(TERMTYPE *tp, bool has_base)
 		} else
 		    *dp++ = *bp;
 	    }
-	    *dp++ = '\0';
+	    *dp = '\0';
 
 	    tp->Strings[to_ptr->nte_index] = _nc_save_str(buf2);
 	}

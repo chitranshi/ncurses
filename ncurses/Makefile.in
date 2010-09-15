@@ -1,4 +1,4 @@
-# $Id: Makefile.in,v 1.125 2010/03/13 19:29:55 tom Exp $
+# $Id: Makefile.in,v 1.128 2010/08/07 19:59:17 tom Exp $
 ##############################################################################
 # Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.                #
 #                                                                            #
@@ -83,6 +83,9 @@ ARFLAGS		= @ARFLAGS@
 AWK		= @AWK@
 LD		= @LD@
 LN_S		= @LN_S@
+
+CTAGS		= @CTAGS@
+ETAGS		= @ETAGS@
 
 CC		= @CC@
 CPP		= @CPP@
@@ -192,12 +195,12 @@ sources:	$(AUTO_SRC)
 
 $(DESTDIR)$(bindir) \
 $(DESTDIR)$(libdir) :
-	sh $(srcdir)/../mkdirs.sh $@
+	mkdir -p $@
 
 ../lib : ; mkdir $@
 
 ./fallback.c : $(tinfo)/MKfallback.sh
-	sh -e $(tinfo)/MKfallback.sh @TERMINFO@ @TERMINFO_SRC@ $(FALLBACK_LIST) >$@
+	sh -e $(tinfo)/MKfallback.sh @TERMINFO@ @TERMINFO_SRC@ @TIC_PATH@ $(FALLBACK_LIST) >$@
 
 ./lib_gen.c : $(base)/MKlib_gen.sh ../include/curses.h
 	sh -e $(base)/MKlib_gen.sh "$(CPP) $(CPPFLAGS)" "$(AWK)" generated <../include/curses.h >$@
@@ -241,10 +244,10 @@ make_hash$(BUILD_EXEEXT) : \
 	echo | $(AWK) -f $(base)/MKunctrl.awk bigstrings=$(USE_BIG_STRINGS) >$@
 
 tags:
-	ctags *.[ch] */*.[ch]
+	$(CTAGS) *.[ch] */*.[ch]
 
 @MAKE_UPPER_TAGS@TAGS:
-@MAKE_UPPER_TAGS@	etags *.[ch] */*.[ch]
+@MAKE_UPPER_TAGS@	$(ETAGS) *.[ch] */*.[ch]
 
 mostlyclean ::
 	-rm -f core tags TAGS *~ *.bak *.i *.ln *.atac trace

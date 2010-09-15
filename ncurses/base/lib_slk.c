@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2008,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -47,7 +47,7 @@
 #define CUR SP_TERMTYPE
 #endif
 
-MODULE_ID("$Id: lib_slk.c,v 1.44 2009/10/31 19:51:40 tom Exp $")
+MODULE_ID("$Id: lib_slk.c,v 1.46 2010/06/05 22:37:05 tom Exp $")
 
 #ifdef USE_TERM_DRIVER
 #define NumLabels    InfoOf(SP_PARM).numlabels
@@ -79,7 +79,7 @@ NCURSES_EXPORT(int)
 _nc_format_slks(NCURSES_SP_DCLx int cols)
 {
     int gap, i, x;
-    unsigned max_length;
+    int max_length;
 
     if (!SP_PARM || !SP_PARM->_slk)
 	return ERR;
@@ -98,7 +98,7 @@ _nc_format_slks(NCURSES_SP_DCLx int cols)
 	}
     } else {
 	if (SP_PARM->slk_format == 2) {		/* 4-4 */
-	    gap = cols - (SP_PARM->_slk->maxlab * max_length) - 6;
+	    gap = cols - (int) (SP_PARM->_slk->maxlab * max_length) - 6;
 
 	    if (gap < 1)
 		gap = 1;
@@ -138,9 +138,8 @@ _nc_slk_initialize(WINDOW *stwin, int cols)
 {
     int i;
     int res = OK;
-    unsigned max_length;
+    int max_length;
     SCREEN *sp;
-    TERMINAL *term;
     int numlab;
 
     T((T_CALLED("_nc_slk_initialize()")));
@@ -151,8 +150,7 @@ _nc_slk_initialize(WINDOW *stwin, int cols)
     if (0 == sp)
 	returnCode(ERR);
 
-    term = TerminalOf(SP_PARM);
-    assert(term);
+    assert(TerminalOf(SP_PARM));
 
     numlab = NumLabels;
 
@@ -174,15 +172,15 @@ _nc_slk_initialize(WINDOW *stwin, int cols)
     else
 	SetAttr(SP_PARM->_slk->attr, A_REVERSE);
 
-    SP_PARM->_slk->maxlab = ((numlab > 0)
-			     ? numlab
-			     : MAX_SKEY(SP_PARM->slk_format));
-    SP_PARM->_slk->maxlen = ((numlab > 0)
-			     ? LabelWidth * LabelHeight
-			     : MAX_SKEY_LEN(SP_PARM->slk_format));
-    SP_PARM->_slk->labcnt = ((SP_PARM->_slk->maxlab < MAX_SKEY(SP_PARM->slk_format))
-			     ? MAX_SKEY(SP_PARM->slk_format)
-			     : SP_PARM->_slk->maxlab);
+    SP_PARM->_slk->maxlab = (short) ((numlab > 0)
+				     ? numlab
+				     : MAX_SKEY(SP_PARM->slk_format));
+    SP_PARM->_slk->maxlen = (short) ((numlab > 0)
+				     ? LabelWidth * LabelHeight
+				     : MAX_SKEY_LEN(SP_PARM->slk_format));
+    SP_PARM->_slk->labcnt = (short) ((SP_PARM->_slk->maxlab < MAX_SKEY(SP_PARM->slk_format))
+				     ? MAX_SKEY(SP_PARM->slk_format)
+				     : SP_PARM->_slk->maxlab);
 
     if (SP_PARM->_slk->maxlen <= 0
 	|| SP_PARM->_slk->labcnt <= 0
@@ -193,7 +191,7 @@ _nc_slk_initialize(WINDOW *stwin, int cols)
 
     max_length = SP_PARM->_slk->maxlen;
     for (i = 0; i < SP_PARM->_slk->labcnt; i++) {
-	size_t used = max_length + 1;
+	size_t used = (size_t) max_length + 1;
 
 	SP_PARM->_slk->ent[i].ent_text = (char *) _nc_doalloc(0, used);
 	if (SP_PARM->_slk->ent[i].ent_text == 0)
@@ -203,9 +201,10 @@ _nc_slk_initialize(WINDOW *stwin, int cols)
 	SP_PARM->_slk->ent[i].form_text = (char *) _nc_doalloc(0, used);
 	if (SP_PARM->_slk->ent[i].form_text == 0)
 	    returnCode(slk_failed(NCURSES_SP_ARG));
-	memset(SP_PARM->_slk->ent[i].form_text, 0, used);
 
-	memset(SP_PARM->_slk->ent[i].form_text, ' ', max_length);
+	memset(SP_PARM->_slk->ent[i].form_text, ' ', used - 1);
+	SP_PARM->_slk->ent[i].form_text[used] = '\0';
+
 	SP_PARM->_slk->ent[i].visible = (char) (i < SP_PARM->_slk->maxlab);
     }
 

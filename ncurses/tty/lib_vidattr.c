@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2007,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -69,7 +69,7 @@
 #define CUR SP_TERMTYPE
 #endif
 
-MODULE_ID("$Id: lib_vidattr.c,v 1.59 2009/10/24 22:12:21 tom Exp $")
+MODULE_ID("$Id: lib_vidattr.c,v 1.61 2010/06/05 22:22:04 tom Exp $")
 
 #define doPut(mode) \
 	TPUTS_TRACE(#mode); \
@@ -84,13 +84,15 @@ MODULE_ID("$Id: lib_vidattr.c,v 1.59 2009/10/24 22:12:21 tom Exp $")
 	/* if there is no current screen, assume we *can* do color */
 #define SetColorsIf(why,old_attr) \
 	if (can_color && (why)) { \
-		int old_pair = PAIR_NUMBER(old_attr); \
+		int old_pair = PairNumber(old_attr); \
 		TR(TRACE_ATTRS, ("old pair = %d -- new pair = %d", old_pair, pair)); \
 		if ((pair != old_pair) \
 		 || (fix_pair0 && (pair == 0)) \
 		 || (reverse ^ ((old_attr & A_REVERSE) != 0))) { \
 		     NCURSES_SP_NAME(_nc_do_color)(NCURSES_SP_ARGx \
-				     old_pair, pair, reverse, outc); \
+				     (short) old_pair, \
+				     (short) pair, \
+				     reverse, outc); \
 		} \
 	}
 
@@ -185,7 +187,7 @@ NCURSES_SP_NAME(vidputs) (NCURSES_SP_DCLx
 	 * A_ALTCHARSET (256) down 2 to line up.  We use the NCURSES_BITS
 	 * macro so this will work properly for the wide-character layout.
 	 */
-	unsigned value = no_color_video;
+	unsigned value = (unsigned) no_color_video;
 	attr_t mask = NCURSES_BITS((value & 63)
 				   | ((value & 192) << 1)
 				   | ((value & 256) >> 2), 8);
@@ -201,7 +203,7 @@ NCURSES_SP_NAME(vidputs) (NCURSES_SP_DCLx
     if (newmode == PreviousAttr)
 	returnCode(OK);
 
-    pair = PAIR_NUMBER(newmode);
+    pair = PairNumber(newmode);
 
     if (reverse) {
 	newmode &= ~A_REVERSE;

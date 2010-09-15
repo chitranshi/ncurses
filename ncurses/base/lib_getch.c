@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2008,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -42,7 +42,7 @@
 
 #include <curses.priv.h>
 
-MODULE_ID("$Id: lib_getch.c,v 1.110 2010/02/06 18:39:16 tom Exp $")
+MODULE_ID("$Id: lib_getch.c,v 1.120 2010/08/28 20:58:29 tom Exp $")
 
 #include <fifo_defs.h>
 
@@ -124,12 +124,6 @@ _nc_use_meta(WINDOW *win)
     return (sp ? sp->_use_meta : 0);
 }
 
-#ifdef NCURSES_WGETCH_EVENTS
-#define TWAIT_MASK (TW_ANY | TW_EVENT)
-#else
-#define TWAIT_MASK TW_ANY
-#endif
-
 /*
  * Check for mouse activity, returning nonzero if we find any.
  */
@@ -138,31 +132,29 @@ check_mouse_activity(SCREEN *sp, int delay EVENTLIST_2nd(_nc_eventlist * evl))
 {
     int rc;
 
+#ifdef USE_TERM_DRIVER
+    rc = TCBOf(sp)->drv->testmouse(TCBOf(sp), delay);
+#else
 #if USE_SYSMOUSE
     if ((sp->_mouse_type == M_SYSMOUSE)
 	&& (sp->_sysmouse_head < sp->_sysmouse_tail)) {
-	return TW_MOUSE;
-    }
+	rc = TW_MOUSE;
+    } else
 #endif
-#ifdef USE_TERM_DRIVER
-    rc = TCBOf(sp)->drv->twait(TCBOf(sp),
-			       TWAIT_MASK,
-			       delay,
-			       (int *) 0
-			       EVENTLIST_2nd(evl));
-#else
-    rc = _nc_timed_wait(sp,
-			TWAIT_MASK,
-			delay,
-			(int *) 0
-			EVENTLIST_2nd(evl));
-#endif
+    {
+	rc = _nc_timed_wait(sp,
+			    TWAIT_MASK,
+			    delay,
+			    (int *) 0
+			    EVENTLIST_2nd(evl));
 #if USE_SYSMOUSE
-    if ((sp->_mouse_type == M_SYSMOUSE)
-	&& (sp->_sysmouse_head < sp->_sysmouse_tail)
-	&& (rc == 0)
-	&& (errno == EINTR)) {
-	rc |= TW_MOUSE;
+	if ((sp->_mouse_type == M_SYSMOUSE)
+	    && (sp->_sysmouse_head < sp->_sysmouse_tail)
+	    && (rc == 0)
+	    && (errno == EINTR)) {
+	    rc |= TW_MOUSE;
+	}
+#endif
     }
 #endif
     return rc;
@@ -272,7 +264,16 @@ fifo_push(SCREEN *sp EVENTLIST_2nd(_nc_eventlist * evl))
 	ch = buf;
 #else
 	unsigned char c2 = 0;
+# if USE_PTHREADS_EINTR
+#  if USE_WEAK_SYMBOLS
+	if ((pthread_self) && (pthread_kill) && (pthread_equal))
+#  endif
+	    _nc_globals.read_thread = pthread_self();
+# endif
 	n = read(sp->_ifd, &c2, 1);
+#if USE_PTHREADS_EINTR
+	_nc_globals.read_thread = 0;
+#endif
 	ch = c2;
 #endif
     }
@@ -287,7 +288,11 @@ fifo_push(SCREEN *sp EVENTLIST_2nd(_nc_eventlist * evl))
      * We don't want this difference to show.  This piece of code
      * tries to make it look like we always have restarting signals.
      */
-    if (n <= 0 && errno == EINTR)
+    if (n <= 0 && errno == EINTR
+# if USE_PTHREADS_EINTR
+	&& (_nc_globals.have_sigwinch == 0)
+# endif
+	)
 	goto again;
 #endif
 
@@ -378,12 +383,13 @@ recur_wgetnstr(WINDOW *win, char *buf)
 
 NCURSES_EXPORT(int)
 _nc_wgetch(WINDOW *win,
-	   unsigned long *result,
+	   int *result,
 	   int use_meta
 	   EVENTLIST_2nd(_nc_eventlist * evl))
 {
     SCREEN *sp;
     int ch;
+    int rc = 0;
 #ifdef NCURSES_WGETCH_EVENTS
     long event_delay = -1;
 #endif
@@ -419,17 +425,18 @@ _nc_wgetch(WINDOW *win,
 	!sp->_cbreak &&
 	!sp->_called_wgetch) {
 	char buf[MAXCOLUMNS], *bufp;
-	int rc;
 
 	TR(TRACE_IEVENT, ("filling queue in cooked mode"));
 
-	rc = recur_wgetnstr(win, buf);
-
 	/* ungetch in reverse order */
 #ifdef NCURSES_WGETCH_EVENTS
+	rc = recur_wgetnstr(win, buf);
 	if (rc != KEY_EVENT)
-#endif
 	    safe_ungetch(sp, '\n');
+#else
+	(void) recur_wgetnstr(win, buf);
+	safe_ungetch(sp, '\n');
+#endif
 	for (bufp = buf + strlen(buf); bufp > buf; bufp--)
 	    safe_ungetch(sp, bufp[-1]);
 
@@ -451,7 +458,6 @@ _nc_wgetch(WINDOW *win,
     if (win->_notimeout || (win->_delay >= 0) || (sp->_cbreak > 1)) {
 	if (head == -1) {	/* fifo is empty */
 	    int delay;
-	    int rc;
 
 	    TR(TRACE_IEVENT, ("timed delay in wgetch()"));
 	    if (sp->_cbreak > 1)
@@ -494,7 +500,6 @@ _nc_wgetch(WINDOW *win,
 	 * increase the wait with mouseinterval().
 	 */
 	int runcount = 0;
-	int rc = 0;
 
 	do {
 	    ch = kgetch(sp EVENTLIST_2nd(evl));
@@ -576,7 +581,7 @@ _nc_wgetch(WINDOW *win,
      * cursor to the left.
      */
     if (sp->_echo && !(win->_flags & _ISPAD)) {
-	chtype backup = (ch == KEY_BACKSPACE) ? '\b' : ch;
+	chtype backup = (chtype) ((ch == KEY_BACKSPACE) ? '\b' : ch);
 	if (backup < KEY_MIN)
 	    wechochar(win, backup);
     }
@@ -607,7 +612,7 @@ NCURSES_EXPORT(int)
 wgetch_events(WINDOW *win, _nc_eventlist * evl)
 {
     int code;
-    unsigned long value;
+    int value;
 
     T((T_CALLED("wgetch_events(%p,%p)"), win, evl));
     code = _nc_wgetch(win,
@@ -624,7 +629,7 @@ NCURSES_EXPORT(int)
 wgetch(WINDOW *win)
 {
     int code;
-    unsigned long value;
+    int value;
 
     T((T_CALLED("wgetch(%p)"), (void *) win));
     code = _nc_wgetch(win,

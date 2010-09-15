@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2008,2009 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -52,7 +52,7 @@
 
 #include <tic.h>
 
-MODULE_ID("$Id: lib_newterm.c,v 1.84 2009/11/28 22:43:51 tom Exp $")
+MODULE_ID("$Id: lib_newterm.c,v 1.86 2010/05/20 23:25:18 tom Exp $")
 
 #ifdef USE_TERM_DRIVER
 #define NumLabels      InfoOf(SP_PARM).numlabels
@@ -85,9 +85,9 @@ _nc_initscr(NCURSES_SP_DCL0)
 
 	buf = term->Nttyb;
 #ifdef TERMIOS
-	buf.c_lflag &= ~(ECHO | ECHONL);
-	buf.c_iflag &= ~(ICRNL | INLCR | IGNCR);
-	buf.c_oflag &= ~(ONLCR);
+	buf.c_lflag &= (unsigned) ~(ECHO | ECHONL);
+	buf.c_iflag &= (unsigned) ~(ICRNL | INLCR | IGNCR);
+	buf.c_oflag &= (unsigned) ~(ONLCR);
 #elif HAVE_SGTTY_H
 	buf.sg_flags &= ~(ECHO | CRMOD);
 #else
@@ -242,7 +242,7 @@ NCURSES_SP_NAME(newterm) (NCURSES_SP_DCLx
 #ifdef USE_TERM_DRIVER
 	    TERMINAL_CONTROL_BLOCK *TCB;
 #elif !NCURSES_SP_FUNCS
-	    SP_PARM = CURRENT_SCREEN;
+	    _nc_set_screen(CURRENT_SCREEN);
 #endif
 	    assert(SP_PARM != 0);
 	    cols = *(ptrCols(SP_PARM));

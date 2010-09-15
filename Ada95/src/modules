@@ -1,7 +1,6 @@
-#!/bin/sh
-# $Id: tar-copy.sh,v 1.5 2003/10/25 14:40:07 tom Exp $
+# $Id: modules,v 1.3 2010/06/26 23:33:14 tom Exp $
 ##############################################################################
-# Copyright (c) 1998,2003 Free Software Foundation, Inc.                     #
+# Copyright (c) 2010 Free Software Foundation, Inc.                          #
 #                                                                            #
 # Permission is hereby granted, free of charge, to any person obtaining a    #
 # copy of this software and associated documentation files (the "Software"), #
@@ -28,50 +27,44 @@
 # authorization.                                                             #
 ##############################################################################
 #
-# Author: Thomas E. Dickey
+# Author: Thomas E. Dickey	2010
 #
-# Copy a collection of files using 'tar', so that their dates and links are
-# preserved
-#
-# Parameters:
-#	$1 = files to copy
-#	$2 = source directory
-#	$3 = destination directory
-#
-#DOIT=echo
-DOIT=eval
 
-if test $# != 3 ; then
-	echo "Usage: $0 files source target"
-	exit 1
-elif test ! -d "$2" ; then
-	echo "Source directory not found: $2"
-	exit 1
-elif test ! -d "$3" ; then
-	echo "Target directory not found: $3"
-	exit 1
-fi
-
-WD=`pwd`
-
-TMP=$WD/copy$$
-
-cd $2
-TEST=`ls -d $1 2>/dev/null`
-if test -z "$TEST"
-then
-	echo "... no match for \"$1\" in $2"
-else
-	echo "... installing files matching \"$1\" in $2"
-	trap "rm -f $TMP" 0 1 2 5 15
-	if ( tar cf $TMP $1 )
-	then
-		cd $3
-		LIST=`tar tf $TMP 2>&1`
-		$DOIT rm -rf $LIST 2>/dev/null
-		$DOIT tar xvf $TMP
-	else
-		echo "Cannot create tar of $1 files"
-		exit 1
-	fi
-fi
+# Library objects
+# rootname				depend-spec	depend-body	unit
+$(ALIB)					$(srcdir)	none		spec
+$(ABASE)-aux				none		$(srcdir)	body
+$(ABASE)				none		.		body
+$(ABASE)-terminfo			$(srcdir)	$(srcdir)	body
+$(ABASE)-termcap			$(srcdir)	$(srcdir)	body
+$(ABASE)-putwin				$(srcdir)	$(srcdir)	body
+$(ABASE)-trace				.		.		body
+$(ABASE)-mouse				.		$(srcdir)	body
+$(ABASE)-panels				.		$(srcdir)	body
+$(ABASE)-menus				.		$(srcdir)	body
+$(ABASE)-forms				.		$(srcdir)	body
+$(ABASE)-forms-field_types		.		$(srcdir)	body
+$(ABASE)-forms-field_types-alpha	$(srcdir)	$(srcdir)	body
+$(ABASE)-forms-field_types-alphanumeric	$(srcdir)	$(srcdir)	body
+$(ABASE)-forms-field_types-intfield	$(srcdir)	$(srcdir)	body
+$(ABASE)-forms-field_types-numeric	$(srcdir)	$(srcdir)	body
+$(ABASE)-forms-field_types-regexp	$(srcdir)	$(srcdir)	body
+$(ABASE)-forms-field_types-enumeration	$(srcdir)	$(srcdir)	body
+$(ABASE)-forms-field_types-ipv4_address	$(srcdir)	$(srcdir)	body
+$(ABASE)-forms-field_types-user		$(srcdir)	$(srcdir)	body
+$(ABASE)-forms-field_types-user-choice	$(srcdir)	$(srcdir)	body
+$(ABASE)-text_io			$(srcdir)	$(srcdir)	body
+$(ABASE)-text_io-aux			$(srcdir)	$(srcdir)	body
+$(ABASE)-menus-menu_user_data		.		$(srcdir)	body
+$(ABASE)-menus-item_user_data		.		$(srcdir)	body
+$(ABASE)-forms-form_user_data		.		$(srcdir)	body
+$(ABASE)-forms-field_user_data		.		$(srcdir)	body
+$(ABASE)-forms-field_types-enumeration-ada $(srcdir)	$(srcdir)	body
+$(ABASE)-panels-user_data		.		$(srcdir)	body
+$(ABASE)-text_io-integer_io		$(srcdir)	$(srcdir)	body
+$(ABASE)-text_io-float_io		$(srcdir)	$(srcdir)	body
+$(ABASE)-text_io-fixed_io		$(srcdir)	$(srcdir)	body
+$(ABASE)-text_io-decimal_io		$(srcdir)	$(srcdir)	body
+$(ABASE)-text_io-enumeration_io		$(srcdir)	$(srcdir)	body
+$(ABASE)-text_io-modular_io		$(srcdir)	$(srcdir)	body
+$(ABASE)-text_io-complex_io		$(srcdir)	$(srcdir)	body

@@ -1,5 +1,5 @@
 ##############################################################################
-# Copyright (c) 1998-2008,2009 Free Software Foundation, Inc.                #
+# Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.                #
 #                                                                            #
 # Permission is hereby granted, free of charge, to any person obtaining a    #
 # copy of this software and associated documentation files (the "Software"), #
@@ -28,7 +28,7 @@
 #
 #  Author:  Juergen Pfeifer, 1996
 #
-#  $Id: Makefile.in,v 1.36 2009/01/11 01:11:54 tom Exp $
+#  $Id: Makefile.in,v 1.39 2010/06/26 15:17:19 tom Exp $
 #
 .SUFFIXES:
 
@@ -87,31 +87,9 @@ ALIB         = @cf_ada_package@
 ABASE        = $(ALIB)-curses
 
 CARGS        =-cargs $(ADAFLAGS)
-LARGS        =-largs @TEST_ARG2@ $(LD_FLAGS) -lAdaCurses
+LARGS        =-largs @TEST_ARG2@ $(LD_FLAGS) -L../lib -lAdaCurses @TEST_LIBS2@
 
 PROGS        = tour rain ncurses
-
-TOUR_OBJS    =	tour.o sample.o sample-curses_demo.o sample-explanation.o 	\
-		sample-form_demo.o sample-function_key_setting.o 		\
-		sample-header_handler.o sample-helpers.o 			\
-		sample-keyboard_handler.o sample-manifest.o sample-menu_demo.o	\
-		sample-menu_demo-aux.o sample-text_io_demo.o			\
-		sample-curses_demo-attributes.o sample-curses_demo-mouse.o	\
-		sample-form_demo-aux.o sample-my_field_type.o
-
-RAIN_OBJS    =	rain.o status.o
-
-NCURSES_OBJS = ncurses.o        	ncurses2-getch_test.o \
-	ncurses2-acs_and_scroll.o       ncurses2-m.o \
-	ncurses2-acs_display.o          ncurses2-menu_test.o \
-	ncurses2-attr_test.o            ncurses2-overlap_test.o \
-	ncurses2-color_edit.o           ncurses2-slk_test.o \
-	ncurses2-color_test.o           ncurses2-test_sgr_attributes.o \
-	ncurses2-demo_forms.o           ncurses2-trace_set.o \
-	ncurses2-demo_pad.o             ncurses2-util.o \
-	ncurses2-demo_panels.o          ncurses2.o \
-	ncurses2-flushinp_test.o
-
 
 all ::  tour$x rain$x ncurses$x
 	@echo made $@
