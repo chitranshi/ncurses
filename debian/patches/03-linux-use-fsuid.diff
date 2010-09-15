@@ -4,7 +4,7 @@
 
 --- a/ncurses/tinfo/read_termcap.c
 +++ b/ncurses/tinfo/read_termcap.c
-@@ -319,6 +319,7 @@
+@@ -323,6 +323,7 @@
  	     */
  	    if (fd >= 0) {
  		(void) lseek(fd, (off_t) 0, SEEK_SET);
@@ -12,7 +12,7 @@
  	    } else if ((_nc_access(db_array[current], R_OK) < 0)
  		       || (fd = open(db_array[current], O_RDONLY, 0)) < 0) {
  		/* No error on unfound file. */
-@@ -329,6 +330,33 @@
+@@ -333,6 +334,33 @@
  	    } else {
  		myfd = TRUE;
  	    }
@@ -46,7 +46,7 @@
  	    lineno = 0;
  
  	    /*
-@@ -1097,8 +1125,20 @@
+@@ -1101,8 +1129,20 @@
  	for (i = 0; i < filecount; i++) {
  
  	    T(("Looking for %s in %s", tn, termpaths[i]));

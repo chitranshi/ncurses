@@ -7,7 +7,7 @@
 
 --- a/form/Makefile.in
 +++ b/form/Makefile.in
-@@ -82,7 +82,7 @@
+@@ -85,7 +85,7 @@
  
  CPPFLAGS	= -I@top_srcdir@/ncurses -DHAVE_CONFIG_H @CPPFLAGS@
  
@@ -18,7 +18,7 @@
  CFLAGS_NORMAL	= $(CCFLAGS)
 --- a/menu/Makefile.in
 +++ b/menu/Makefile.in
-@@ -82,7 +82,7 @@
+@@ -85,7 +85,7 @@
  
  CPPFLAGS	= -I@top_srcdir@/ncurses -DHAVE_CONFIG_H @CPPFLAGS@
  
@@ -29,18 +29,18 @@
  CFLAGS_NORMAL	= $(CCFLAGS)
 --- a/ncurses/Makefile.in
 +++ b/ncurses/Makefile.in
-@@ -91,7 +91,7 @@
+@@ -94,7 +94,7 @@
  INCDIR		= $(srcdir)/../include
  CPPFLAGS	= -DHAVE_CONFIG_H -I../ncurses -I$(srcdir) @CPPFLAGS@
  
 -CCFLAGS		= $(CPPFLAGS) $(CFLAGS)
 +CCFLAGS		= $(CPPFLAGS) $(CFLAGS) -D_REENTRANT
  
- BUILD_CPPFLAGS	= -I../include @BUILD_CPPFLAGS@
+ BUILD_CPPFLAGS	= -I../include -DUSE_BUILD_CC @BUILD_CPPFLAGS@
  BUILD_CC	= @BUILD_CC@
 --- a/panel/Makefile.in
 +++ b/panel/Makefile.in
-@@ -83,7 +83,7 @@
+@@ -86,7 +86,7 @@
  
  CPPFLAGS	= -I@top_srcdir@/ncurses -DHAVE_CONFIG_H @CPPFLAGS@
  
