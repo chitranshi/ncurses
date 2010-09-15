@@ -12,6 +12,16 @@ ncurses (5.7+20100911-1) UNRELEASED; urgency=low
 
  -- Sven Joachim <svenjoac@gmx.de>  Wed, 15 Sep 2010 11:19:52 +0200
 
+ncurses (5.7+20100313-3) unstable; urgency=low
+
+  * Fix dangling symlinks in ncurses-term that were introduced by the
+    removal of the ncurses-base compatibility symlinks in version
+    5.7+20100313-1 (Closes: #576127).  Add versioned Breaks against older
+    ncurses-term versions in ncurses-base.
+  * Correct rxvt-unicode sgr0 terminfo entry (Closes: #595484).
+
+ -- Sven Joachim <svenjoac@gmx.de>  Sat, 11 Sep 2010 21:13:00 +0200
+
 ncurses (5.7+20100313-2) unstable; urgency=medium
 
   [ Sven Joachim ]
