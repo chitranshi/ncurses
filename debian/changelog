@@ -1,3 +1,11 @@
+ncurses (5.7+20100313-4) UNRELEASED; urgency=low
+
+  * New patch 09-fix-delscreen-segfault.diff taken from upstream
+    patchlevel 20100501, fixes a segfault or infinite loop in applications
+    using multiple screens (Closes: #597175).
+
+ -- Sven Joachim <svenjoac@gmx.de>  Fri, 17 Sep 2010 16:54:43 +0200
+
 ncurses (5.7+20100313-3) unstable; urgency=low
 
   * Fix dangling symlinks in ncurses-term that were introduced by the
