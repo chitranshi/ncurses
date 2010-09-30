@@ -9,7 +9,8 @@ ncurses (5.7+20100911-1) UNRELEASED; urgency=low
   * Ship curses and termcap symlinks in lib{32,64}ncurses5-dev (LP: #485118).
   * Add lintian override for the empty /usr/share/terminfo directory that
     was introduced in 5.7+20100313-2.
-  * Refresh all Debian patches.
+  * Drop patch 09-fix-delscreen-segfault.diff, applied upstream.
+  * Refresh all remaining Debian patches.
   * Upgrade Standards-Version to 3.9.1, no changes needed.
 
   [ Loïc Minier ]
