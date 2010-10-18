@@ -4,6 +4,7 @@ Priority: required
 Maintainer: Craig Small <csmall@debian.org>
 Uploaders: Sven Joachim <svenjoac@gmx.de>
 Build-Depends: debhelper (>= 7),
+               dpkg-dev (>= 1.15.7),
                g++-multilib [amd64 i386 kfreebsd-amd64 powerpc ppc64 s390 sparc],
                libgpm-dev [!hurd-i386 !kfreebsd-amd64 !kfreebsd-i386],
                quilt (>= 0.40)

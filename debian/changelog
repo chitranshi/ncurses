@@ -11,6 +11,8 @@ ncurses (5.7+20100911-1) UNRELEASED; urgency=low
     was introduced in 5.7+20100313-2.
   * Drop patch 09-fix-delscreen-segfault.diff, applied upstream.
   * Refresh all remaining Debian patches.
+  * Get CFLAGS, CXXFLAGS and LDFLAGS from dpkg-buildflags, adding a build
+    dependency on dpkg-dev (>= 1.15.7).
   * Upgrade Standards-Version to 3.9.1, no changes needed.
 
   [ Loïc Minier ]

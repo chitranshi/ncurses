@@ -4,7 +4,9 @@
 
 include /usr/share/quilt/quilt.make
 
-export LDFLAGS
+CFLAGS := $(shell dpkg-buildflags --get CFLAGS)
+export CXXFLAGS := $(shell dpkg-buildflags --get CXXFLAGS)
+export LDFLAGS := $(shell dpkg-buildflags --get LDFLAGS)
 
 # These are important since this is a library package
 soname=5
@@ -86,7 +88,6 @@ ifneq ($(findstring linux,$(DEB_HOST_GNU_SYSTEM)),)
 with_gpm = --with-gpm
 endif
 
-CFLAGS = -O2 -g
 CONFARGS =	--prefix=/usr \
 		--with-shared \
 		--mandir=/usr/share/man \
