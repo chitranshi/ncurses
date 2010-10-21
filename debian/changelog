@@ -13,6 +13,9 @@ ncurses (5.7+20100911-1) UNRELEASED; urgency=low
   * Refresh all remaining Debian patches.
   * Get CFLAGS, CXXFLAGS and LDFLAGS from dpkg-buildflags, adding a build
     dependency on dpkg-dev (>= 1.15.7).
+  * Switch to format 3.0 (quilt).
+    - Remove quilt build dependency and patch/unpatch logic from debian/rules.
+    - Drop debian/README.source.
   * Upgrade Standards-Version to 3.9.1, no changes needed.
 
   [ Loïc Minier ]
