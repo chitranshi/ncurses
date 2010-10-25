@@ -1,3 +1,10 @@
+Author: Daniel Jacobowitz <dan@debian.org>
+Description: Fix terminfo entries for gnome-terminal and Eterm
+Bug-Debian: http://bugs.debian.org/127622
+Bug-Debian: http://bugs.debian.org/237997
+Forwarded: not-needed
+Last-Update: 2010-10-28
+
 ---
  misc/terminfo.src |    3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)

@@ -1,6 +1,7 @@
-06-kfreebsd.diff by Petr Salinger <Petr.Salinger@seznam.cz>
-
-Fixing FTBFS on GNU/kFreeBSD (Closes: #504820).
+Author: Petr Salinger <Petr.Salinger@seznam.cz>
+Description: Fix FTBFS on GNU/kFreeBSD
+Bug-Debian: http://bugs.debian.org/504820
+Last-Update: 2010-10-22
 
 ---
  progs/tset.c |    2 +-
