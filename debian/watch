@@ -1,0 +1,10 @@
+version=3
+
+opts=passive ftp://invisible-island.net/ncurses/ncurses-(.*)\.tar\.gz \
+ debian uupdate
+
+# Above entry is for releases, if you want to check for the weekly snapshots,
+# uncomment the following entry.
+
+# opts=passive,uversionmangle=s/-/+/ \
+#  ftp://invisible-island.net/ncurses/current/ncurses-(.*)\.tgz debian uupdate

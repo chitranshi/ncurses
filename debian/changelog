@@ -23,6 +23,7 @@ ncurses (5.7+20100911-1) UNRELEASED; urgency=low
   * Switch to format 3.0 (quilt).
     - Remove quilt build dependency and patch/unpatch logic from debian/rules.
     - Drop debian/README.source.
+  * Add a debian/watch file.
   * Upgrade Standards-Version to 3.9.1, no changes needed.
 
   [ Loïc Minier ]
