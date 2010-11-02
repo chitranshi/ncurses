@@ -402,15 +402,11 @@ endif
 		-- -L$(shell pwd)/debian/shlibs.dummy
 
 ifneq ($(build_32),)
-	# It should not be necessary to use $(lib32):$(usr_lib32): here.
-	# But dpkg-shlibdeps has a hardcoded list of paths, which does not
-	# include the /emul directories, and there are no symlinks in
-	# /lib/ldconfig yet for these directories either.
 	dh_shlibdeps -p$(package-lib-32) \
-		-l$(lib32):$(usr_lib32):debian/$(package-lib-32)$(lib32):debian/$(package-lib-32)$(usr_lib32) \
+		-ldebian/$(package-lib-32)$(lib32):debian/$(package-lib-32)$(usr_lib32) \
 		-- -L$(shell pwd)/debian/shlibs.dummy
 	dh_shlibdeps -p$(package-libw-32) \
-		-l$(lib32):$(usr_lib32):debian/$(package-libw-32)$(lib32):debian/$(package-libw-32)$(usr_lib32) \
+		-ldebian/$(package-libw-32)$(lib32):debian/$(package-libw-32)$(usr_lib32) \
 		-- -L$(shell pwd)/debian/shlibs.dummy
 endif
 
