@@ -314,12 +314,12 @@ endif
 	#test -d $(tempdir)/usr/lib/debug || mkdir -p $(tempdir)/usr/lib/debug
 	#cp -a $(tempdir)/usr/lib/*.so.* $(tempdir)/usr/lib/debug
 
-	# Rename static debug libraries.
+	# Static debug libraries need _g suffix to avoid file clashes
 	for lib in $(objdir-debug)/lib/*.a; do \
-	  mv $$lib `echo $$lib | sed 's/\.a$$/_g.a/'`; \
+	  cp -p $$lib `echo $$lib | sed 's/\.a$$/_g.a/'`; \
 	done
 	for lib in $(wobjdir-debug)/lib/*.a; do \
-	  mv $$lib `echo $$lib | sed 's/\.a$$/_g.a/'`; \
+	  cp -p $$lib `echo $$lib | sed 's/\.a$$/_g.a/'`; \
 	done
 
 	# Install non -DTRACE versions.

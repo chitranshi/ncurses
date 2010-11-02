@@ -9,6 +9,8 @@ ncurses (5.7+20100911-1) UNRELEASED; urgency=low
   * Ship curses and termcap symlinks in lib{32,64}ncurses5-dev (LP: #485118).
   * Add lintian override for the empty /usr/share/terminfo directory that
     was introduced in 5.7+20100313-2.
+  * Fix non-idempotency of the install (and thus the binary) target in
+    debian/rules introduced in 5.7+20100313-1.
   * Drop most patches as obsolete or unused:
     - 09-fix-delscreen-segfault.diff, applied upstream.
     - 06-kfreebsd.diff, apparently no longer needed.
