@@ -263,6 +263,8 @@ build-wide-debug: $(wobjdir-debug)/config.status
 clean:
 	dh_testdir
 	rm -f build
+	rm -f build-normal build-static build-wide build-debug build-wide-debug \
+		build-wide-static $(build_32) $(build_64)
 	rm -rf $(objdir)
 	rm -rf $(objdir-static)
 	rm -rf $(objdir-32)
@@ -272,8 +274,6 @@ clean:
 	rm -rf $(wobjdir-32)
 	rm -rf $(objdir-debug)
 	rm -rf $(wobjdir-debug)
-	rm -f build-normal build-static build-wide build-debug build-wide-debug \
-		build-wide-static $(build_32) $(build_64)
 	rm -f debian/shlibs.local
 	dh_clean
 
