@@ -13,6 +13,7 @@ ncurses (5.7+20100911-1) UNRELEASED; urgency=low
     debian/rules introduced in 5.7+20100313-1.
   * Do not unnecessarily add /lib32 and /usr/lib32 to dh_shlibdeps' search
     path when calculating the dependencies of the 32-bit libraries.
+  * Do not allow dh_shlibdeps to fail for the 64-bit libraries.
   * Drop most patches as obsolete or unused:
     - 09-fix-delscreen-segfault.diff, applied upstream.
     - 06-kfreebsd.diff, apparently no longer needed.

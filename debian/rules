@@ -380,10 +380,7 @@ ifneq ($(build_32),)
 endif
 
 ifneq ($(build_64),)
-	# Unfortunately, dh_shlibdeps runs ldd, and 64-bit ldd doesn't run on
-	# a 31-bit S/390 build daemon, so I can't always use dh_shlibdeps.
-	# So this is allowed to fail.
-	-dh_shlibdeps -p$(package-lib-64) \
+	dh_shlibdeps -p$(package-lib-64) \
 		-ldebian/$(package-lib-64)/lib64:debian/$(package-lib-64)/usr/lib64 \
 		-- -L$(shell pwd)/debian/shlibs.dummy
 endif
