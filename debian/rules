@@ -301,7 +301,7 @@ install: build
 	# Compile Debian-specific terminfo entries before moving files
 	# into their packages.  Hurd uses gsbom/grbom, so pass -x to tic.
 ifeq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
-	for ti in xterm hurd rxvt rxvt-unicode screen; do \
+	for ti in xterm hurd rxvt rxvt-unicode; do \
 	  LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$(fulltempdir)/usr/lib:$(fulltempdir)/lib \
 		TERMINFO=$(fulltempdir)/usr/share/terminfo \
 		$(tempdir)/usr/bin/tic -x debian/$$ti.ti; \
@@ -315,7 +315,7 @@ else
 	  exit 1;						\
 	fi
 
-	for ti in xterm hurd rxvt rxvt-unicode screen; do \
+	for ti in xterm hurd rxvt rxvt-unicode; do \
 		TERMINFO=$(fulltempdir)/usr/share/terminfo \
 		tic -x debian/$$ti.ti; \
 	done
