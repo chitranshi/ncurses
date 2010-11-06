@@ -14,7 +14,6 @@ Homepage: http://invisible-island.net/ncurses/
 
 Package: libncurses5
 Architecture: any
-Priority: required
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Recommends: libgpm2 [!hurd-i386 !kfreebsd-amd64 !kfreebsd-i386]
 Description: shared libraries for terminal handling
@@ -156,7 +155,6 @@ Description: developer's libraries for ncursesw (32-bit)
 Package: ncurses-bin
 Architecture: any
 Section: utils
-Priority: required
 Essential: yes
 Pre-Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: terminal-related programs and man pages
@@ -167,7 +165,6 @@ Description: terminal-related programs and man pages
 Package: ncurses-base
 Architecture: all
 Section: utils
-Priority: required
 Essential: yes
 Depends: ${misc:Depends}
 Conflicts: ncurses, ncurses-runtime
