@@ -1,4 +1,4 @@
-ncurses (5.7+20100911-1) UNRELEASED; urgency=low
+ncurses (5.7+20101113-1) UNRELEASED; urgency=low
 
   [ Sven Joachim ]
   * New upstream patchlevel.
@@ -44,7 +44,7 @@ ncurses (5.7+20100911-1) UNRELEASED; urgency=low
   [ Steve Langasek ]
   * Export LDFLAGS in debian/rules (Closes: #586144).
 
- -- Sven Joachim <svenjoac@gmx.de>  Wed, 15 Sep 2010 11:19:52 +0200
+ -- Sven Joachim <svenjoac@gmx.de>  Wed, 17 Nov 2010 16:18:44 +0100
 
 ncurses (5.7+20100313-4) unstable; urgency=low
 
