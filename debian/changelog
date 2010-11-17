@@ -36,6 +36,7 @@ ncurses (5.7+20101113-1) UNRELEASED; urgency=low
   * Remove duplicate "Priority:" fields from debian/control.
   * Update debian/copyright:
     - Update FSF Copyright years.
+    - Mention other copyright holders and licenses.
     - Stop mentioning Debian changes.
   * Upgrade Standards-Version to 3.9.1, no changes needed.
 
