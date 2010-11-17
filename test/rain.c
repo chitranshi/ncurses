@@ -26,7 +26,7 @@
  * authorization.                                                           *
  ****************************************************************************/
 /*
- * $Id: rain.c,v 1.36 2010/05/01 19:12:26 tom Exp $
+ * $Id: rain.c,v 1.38 2010/11/13 20:11:46 tom Exp $
  */
 #include <test.priv.h>
 
@@ -74,23 +74,23 @@ onsig(int n GCC_UNUSED)
     ExitProgram(EXIT_FAILURE);
 }
 
-static float
+static double
 ranf(void)
 {
     long r = (rand() & 077777);
-    return ((float) r / 32768.);
+    return ((double) r / 32768.);
 }
 
 static int
 random_x(void)
 {
-    return (((float) (COLS - 4) * ranf()) + 2);
+    return (int) (((double) (COLS - 4) * ranf()) + 2);
 }
 
 static int
 random_y(void)
 {
-    return (((float) (LINES - 4) * ranf()) + 2);
+    return (int) (((double) (LINES - 4) * ranf()) + 2);
 }
 
 static int
@@ -102,7 +102,7 @@ next_j(int j)
 	--j;
     if (has_colors()) {
 	int z = (int) (3 * ranf());
-	chtype color = COLOR_PAIR(z);
+	chtype color = (chtype) COLOR_PAIR(z);
 	if (z)
 	    color |= A_BOLD;
 	(void) attrset(color);
@@ -222,7 +222,11 @@ draw_drop(void *arg)
      * Find myself in the list of threads so we can count the number of loops.
      */
     for (mystats = 0; mystats < MAX_THREADS; ++mystats) {
+#ifdef __MINGW32__
+	if (drop_threads[mystats].myself.p == pthread_self().p)
+#else
 	if (drop_threads[mystats].myself == pthread_self())
+#endif
 	    break;
     }
 
@@ -310,8 +314,8 @@ main(int argc GCC_UNUSED,
 	if (use_default_colors() == OK)
 	    bg = -1;
 #endif
-	init_pair(1, COLOR_BLUE, bg);
-	init_pair(2, COLOR_CYAN, bg);
+	init_pair(1, COLOR_BLUE, (short) bg);
+	init_pair(2, COLOR_CYAN, (short) bg);
     }
     nl();
     noecho();

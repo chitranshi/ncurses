@@ -25,7 +25,7 @@
 -- sale, use or other dealings in this Software without prior written        --
 -- authorization.                                                            --
 -------------------------------------------------------------------------------
--- $Id: NEWS,v 1.1590 2010/09/11 21:41:14 tom Exp $
+-- $Id: NEWS,v 1.1610 2010/11/13 20:23:02 tom Exp $
 -------------------------------------------------------------------------------
 
 This is a log of changes that ncurses has gone through since Zeyd started
@@ -44,6 +44,79 @@ See the AUTHORS file for the corresponding full names.
 
 Changes through 1.9.9e did not credit all contributions;
 it is not possible to add this information.
+
+20101113
+	+ compiler warning fixes for test programs.
+	+ various build-fixes for test-programs with pdcurses.
+	+ updated configure checks for X packages in test/configure from xterm
+	  #267 changes.
+	+ add configure check to gnatmake, to accommodate cygwin.
+
+20101106
+	+ correct list of sub-directories needed in Ada95 tree for building as
+	  a separate package.
+	+ modify scripts in test-directory to improve builds as a separate
+	  package.
+
+20101023
+	+ correct parsing of relative tab-stops in tabs program (report by
+	  Philip Ganchev).
+	+ adjust configure script so that "t" is not added to library suffix
+	  when weak-symbols are used, allowing the pthread configuration to
+	  more closely match the non-thread naming (report by Werner Fink).
+	+ modify configure check for tic program, used for fallbacks, to a
+	  warning if not found.  This makes it simpler to use additonal
+	  scripts to bootstrap the fallbacks code using tic from the build
+	  tree (report by Werner Fink).
+	+ fix several places in configure script using ${variable-value} form.
+	+ modify configure macro CF_LDFLAGS_STATIC to accommodate some loaders
+	  which do not support selectively linking against static libraries
+	  (report by John P. Hartmann)
+	+ fix an unescaped dash in man/tset.1 (report by Sven Joachim).
+
+20101009
+	+ correct comparison used for setting 16-colors in linux-16color
+	  entry (Novell #644831) -TD
+	+ improve linux-16color entry, using "dim" for color-8 which makes it
+	  gray rather than black like color-0 -TD
+	+ drop misc/ncu-indent and misc/jpf-indent; they are provided by an
+	  external package "cindent".
+
+20101002
+	+ improve linkages in html manpages, adding references to the newer
+	  pages, e.g., *_variables, curs_sp_funcs, curs_threads.
+	+ add checks in tic for inconsistent cursor-movement controls, and for
+	  inconsistent printer-controls.
+	+ fill in no-parameter forms of cursor-movement where a parameterized
+	  form is available -TD
+	+ fill in missing cursor controls where the form of the controls is
+	  ANSI -TD
+	+ fix inconsistent punctuation in form_variables manpage (patch by
+	  Sven Joachim).
+	+ add parameterized cursor-controls to linux-basic (report by Dae) -TD
+	> patch by Juergen Pfeifer:
+	+ document how to build 32-bit libraries in README.MinGW 
+	+ fixes to filename computation in mk-dlls.sh.in 
+	+ use POSIX locale in mk-dlls.sh.in rather than en_US (report by Sven
+	  Joachim).
+	+ add a check in mk-dlls.sh.in to obtain the size of a pointer to
+	  distinguish between 32-bit and 64-bit hosts.  The result is stored
+	  in mingw_arch
+
+20100925
+	+ add "XT" capability to entries for terminals that support both
+	  xterm-style mouse- and title-controls, for "screen" which
+	  special-cases TERM beginning with "xterm" or "rxvt" -TD
+	> patch by Juergen Pfeifer:
+	+ use 64-Bit MinGW toolchain (recommended package from TDM, see
+	  README.MinGW).
+	+ support pthreads when using the TDM MinGW toolchain
+
+20100918
+	+ regenerated html manpages.
+	+ minor fixes for symlinks to curs_legacy.3x and curs_slk.3x manpages.
+	+ add manpage for sp-funcs.
+	+ add sp-funcs to test/listused.sh, for documentation aids.
 
 20100911
 	+ add manpages for summarizing public variables of curses-, terminfo-
