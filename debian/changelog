@@ -37,6 +37,7 @@ ncurses (5.7+20101113-1) UNRELEASED; urgency=low
   * Update debian/copyright:
     - Update FSF Copyright years.
     - Mention other copyright holders and licenses.
+    - Give a pointer to the current location of the ncurses sources.
     - Stop mentioning Debian changes.
   * Upgrade Standards-Version to 3.9.1, no changes needed.
 

@@ -6,6 +6,8 @@ currently held by the Free Software Foundation.
 This package was put together by Vaidhyanathan G Mayilrangam
 <vaidhy@debian.org> and Joel Klecker <espy@debian.org>, using sources
 obtained from ftp://ftp.gnu.org/gnu/ncurses/ncurses-5.0.tar.gz.
+Current versions of the ncurses sources are found at
+ftp://invisible-island.net/ncurses/.
 
 It is based somewhat on work done by Bruce Perens <Bruce@Pixar.com>,
 David Engel <david@elo.ods.com>.  Michael Alan Dorman
