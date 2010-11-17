@@ -15,15 +15,6 @@ David Engel <david@elo.ods.com>.  Michael Alan Dorman
 over various years.
 
 
-Changes:
- * added Debian package maintenance system files
- * changed Makefile.in's to compile with -D_REENTRANT
- * changed configure.in to support proper compilation of debugging libraries
- * Fixed tget{flag,num,str} in lib_termcap ("long" strings work now)
-
-Changes to terminfo.src:
- * Removed ich(1) from linux, screen, vt320
-
 /****************************************************************************
  * Copyright (c) 1998 Free Software Foundation, Inc.                        *
  *                                                                          *

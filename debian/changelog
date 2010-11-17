@@ -34,6 +34,8 @@ ncurses (5.7+20101113-1) UNRELEASED; urgency=low
     - Drop debian/README.source.
   * Add a debian/watch file.
   * Remove duplicate "Priority:" fields from debian/control.
+  * Update debian/copyright:
+    - Stop mentioning Debian changes.
   * Upgrade Standards-Version to 3.9.1, no changes needed.
 
   [ Loïc Minier ]
