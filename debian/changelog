@@ -23,6 +23,8 @@ ncurses (5.7+20101128-1) UNRELEASED; urgency=low
       away from LinuxThreads and Policy 3.9.1 has explicitly removed the need
       to #define _REENTRANT.
   * Refresh all remaining Debian patches and add DEP-3 headers to them.
+  * Remove the fix for bug #127622 from 02-debian-backspace.diff,
+    no longer needed.
   * Update patch 02-debian-backspace.diff to get kbs=\177 in all screen-*
     terminfo entries (Closes: #602300).
   * Drop the rather outdated screen terminfo from the debian directory and use

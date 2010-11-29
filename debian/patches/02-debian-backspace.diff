@@ -1,27 +1,18 @@
 Author: Daniel Jacobowitz <dan@debian.org>
 Author: Sven Joachim <svenjoac@gmx.de>
 Description: Fix backspace key description in some terminfo entries
-Bug-Debian: http://bugs.debian.org/127622
 Bug-Debian: http://bugs.debian.org/237997
 Bug-Debian: http://bugs.debian.org/602300
 Forwarded: not-needed
-Last-Update: 2010-11-04
+Last-Update: 2010-11-29
 
 ---
- misc/terminfo.src |    5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ misc/terminfo.src |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 --- a/misc/terminfo.src
 +++ b/misc/terminfo.src
-@@ -3829,6 +3829,7 @@
- 	use=xterm+pcfkeys,
- 
- gnome|GNOME Terminal,
-+	bs=\177,
- 	use=gnome-2008,
- 
- # palette is hardcoded...
-@@ -4225,7 +4226,7 @@
+@@ -4242,7 +4242,7 @@
  	ich1=\E[@, il=\E[%p1%dL, il1=\E[L, ind=^J,
  	is1=\E[?47l\E>\E[?1l,
  	is2=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;3;4;6l\E[4l, kNXT@,
@@ -30,7 +21,7 @@ Last-Update: 2010-11-04
  	kc1=\E[8~, kc3=\E[6~, kent=\EOM, khlp=\E[28~, kmous=\E[M,
  	mc4=\E[4i, mc5=\E[5i, rc=\E8, rev=\E[7m, ri=\EM, rmacs=^O,
  	rmam=\E[?7l, rmcup=\E[2J\E[?47l\E8, rmir=\E[4l, rmkx=,
-@@ -4656,7 +4657,7 @@
+@@ -4675,7 +4675,7 @@
  	cvvis=\E[34l, dch=\E[%p1%dP, dch1=\E[P, dl=\E[%p1%dM,
  	dl1=\E[M, ed=\E[J, el=\E[K, el1=\E[1K, enacs=\E(B\E)0,
  	flash=\Eg, home=\E[H, ht=^I, hts=\EH, ich=\E[%p1%d@,
