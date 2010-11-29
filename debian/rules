@@ -374,7 +374,7 @@ binary-arch: build install
 	dh_strip -p$(package-libw) --dbg-package=$(package-dbgw)
 	dh_lintian -s
 	dh_compress -p$(package-examples) usr/lib/ncurses/examples/README
-	dh_compress -s
+	dh_compress -s -N$(package-examples)
 	dh_fixperms -s
 	dh_link -s
 	dh_makeshlibs -p$(package-lib) -V "$(package-lib) $(sodepver)"
