@@ -27,6 +27,7 @@ package-devw-32=lib32ncursesw$(soname)-dev
 package-dbg=libncurses$(soname)-dbg
 package-dbgw=libncursesw$(soname)-dbg
 package-term=ncurses-term
+package-examples=ncurses-examples
 
 workdir=$(shell pwd)
 tempdir=debian/tmp
@@ -42,6 +43,7 @@ wobjdir-static=$(srcdir)/obj-wide-static
 wobjdir-32=$(srcdir)/obj-wide-32
 objdir-debug=$(srcdir)/obj-debug
 wobjdir-debug=$(srcdir)/obj-wide-debug
+objdir-test=$(srcdir)/obj-test
 
 DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_HOST_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
@@ -103,8 +105,13 @@ CONFARGS =	--prefix=/usr \
 		--with-terminfo-dirs="/etc/terminfo:/lib/terminfo:/usr/share/terminfo" \
 		--with-ticlib
 
+CONFARGS-TEST =	--prefix=/usr \
+		--bindir=/usr/lib/ncurses/examples \
+		--with-curses-dir=$(objdir)
+
 ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
 CONFARGS += --with-build-cc=gcc --host=$(DEB_HOST_GNU_TYPE)
+CONFARGS-TEST += --with-build-cc=gcc --host=$(DEB_HOST_GNU_TYPE)
 endif
 
 # Files for /lib/terminfo.
@@ -218,9 +225,13 @@ $(wobjdir-32)/config.status:
 		--disable-overwrite --enable-widec \
 		--libdir=$(usr_lib32)
 
+$(objdir-test)/config.status: build-normal
+	test -d $(objdir-test) || mkdir $(objdir-test)
+	cd $(objdir-test) && CFLAGS="$(CFLAGS)" $(srcdir)/test/configure \
+		$(CONFARGS-TEST)
 
 build: build-normal build-static build-wide build-debug build-wide-debug \
-	build-wide-static $(build_64) $(build_32)
+	build-wide-static build-test $(build_64) $(build_32)
 
 	touch $@
 
@@ -260,11 +271,15 @@ build-wide-debug: $(wobjdir-debug)/config.status
 	cd $(wobjdir-debug) && $(MAKE)
 	touch $@
 
+build-test: $(objdir-test)/config.status
+	cd $(objdir-test) && $(MAKE)
+	touch $@
+
 clean:
 	dh_testdir
 	rm -f build
 	rm -f build-normal build-static build-wide build-debug build-wide-debug \
-		build-wide-static $(build_32) $(build_64)
+		build-wide-static build-test $(build_32) $(build_64)
 	rm -rf $(objdir)
 	rm -rf $(objdir-static)
 	rm -rf $(objdir-32)
@@ -274,6 +289,7 @@ clean:
 	rm -rf $(wobjdir-32)
 	rm -rf $(objdir-debug)
 	rm -rf $(wobjdir-debug)
+	rm -rf $(objdir-test)
 	rm -f debian/shlibs.local
 	dh_clean
 
@@ -333,6 +349,9 @@ endif
 	mkdir -p $(tempdir)/etc/terminfo
 	install --mode 644 --owner=root --group=root \
 		debian/README.etc $(tempdir)/etc/terminfo/README
+
+	# Install the test programs, sparing the detour to debian/tmp.
+	$(MAKE) -C $(objdir-test) DESTDIR=$(workdir)/debian/$(package-examples) install
 
 	dh_install -s
 

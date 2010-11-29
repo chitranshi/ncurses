@@ -5,6 +5,8 @@ ncurses (5.7+20101128-1) UNRELEASED; urgency=low
     - Clarify that infotocap, captoinfo and tic read text files and do
       not work with compiled terminfo files (Closes: #593920).
   * Remove dangling /usr/share/terminfo/k/kon2 symlink (Closes: #522435).
+  * Add an ncurses-examples package containing the compiled test programs
+    (Closes: #34182).
   * Ship mlterm terminfo in ncurses-term (see #485448).
   * Ship curses and termcap symlinks in lib{32,64}ncurses5-dev (LP: #485118).
   * Add lintian override for the empty /usr/share/terminfo directory that
