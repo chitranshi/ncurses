@@ -95,6 +95,7 @@ CONFARGS =	--prefix=/usr \
 		--disable-rpath --enable-echo \
 		--enable-const \
 		--without-ada \
+		--without-tests \
 		$(with_gpm) \
 		--enable-symlinks \
 		--disable-lp64 \

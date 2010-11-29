@@ -11,6 +11,7 @@ ncurses (5.7+20101128-1) UNRELEASED; urgency=low
   * Ship curses and termcap symlinks in lib{32,64}ncurses5-dev (LP: #485118).
   * Add lintian override for the empty /usr/share/terminfo directory that
     was introduced in 5.7+20100313-2.
+  * Stop building the test programs in every library build.
   * Fix non-idempotency of the install (and thus the binary) target in
     debian/rules introduced in 5.7+20100313-1.
   * Do not unnecessarily add /lib32 and /usr/lib32 to dh_shlibdeps' search
