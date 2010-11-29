@@ -25,7 +25,7 @@
 -- sale, use or other dealings in this Software without prior written        --
 -- authorization.                                                            --
 -------------------------------------------------------------------------------
--- $Id: NEWS,v 1.1610 2010/11/13 20:23:02 tom Exp $
+-- $Id: NEWS,v 1.1615 2010/11/28 16:43:28 tom Exp $
 -------------------------------------------------------------------------------
 
 This is a log of changes that ncurses has gone through since Zeyd started
@@ -44,6 +44,28 @@ See the AUTHORS file for the corresponding full names.
 
 Changes through 1.9.9e did not credit all contributions;
 it is not possible to add this information.
+
+20101128
+	+ modify test/configure and test/Makefile.in to handle this special
+	  case of building within a build-tree (Debian #34182):
+		mkdir -p build && cd build && ../test/configure && make
+
+20101127
+	+ miscellaneous build-fixes for Ada95 and test-directories when built
+	  out-of-tree.
+	+ use VPATH in makefiles to simplify out-of-tree builds (Debian #34182).
+	+ fix typo in rmso for tek4106 entry -Goran Weinholt
+
+20101120
+	+ improve checks in test/configure for X libraries, from xterm #267
+	  changes.
+	+ modify test/configure to allow it to use the build-tree's libraries
+	  e.g., when using that to configure the test-programs without the
+	  rpath feature (request by Sven Joachim).
+	+ repurpose "gnome" terminfo entries as "vte", retaining "gnome" items
+	  for compatibility, but generally deprecating those since the VTE
+	  library is what actually defines the behavior of "gnome", etc.,
+	  since 2003 -TD
 
 20101113
 	+ compiler warning fixes for test programs.
