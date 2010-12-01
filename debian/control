@@ -29,10 +29,10 @@ Depends: libncurses5 (= ${binary:Version}), ncurses-bin (= ${binary:Version}),
 Conflicts: ncurses-dev, libncurses-dev
 Replaces: ncurses-dev, libncurses-dev
 Provides: libncurses-dev, ncurses-dev
-Description: developer's libraries and docs for ncurses
+Suggests: ncurses-doc
+Description: developer's libraries for ncurses
  This package contains the header files, static libraries
  and symbolic links that developers using ncurses will need.
- It also includes the libraries' man pages and other documentation.
 
 Package: libncurses5-dbg
 Architecture: any
@@ -57,7 +57,7 @@ Section: libdevel
 Priority: optional
 Depends: libncursesw5 (= ${binary:Version}), ncurses-bin (= ${binary:Version}),
 	 libc-dev, ${misc:Depends}
-Suggests: libncurses5-dev
+Suggests: ncurses-doc
 Description: developer's libraries for ncursesw
  This package contains the header files, static libraries
  and symbolic links that developers using ncursesw will need.
@@ -91,6 +91,7 @@ Architecture: i386 powerpc sparc s390
 Section: libdevel
 Priority: optional
 Depends: lib64ncurses5 (= ${binary:Version}), libncurses5-dev, lib64c-dev, ${misc:Depends}
+Suggests: ncurses-doc
 Replaces: amd64-libs-dev (<= 1.2)
 Description: developer's libraries for ncurses (64-bit)
  This package contains the header files, static libraries
@@ -117,6 +118,7 @@ Architecture: amd64 ppc64
 Section: libdevel
 Priority: optional
 Depends: lib32ncurses5 (= ${binary:Version}), libncurses5-dev, lib32c-dev, ${misc:Depends}
+Suggests: ncurses-doc
 Conflicts: libc6-i386 (<= 2.9-18)
 Description: developer's libraries for ncurses (32-bit)
  This package contains the header files, static libraries
@@ -143,7 +145,7 @@ Section: libdevel
 Priority: optional
 Depends: lib32ncursesw5 (= ${binary:Version}), libncursesw5-dev, lib32c-dev, ${misc:Depends}
 Conflicts: libc6-i386 (<= 2.9-18)
-Suggests: lib32ncurses5-dev
+Suggests: ncurses-doc
 Description: developer's libraries for ncursesw (32-bit)
  This package contains the header files, static libraries
  and symbolic links that developers using ncursesw will need.
@@ -197,3 +199,16 @@ Description: test programs and examples for ncurses
  analog/digital clock and several classic programs such as solitaire,
  battleships, a knight's tour on a chess board, the towers of Hanoi
  and several others.
+
+Package: ncurses-doc
+Architecture: all
+Section: doc
+Priority: optional
+Depends: ${misc:Depends}
+Replaces: libncurses5-dev (<< 5.7+20101128)
+Description: developer's guide and documentation for ncurses
+ This package contains an introduction to writing programs with
+ ncurses a guide to the internals of the ncurses library.  It also
+ includes the libraries' man pages.
+ .
+ Non-developers likely have little use for this package.
