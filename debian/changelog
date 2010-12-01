@@ -41,6 +41,7 @@ ncurses (5.7+20101128-1) UNRELEASED; urgency=low
     - Remove quilt build dependency and patch/unpatch logic from debian/rules.
     - Drop debian/README.source.
   * Add a debian/watch file.
+  * Extend the package descriptions.
   * Remove duplicate "Priority:" fields from debian/control.
   * Update debian/copyright:
     - Update FSF Copyright years.
