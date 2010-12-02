@@ -4,5 +4,4 @@ files
 *.debhelper.log
 lib*ncurses*/
 ncurses-*/
-shlibs.local
 tmp/

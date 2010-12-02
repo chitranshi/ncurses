@@ -291,7 +291,6 @@ clean:
 	rm -rf $(objdir-debug)
 	rm -rf $(wobjdir-debug)
 	rm -rf $(objdir-test)
-	rm -f debian/shlibs.local
 	dh_clean
 
 install: build
@@ -386,36 +385,7 @@ endif
 ifneq ($(build_64),)
 	dh_makeshlibs -p$(package-lib-64) -V "$(package-lib-64) $(sodepver)" -- -c4
 endif
-	dh_shlibdeps -p$(package-lib) -p$(package-libw) \
-		-ldebian/$(package-lib)/lib:debian/$(package-lib)/usr/lib:debian/$(package-libw)/usr/lib \
-		-- -L$(shell pwd)/debian/shlibs.dummy
-
-ifneq ($(build_32),)
-	dh_shlibdeps -p$(package-lib-32) \
-		-ldebian/$(package-lib-32)$(lib32):debian/$(package-lib-32)$(usr_lib32) \
-		-- -L$(shell pwd)/debian/shlibs.dummy
-	dh_shlibdeps -p$(package-libw-32) \
-		-ldebian/$(package-libw-32)$(lib32):debian/$(package-libw-32)$(usr_lib32) \
-		-- -L$(shell pwd)/debian/shlibs.dummy
-endif
-
-ifneq ($(build_64),)
-	dh_shlibdeps -p$(package-lib-64) \
-		-ldebian/$(package-lib-64)/lib64:debian/$(package-lib-64)/usr/lib64 \
-		-- -L$(shell pwd)/debian/shlibs.dummy
-endif
-
-	# We don't ship any binaries linked against the 64-bit libraries, so
-	# don't add them to shlibs.  They have the same sonames, so they
-	# override the 32-bit versions, messing up the dependencies from
-	# ncurses-bin.
-	cat debian/$(package-lib)/DEBIAN/shlibs \
-	  debian/$(package-libw)/DEBIAN/shlibs > debian/shlibs.local
-
-	dh_shlibdeps -s -N$(package-lib) -N$(package-libw) \
-		-N$(package-lib-32) -N$(package-libw-32) -N$(package-lib-64) \
-		-ldebian/$(package-lib)/lib:debian/$(package-lib)/usr/lib:debian/$(package-libw)/usr/lib
-
+	dh_shlibdeps -s
 	dh_gencontrol -s
 	dh_installdeb -s
 	dh_md5sums -s
