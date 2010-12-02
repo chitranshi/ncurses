@@ -6,25 +6,25 @@ libformw.so.5 #PACKAGE# #MINVER#
  TYPE_IPV4@Base 5.6+20070908
  TYPE_NUMERIC@Base 5.6+20070908
  TYPE_REGEXP@Base 5.6+20070908
- _nc_Copy_Argument@Base 5.6+20070908
- _nc_Copy_Type@Base 5.6+20070908
- _nc_Default_Field@Base 5.6+20070908
- _nc_Default_FieldType@Base 5.6+20070908
- _nc_Default_Form@Base 5.6+20070908
- _nc_First_Active_Field@Base 5.6+20070908
- _nc_Free_Argument@Base 5.6+20070908
- _nc_Free_Type@Base 5.6+20070908
- _nc_Internal_Validation@Base 5.6+20070908
- _nc_Make_Argument@Base 5.6+20070908
- _nc_Position_Form_Cursor@Base 5.6+20070908
- _nc_Refresh_Current_Field@Base 5.6+20070908
- _nc_Set_Current_Field@Base 5.6+20070908
- _nc_Set_Form_Page@Base 5.6+20070908
- _nc_Synchronize_Attributes@Base 5.6+20070908
- _nc_Synchronize_Options@Base 5.6+20070908
- _nc_Widen_String@Base 5.6+20070908
- _nc_fty_generic@Base 5.7+20100313
- _nc_get_fieldbuffer@Base 5.7+20100313
+ (optional)_nc_Copy_Argument@Base 5.6+20070908
+ (optional)_nc_Copy_Type@Base 5.6+20070908
+ (optional)_nc_Default_Field@Base 5.6+20070908
+ (optional)_nc_Default_FieldType@Base 5.6+20070908
+ (optional)_nc_Default_Form@Base 5.6+20070908
+ (optional)_nc_First_Active_Field@Base 5.6+20070908
+ (optional)_nc_Free_Argument@Base 5.6+20070908
+ (optional)_nc_Free_Type@Base 5.6+20070908
+ (optional)_nc_Internal_Validation@Base 5.6+20070908
+ (optional)_nc_Make_Argument@Base 5.6+20070908
+ (optional)_nc_Position_Form_Cursor@Base 5.6+20070908
+ (optional)_nc_Refresh_Current_Field@Base 5.6+20070908
+ (optional)_nc_Set_Current_Field@Base 5.6+20070908
+ (optional)_nc_Set_Form_Page@Base 5.6+20070908
+ (optional)_nc_Synchronize_Attributes@Base 5.6+20070908
+ (optional)_nc_Synchronize_Options@Base 5.6+20070908
+ (optional)_nc_Widen_String@Base 5.6+20070908
+ (optional)_nc_fty_generic@Base 5.7+20100313
+ (optional)_nc_get_fieldbuffer@Base 5.7+20100313
  current_field@Base 5.6+20070908
  data_ahead@Base 5.6+20070908
  data_behind@Base 5.6+20070908
@@ -99,19 +99,19 @@ libformw.so.5 #PACKAGE# #MINVER#
  set_new_page@Base 5.6+20070908
  unpost_form@Base 5.6+20070908
 libmenuw.so.5 #PACKAGE# #MINVER#
- _nc_Calculate_Item_Length_and_Width@Base 5.6+20070908
- _nc_Calculate_Text_Width@Base 5.6+20070908
- _nc_Connect_Items@Base 5.6+20070908
- _nc_Default_Item@Base 5.6+20070908
- _nc_Default_Menu@Base 5.6+20070908
- _nc_Disconnect_Items@Base 5.6+20070908
- _nc_Draw_Menu@Base 5.6+20070908
- _nc_Link_Items@Base 5.6+20070908
- _nc_Match_Next_Character_In_Item_Name@Base 5.6+20070908
- _nc_New_TopRow_and_CurrentItem@Base 5.6+20070908
- _nc_Post_Item@Base 5.6+20070908
- _nc_Show_Menu@Base 5.6+20070908
- _nc_menu_cursor_pos@Base 5.6+20070908
+ (optional)_nc_Calculate_Item_Length_and_Width@Base 5.6+20070908
+ (optional)_nc_Calculate_Text_Width@Base 5.6+20070908
+ (optional)_nc_Connect_Items@Base 5.6+20070908
+ (optional)_nc_Default_Item@Base 5.6+20070908
+ (optional)_nc_Default_Menu@Base 5.6+20070908
+ (optional)_nc_Disconnect_Items@Base 5.6+20070908
+ (optional)_nc_Draw_Menu@Base 5.6+20070908
+ (optional)_nc_Link_Items@Base 5.6+20070908
+ (optional)_nc_Match_Next_Character_In_Item_Name@Base 5.6+20070908
+ (optional)_nc_New_TopRow_and_CurrentItem@Base 5.6+20070908
+ (optional)_nc_Post_Item@Base 5.6+20070908
+ (optional)_nc_Show_Menu@Base 5.6+20070908
+ (optional)_nc_menu_cursor_pos@Base 5.6+20070908
  current_item@Base 5.6+20070908
  free_item@Base 5.6+20070908
  free_menu@Base 5.6+20070908
@@ -189,149 +189,149 @@ libncursesw.so.5 #PACKAGE# #MINVER#
  SP@Base 5.6+20070908
  TABSIZE@Base 5.6+20070908
  UP@Base 5.6+20070908
- _nc_access@Base 5.6+20070908
- _nc_add_to_try@Base 5.6+20070908
+ (optional)_nc_access@Base 5.6+20070908
+ (optional)_nc_add_to_try@Base 5.6+20070908
  _nc_align_termtype@Base 5.6+20070908
  _nc_basename@Base 5.6+20070908
- _nc_baudrate@Base 5.6+20070908
- _nc_build_wch@Base 5.6+20070908
+ (optional)_nc_baudrate@Base 5.6+20070908
+ (optional)_nc_build_wch@Base 5.6+20070908
  _nc_copy_termtype@Base 5.6+20070908
  _nc_curr_col@Base 5.6+20070908
  _nc_curr_line@Base 5.6+20070908
- _nc_delink_entry@Base 5.6+20070908
- _nc_do_color@Base 5.6+20070908
- _nc_doalloc@Base 5.6+20070908
+ (optional)_nc_delink_entry@Base 5.6+20070908
+ (optional)_nc_do_color@Base 5.6+20070908
+ (optional)_nc_doalloc@Base 5.6+20070908
  _nc_err_abort@Base 5.6+20070908
- _nc_expand_try@Base 5.6+20070908
- _nc_expanded@Base 5.6+20070908
+ (optional)_nc_expand_try@Base 5.6+20070908
+ (optional)_nc_expanded@Base 5.6+20070908
  _nc_fallback@Base 5.6+20070908
  _nc_find_entry@Base 5.7+20090711
  _nc_find_type_entry@Base 5.7+20090711
  _nc_first_db@Base 5.6+20070908
  _nc_first_name@Base 5.6+20070908
- _nc_flush@Base 5.6+20070908
- _nc_format_slks@Base 5.7+20090711
+ (optional)_nc_flush@Base 5.6+20070908
+ (optional)_nc_format_slks@Base 5.7+20090711
  _nc_free_and_exit@Base 5.6+20080920
  _nc_free_entries@Base 5.6+20070908
  _nc_free_entry@Base 5.6+20070908
  _nc_free_termtype@Base 5.6+20070908
  _nc_freeall@Base 5.6+20070908
- _nc_freewin@Base 5.6+20070908
+ (optional)_nc_freewin@Base 5.6+20070908
  _nc_get_alias_table@Base 5.7+20090711
  _nc_get_hash_info@Base 5.7+20100313
  _nc_get_hash_table@Base 5.7+20090711
- _nc_get_locale@Base 5.6+20070908
- _nc_get_screensize@Base 5.6+20070908
+ (optional)_nc_get_locale@Base 5.6+20070908
+ (optional)_nc_get_screensize@Base 5.6+20070908
  _nc_get_source@Base 5.6+20070908
  _nc_get_table@Base 5.7+20090711
  _nc_get_tty_mode@Base 5.6+20070908
  _nc_get_type@Base 5.6+20070908
- _nc_getenv_num@Base 5.6+20070908
- _nc_globals@Base 5.6+20070908
- _nc_handle_sigwinch@Base 5.6+20070908
+ (optional)_nc_getenv_num@Base 5.6+20070908
+ (optional)_nc_globals@Base 5.6+20070908
+ (optional)_nc_handle_sigwinch@Base 5.6+20070908
  _nc_has_mouse@Base 5.6+20070908
- _nc_hash_map@Base 5.6+20070908
- _nc_hashed_db@Base 5.6+20070908
+ (optional)_nc_hash_map@Base 5.6+20070908
+ (optional)_nc_hashed_db@Base 5.6+20070908
  _nc_head@Base 5.6+20070908
  _nc_home_terminfo@Base 5.6+20070908
  _nc_init_acs@Base 5.6+20070908
- _nc_init_keytry@Base 5.6+20070908
- _nc_init_wacs@Base 5.6+20070908
- _nc_insert_ch@Base 5.6+20070908
- _nc_insert_wch@Base 5.7+20100313
+ (optional)_nc_init_keytry@Base 5.6+20070908
+ (optional)_nc_init_wacs@Base 5.6+20070908
+ (optional)_nc_insert_ch@Base 5.6+20070908
+ (optional)_nc_insert_wch@Base 5.7+20100313
  _nc_is_abs_path@Base 5.6+20070908
- _nc_is_charable@Base 5.6+20070908
+ (optional)_nc_is_charable@Base 5.6+20070908
  _nc_is_dir_path@Base 5.6+20070908
  _nc_is_file_path@Base 5.6+20070908
- _nc_keep_tic_dir@Base 5.6+20070908
- _nc_keyname@Base 5.6+20080614
- _nc_keypad@Base 5.6+20070908
+ (optional)_nc_keep_tic_dir@Base 5.6+20070908
+ (optional)_nc_keyname@Base 5.6+20080614
+ (optional)_nc_keypad@Base 5.6+20070908
  _nc_last_db@Base 5.6+20070908
- _nc_leaks_tinfo@Base 5.6+20070908
- _nc_locale_breaks_acs@Base 5.6+20070908
- _nc_make_oldhash@Base 5.6+20070908
- _nc_makenew@Base 5.6+20070908
- _nc_memmove@Base 5.6+20070908
- _nc_msec_cost@Base 5.6+20070908
- _nc_mvcur_init@Base 5.6+20070908
- _nc_mvcur_resume@Base 5.6+20070908
- _nc_mvcur_wrap@Base 5.6+20070908
+ (optional)_nc_leaks_tinfo@Base 5.6+20070908
+ (optional)_nc_locale_breaks_acs@Base 5.6+20070908
+ (optional)_nc_make_oldhash@Base 5.6+20070908
+ (optional)_nc_makenew@Base 5.6+20070908
+ (optional)_nc_memmove@Base 5.6+20070908
+ (optional)_nc_msec_cost@Base 5.6+20070908
+ (optional)_nc_mvcur_init@Base 5.6+20070908
+ (optional)_nc_mvcur_resume@Base 5.6+20070908
+ (optional)_nc_mvcur_wrap@Base 5.6+20070908
  _nc_name_match@Base 5.6+20070908
  _nc_next_db@Base 5.6+20070908
  _nc_nulls_sent@Base 5.6+20070908
- _nc_oldnums@Base 5.6+20070908
- _nc_ospeed@Base 5.6+20070908
- _nc_outch@Base 5.6+20070908
- _nc_panelhook@Base 5.6+20070908
+ (optional)_nc_oldnums@Base 5.6+20070908
+ (optional)_nc_ospeed@Base 5.6+20070908
+ (optional)_nc_outch@Base 5.6+20070908
+ (optional)_nc_panelhook@Base 5.6+20070908
  _nc_pathlast@Base 5.6+20070908
- _nc_prescreen@Base 5.6+20070908
- _nc_printf_string@Base 5.6+20070908
- _nc_putp@Base 5.7+20090404
- _nc_putp_flush@Base 5.7+20090404
+ (optional)_nc_prescreen@Base 5.6+20070908
+ (optional)_nc_printf_string@Base 5.6+20070908
+ (optional)_nc_putp@Base 5.7+20090404
+ (optional)_nc_putp_flush@Base 5.7+20090404
  _nc_read_entry@Base 5.6+20070908
  _nc_read_file_entry@Base 5.6+20070908
- _nc_read_termcap@Base 5.6+20070908
+ (optional)_nc_read_termcap@Base 5.6+20070908
  _nc_read_termtype@Base 5.6+20070908
- _nc_remove_key@Base 5.6+20070908
- _nc_remove_string@Base 5.6+20070908
- _nc_render@Base 5.6+20070908
- _nc_reset_colors@Base 5.6+20070908
+ (optional)_nc_remove_key@Base 5.6+20070908
+ (optional)_nc_remove_string@Base 5.6+20070908
+ (optional)_nc_render@Base 5.6+20070908
+ (optional)_nc_reset_colors@Base 5.6+20070908
  _nc_ripoffline@Base 5.6+20070908
  _nc_rootname@Base 5.6+20070908
- _nc_safe_strcat@Base 5.6+20070908
- _nc_safe_strcpy@Base 5.6+20070908
- _nc_screen_chain@Base 5.6+20070908
- _nc_screen_init@Base 5.6+20070908
- _nc_screen_of@Base 5.6+20080614
- _nc_screen_resume@Base 5.6+20070908
- _nc_screen_wrap@Base 5.6+20070908
- _nc_scroll_oldhash@Base 5.6+20070908
- _nc_scroll_optimize@Base 5.6+20070908
- _nc_scroll_window@Base 5.6+20070908
- _nc_scrolln@Base 5.6+20070908
- _nc_set_buffer@Base 5.6+20070908
- _nc_set_no_padding@Base 5.6+20080713
+ (optional)_nc_safe_strcat@Base 5.6+20070908
+ (optional)_nc_safe_strcpy@Base 5.6+20070908
+ (optional)_nc_screen_chain@Base 5.6+20070908
+ (optional)_nc_screen_init@Base 5.6+20070908
+ (optional)_nc_screen_of@Base 5.6+20080614
+ (optional)_nc_screen_resume@Base 5.6+20070908
+ (optional)_nc_screen_wrap@Base 5.6+20070908
+ (optional)_nc_scroll_oldhash@Base 5.6+20070908
+ (optional)_nc_scroll_optimize@Base 5.6+20070908
+ (optional)_nc_scroll_window@Base 5.6+20070908
+ (optional)_nc_scrolln@Base 5.6+20070908
+ (optional)_nc_set_buffer@Base 5.6+20070908
+ (optional)_nc_set_no_padding@Base 5.6+20080713
  _nc_set_source@Base 5.6+20070908
  _nc_set_tty_mode@Base 5.6+20070908
  _nc_set_type@Base 5.6+20070908
- _nc_setup_tinfo@Base 5.7+20101113
- _nc_setupscreen@Base 5.6+20070908
- _nc_setupterm@Base 5.6+20070908
- _nc_signal_handler@Base 5.6+20070908
- _nc_slk_initialize@Base 5.6+20070908
- _nc_str_copy@Base 5.6+20070908
- _nc_str_init@Base 5.6+20070908
- _nc_str_null@Base 5.6+20070908
+ (optional)_nc_setup_tinfo@Base 5.7+20101113
+ (optional)_nc_setupscreen@Base 5.6+20070908
+ (optional)_nc_setupterm@Base 5.6+20070908
+ (optional)_nc_signal_handler@Base 5.6+20070908
+ (optional)_nc_slk_initialize@Base 5.6+20070908
+ (optional)_nc_str_copy@Base 5.6+20070908
+ (optional)_nc_str_init@Base 5.6+20070908
+ (optional)_nc_str_null@Base 5.6+20070908
  _nc_suppress_warnings@Base 5.6+20070908
- _nc_synchook@Base 5.6+20070908
+ (optional)_nc_synchook@Base 5.6+20070908
  _nc_syserr_abort@Base 5.6+20070908
  _nc_tail@Base 5.6+20070908
  _nc_tic_dir@Base 5.6+20070908
- _nc_timed_wait@Base 5.6+20070908
- _nc_tinfo_cmdch@Base 5.7+20100313
+ (optional)_nc_timed_wait@Base 5.6+20070908
+ (optional)_nc_tinfo_cmdch@Base 5.7+20100313
  _nc_tinfo_fkeys@Base 5.6+20070908
- _nc_to_char@Base 5.6+20070908
- _nc_to_widechar@Base 5.6+20070908
+ (optional)_nc_to_char@Base 5.6+20070908
+ (optional)_nc_to_widechar@Base 5.6+20070908
  _nc_tparm_analyze@Base 5.6+20070908
  _nc_tparm_err@Base 5.6+20070908
  _nc_tracing@Base 5.6+20070908
  _nc_trim_sgr0@Base 5.6+20070908
- _nc_unctrl@Base 5.6+20080614
- _nc_ungetch@Base 5.6+20080503
- _nc_unicode_locale@Base 5.6+20070908
- _nc_update_screensize@Base 5.6+20070908
+ (optional)_nc_unctrl@Base 5.6+20080614
+ (optional)_nc_ungetch@Base 5.6+20080503
+ (optional)_nc_unicode_locale@Base 5.6+20070908
+ (optional)_nc_update_screensize@Base 5.6+20070908
  _nc_user_definable@Base 5.6+20070908
- _nc_varargs@Base 5.6+20070908
+ (optional)_nc_varargs@Base 5.6+20070908
  _nc_visbuf2@Base 5.6+20070908
  _nc_visbuf@Base 5.6+20070908
- _nc_visbufn@Base 5.6+20070908
+ (optional)_nc_visbufn@Base 5.6+20070908
  _nc_vsscanf@Base 5.6+20070908
  _nc_wacs@Base 5.6+20070908
- _nc_waddch_nosync@Base 5.6+20070908
+ (optional)_nc_waddch_nosync@Base 5.6+20070908
  _nc_warning@Base 5.6+20070908
- _nc_wchstrlen@Base 5.6+20070908
- _nc_wcrtomb@Base 5.6+20071124
- _nc_wgetch@Base 5.6+20070908
+ (optional)_nc_wchstrlen@Base 5.6+20070908
+ (optional)_nc_wcrtomb@Base 5.6+20071124
+ (optional)_nc_wgetch@Base 5.6+20070908
  acs_map@Base 5.6+20070908
  add_wch@Base 5.6+20070908
  add_wchnstr@Base 5.6+20070908
