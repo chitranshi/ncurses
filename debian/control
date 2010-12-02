@@ -115,7 +115,8 @@ Package: lib64ncurses5-dev
 Architecture: i386 powerpc sparc s390
 Section: libdevel
 Priority: optional
-Depends: lib64ncurses5 (= ${binary:Version}), libncurses5-dev, lib64c-dev, ${misc:Depends}
+Depends: lib64ncurses5 (= ${binary:Version}),
+	 libncurses5-dev (= ${binary:Version}), lib64c-dev, ${misc:Depends}
 Suggests: ncurses-doc
 Replaces: amd64-libs-dev (<= 1.2)
 Description: developer's libraries for ncurses (64-bit)
@@ -148,7 +149,8 @@ Package: lib32ncurses5-dev
 Architecture: amd64 ppc64
 Section: libdevel
 Priority: optional
-Depends: lib32ncurses5 (= ${binary:Version}), libncurses5-dev, lib32c-dev, ${misc:Depends}
+Depends: lib32ncurses5 (= ${binary:Version}),
+	 libncurses5-dev (= ${binary:Version}), lib32c-dev, ${misc:Depends}
 Suggests: ncurses-doc
 Conflicts: libc6-i386 (<= 2.9-18)
 Description: developer's libraries for ncurses (32-bit)
@@ -180,7 +182,8 @@ Package: lib32ncursesw5-dev
 Architecture: amd64 ppc64
 Section: libdevel
 Priority: optional
-Depends: lib32ncursesw5 (= ${binary:Version}), libncursesw5-dev, lib32c-dev, ${misc:Depends}
+Depends: lib32ncursesw5 (= ${binary:Version}),
+	 libncursesw5-dev (= ${binary:Version}), lib32c-dev, ${misc:Depends}
 Conflicts: libc6-i386 (<= 2.9-18)
 Suggests: ncurses-doc
 Description: developer's libraries for ncursesw (32-bit)
