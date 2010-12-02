@@ -10,6 +10,7 @@ ncurses (5.7+20101128-1) UNRELEASED; urgency=low
   * Move documentation and section 3 manpages to a new ncurses-doc package
     (Closes: #233400).  Suggest ncurses-doc in all -dev packages.
   * Register the documentation in doc-base (Closes: #451667).
+  * Provide symbols files in all library packages.
   * Ship mlterm terminfo in ncurses-term (see #485448).
   * Ship curses and termcap symlinks in lib{32,64}ncurses5-dev (LP: #485118).
   * Add lintian override for the empty /usr/share/terminfo directory that

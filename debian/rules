@@ -377,14 +377,14 @@ binary-arch: build install
 	dh_compress -s -N$(package-examples)
 	dh_fixperms -s
 	dh_link -s
-	dh_makeshlibs -p$(package-lib) -V "$(package-lib) $(sodepver)"
-	dh_makeshlibs -p$(package-libw) -V "$(package-libw) $(sodepver)"
+	dh_makeshlibs -p$(package-lib) -V "$(package-lib) $(sodepver)" -- -c4
+	dh_makeshlibs -p$(package-libw) -V "$(package-libw) $(sodepver)" -- -c4
 ifneq ($(build_32),)
-	dh_makeshlibs -p$(package-lib-32) -V "$(package-lib-32) $(sodepver)"
-	dh_makeshlibs -p$(package-libw-32) -V "$(package-libw-32) $(sodepver)"
+	dh_makeshlibs -p$(package-lib-32) -V "$(package-lib-32) $(sodepver)" -- -c4
+	dh_makeshlibs -p$(package-libw-32) -V "$(package-libw-32) $(sodepver)" -- -c4
 endif
 ifneq ($(build_64),)
-	dh_makeshlibs -p$(package-lib-64) -V "$(package-lib-64) $(sodepver)"
+	dh_makeshlibs -p$(package-lib-64) -V "$(package-lib-64) $(sodepver)" -- -c4
 endif
 	dh_shlibdeps -p$(package-lib) -p$(package-libw) \
 		-ldebian/$(package-lib)/lib:debian/$(package-lib)/usr/lib:debian/$(package-libw)/usr/lib \
