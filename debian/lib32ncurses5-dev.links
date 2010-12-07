@@ -1,5 +1,4 @@
 lib32/libncurses.so.5 usr/lib32/libncurses.so
-lib32/libtic.so.5     usr/lib32/libtic.so
 usr/lib32/libncurses.so usr/lib32/libcurses.so
 usr/lib32/libncurses.so usr/lib32/libtermcap.so
 usr/lib32/libncurses.a  usr/lib32/libtermcap.a

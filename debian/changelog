@@ -11,6 +11,7 @@ ncurses (5.7+20101128-1) UNRELEASED; urgency=low
     (Closes: #233400).  Suggest ncurses-doc in all -dev packages.
   * Register the documentation in doc-base (Closes: #451667).
   * Remove the rather useless README.Debian (Closes: #606034).
+  * Move libtic libraries to /usr.
   * Tighten the dependencies of the lib{32,64}ncurses*-dev packages to their
     regular counterparts.
   * Provide symbols files in all library packages.
