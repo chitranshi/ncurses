@@ -1,3 +1,4 @@
+01-debian-kfreebsd-terminfo.patch
 01-use-d-reentrant.diff
 02-debian-backspace.diff
 03-linux-use-fsuid.diff

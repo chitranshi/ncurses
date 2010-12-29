@@ -107,7 +107,7 @@ CONFARGS += --with-build-cc=gcc --host=$(DEB_HOST_GNU_TYPE)
 endif
 
 # Files for /lib/terminfo.
-libterminfofiles=a/ansi c/cons25 c/cygwin d/dumb h/hurd l/linux m/mach \
+libterminfofiles=a/ansi c/cons25 c/cons25-debian c/cygwin d/dumb h/hurd l/linux m/mach \
 	m/mach-bold m/mach-color p/pcansi r/rxvt r/rxvt-m r/rxvt-basic \
 	r/rxvt-unicode \
 	s/screen s/screen-bce s/screen-s s/screen-w s/sun v/vt100 v/vt102 \
