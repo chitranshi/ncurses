@@ -1,10 +1,10 @@
-ncurses (5.7+20100313-5) UNRELEASED; urgency=low
+ncurses (5.7+20100313-5) unstable; urgency=low
 
   * New patch 01-debian-kfreebsd-terminfo.patch, adding a cons25-debian
     terminfo entry to ncurses-base for the Debian GNU/kfreebsd console
     (Closes: #607662).
 
- -- Sven Joachim <svenjoac@gmx.de>  Wed, 29 Dec 2010 18:53:50 +0100
+ -- Sven Joachim <svenjoac@gmx.de>  Wed, 29 Dec 2010 19:55:00 +0100
 
 ncurses (5.7+20100313-4) unstable; urgency=low
 
