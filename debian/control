@@ -231,8 +231,8 @@ Architecture: all
 Section: admin
 Priority: standard
 Depends: ${misc:Depends}
-Replaces: ncurses-base (<< 5.7+20100313-1), mlterm-common (<< 3.0.1-4)
-Breaks: mlterm-common (<< 3.0.1-4)
+Replaces: ncurses-base (<< 5.7+20100313-1), mlterm-common (<< 3.0.2-1)
+Breaks: mlterm-common (<< 3.0.2-1)
 Description: additional terminal type definitions
  The ncurses library routines are a terminal-independent method of
  updating character screens with reasonable optimization.

@@ -1,3 +1,10 @@
+ncurses (5.7+20101128-2) UNRELEASED; urgency=low
+
+  * Adjust the Replaces/Breaks combination on mlterm-common, now that
+    mlterm 3.0.2-1 has dropped the mlterm terminfo entry.
+
+ -- Sven Joachim <svenjoac@gmx.de>  Wed, 05 Jan 2011 11:33:44 +0100
+
 ncurses (5.7+20101128-1) experimental; urgency=low
 
   [ Sven Joachim ]
