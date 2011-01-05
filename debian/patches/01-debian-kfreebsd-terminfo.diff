@@ -14,7 +14,7 @@ Last-Update: 2010-12-29
 
 --- a/misc/terminfo.src
 +++ b/misc/terminfo.src
-@@ -1774,6 +1774,9 @@
+@@ -1919,6 +1919,9 @@
  cons25|ansis|ansi80x25|freebsd console (25-line ansi mode),
  	acsc=-\030.^Y0\333`\004a\260f\370g\361h\261i\025j\331k\277l\332m\300n\305q\304t\303u\264v\301w\302x\263y\363z\362~\371,
  	use=cons25w,
