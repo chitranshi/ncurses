@@ -94,6 +94,7 @@ CONFARGS =	--prefix=/usr \
 		--without-profile --without-debug \
 		--disable-rpath --enable-echo \
 		--enable-const \
+		--enable-pc-files \
 		--without-ada \
 		--without-tests \
 		$(with_gpm) \

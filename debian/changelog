@@ -1,5 +1,7 @@
 ncurses (5.7+20101128-2) UNRELEASED; urgency=low
 
+  * Ship .pc files for pkg-config in libncurses5-dev and libncursesw5-dev,
+    adding a build-dependency on pkg-config (Closes: #609614).
   * Adjust the Replaces/Breaks combination on mlterm-common, now that
     mlterm 3.0.2-1 has dropped the mlterm terminfo entry.
   * Rename patch 01-debian-kfreebsd-terminfo.patch to

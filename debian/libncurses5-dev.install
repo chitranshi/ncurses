@@ -4,4 +4,10 @@ usr/lib/libtic.so
 usr/lib/libform.so
 usr/lib/libmenu.so
 usr/lib/libpanel.so
+usr/lib/pkgconfig/form.pc
+usr/lib/pkgconfig/menu.pc
+usr/lib/pkgconfig/ncurses++.pc
+usr/lib/pkgconfig/ncurses.pc
+usr/lib/pkgconfig/panel.pc
+usr/lib/pkgconfig/tic.pc
 obj-static/lib/*.a usr/lib
