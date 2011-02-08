@@ -6,6 +6,8 @@ ncurses (5.7+20101128-2) UNRELEASED; urgency=low
     mlterm 3.0.2-1 has dropped the mlterm terminfo entry.
   * Fix the libncursesw5-dbg preinst which had been removing the wrong
     symlink since it was introduced.
+  * Drop the other preinst scripts, they were only necessary for upgrades
+    from pre-Lenny versions.
   * Rename patch 01-debian-kfreebsd-terminfo.patch to
     01-debian-kfreebsd-terminfo.diff for consistency with the other
     patch names.
