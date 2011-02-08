@@ -8,6 +8,7 @@ ncurses (5.7+20101128-2) UNRELEASED; urgency=low
     symlink since it was introduced.
   * Drop the other preinst scripts, they were only necessary for upgrades
     from pre-Lenny versions.
+  * Do not run uupdate from debian/watch.
   * Rename patch 01-debian-kfreebsd-terminfo.patch to
     01-debian-kfreebsd-terminfo.diff for consistency with the other
     patch names.
