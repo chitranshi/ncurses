@@ -4,9 +4,9 @@ set -e
 
 case "${1}" in
 	install|upgrade)
-		if [ -L /usr/share/doc/libncurses5-dbg ]
+		if [ -L /usr/share/doc/libncursesw5-dbg ]
 		then
-			rm -f /usr/share/doc/libncurses5-dbg
+			rm -f /usr/share/doc/libncursesw5-dbg
 		fi
 		;;
 
