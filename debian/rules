@@ -354,13 +354,12 @@ endif
 	# Install the test programs, sparing the detour to debian/tmp.
 	$(MAKE) -C $(objdir-test) DESTDIR=$(workdir)/debian/$(package-examples) install
 
-	dh_install -s
-
 binary:	binary-arch binary-indep
 
 binary-arch: build install
 	dh_testdir
 	dh_testroot
+	dh_install -s
 	dh_installman -s
 	dh_installdocs -s debian/FAQ
 	dh_installchangelogs -s NEWS
