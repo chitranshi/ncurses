@@ -8,7 +8,6 @@ export LDFLAGS := $(shell dpkg-buildflags --get LDFLAGS)
 
 # These are important since this is a library package
 soname=5
-vername=5.8
 sodepver = (>= 5.7+20100313)
 
 # Name our packages
