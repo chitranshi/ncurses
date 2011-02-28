@@ -1,5 +1,5 @@
 -------------------------------------------------------------------------------
--- Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.               --
+-- Copyright (c) 1998-2010,2011 Free Software Foundation, Inc.               --
 --                                                                           --
 -- Permission is hereby granted, free of charge, to any person obtaining a   --
 -- copy of this software and associated documentation files (the             --
@@ -25,7 +25,7 @@
 -- sale, use or other dealings in this Software without prior written        --
 -- authorization.                                                            --
 -------------------------------------------------------------------------------
--- $Id: NEWS,v 1.1615 2010/11/28 16:43:28 tom Exp $
+-- $Id: NEWS,v 1.1651 2011/02/26 16:54:31 tom Exp $
 -------------------------------------------------------------------------------
 
 This is a log of changes that ncurses has gone through since Zeyd started
@@ -44,6 +44,95 @@ See the AUTHORS file for the corresponding full names.
 
 Changes through 1.9.9e did not credit all contributions;
 it is not possible to add this information.
+
+20110226 5.8 release for upload to ftp.gnu.org
+
+20110226
+	+ update release notes, for 5.8.
+	+ regenerated html manpages.
+	+ change open() in _nc_read_file_entry() to fopen() for consistency
+	  with write_file().
+	+ modify misc/run_tic.in to create parent directory, in case this is
+	  a new install of hashed database.
+	+ fix typo in Ada95/mk-1st.awk which causes error with original awk.
+
+20110220
+	+ configure script rpath fixes from xterm #269.
+	+ workaround for cygwin's non-functional features.h, to force ncurses'
+	  configure script to define _XOPEN_SOURCE_EXTENDED when building
+	  wide-character configuration.
+	+ build-fix in run_tic.sh for OS/2 EMX install
+	+ add cons25-debian entry (patch by Brian M Carlson, Debian #607662).
+
+20110212
+	+ regenerated html manpages.
+	+ use _tracef() in show_where() function of tic, to work correctly with
+	  special case of trace configuration. 
+
+20110205
+	+ add xterm-utf8 entry as a demo of the U8 feature -TD
+	+ add U8 feature to denote entries for terminal emulators which do not
+	  support VT100 SI/SO when processing UTF-8 encoding -TD
+	+ improve the NCURSES_NO_UTF8_ACS feature by adding a check for an
+	  extended terminfo capability U8 (prompted by mailing list
+	  discussion).
+
+20110122
+	+ start documenting interface changes for upcoming 5.8 release.
+	+ correct limit-checks in derwin().
+	+ correct limit-checks in newwin(), to ensure that windows have nonzero
+	  size (report by Garrett Cooper).
+	+ fix a missing "weak" declaration for pthread_kill (patch by Nicholas
+	  Alcock).
+	+ improve documentation of KEY_ENTER in curs_getch.3x manpage (prompted
+	  by discussion with Kevin Martin).
+
+20110115
+	+ modify Ada95/configure script to make the --with-curses-dir option
+	  work without requiring the --with-ncurses option.
+	+ modify test programs to allow them to be built with NetBSD curses.
+	+ document thick- and double-line symbols in curs_add_wch.3x manpage.
+	+ document WACS_xxx constants in curs_add_wch.3x manpage.
+	+ fix some warnings for clang 2.6 "--analyze"
+	+ modify Ada95 makefiles to make html-documentation with the project
+	  file configuration if that is used.
+	+ update config.guess, config.sub
+
+20110108
+	+ regenerated html manpages.
+	+ minor fixes to enable lint when trace is not enabled, e.g., with
+	  clang --analyze.
+	+ fix typo in man/default_colors.3x (patch by Tim van der Molen).
+	+ update ncurses/llib-lncurses*
+
+20110101
+	+ fix remaining strict compiler warnings in ncurses library ABI=5,
+	  except those dealing with function pointers, etc.
+
+20101225
+	+ modify nc_tparm.h, adding guards against repeated inclusion, and
+	  allowing TPARM_ARG to be overridden.
+	+ fix some strict compiler warnings in ncurses library.
+
+20101211
+	+ suppress ncv in screen entry, allowing underline (patch by Alejandro
+	  R Sedeno).
+	+ also suppress ncv in konsole-base -TD
+	+ fixes in wins_nwstr() and related functions to ensure that special
+	  characters, i.e., control characters are handled properly with the
+	  wide-character configuration.
+	+ correct a comparison in wins_nwstr() (Redhat #661506).
+	+ correct help-messages in some of the test-programs, which still
+	  referred to quitting with 'q'.
+
+20101204
+	+ add special case to _nc_infotocap() to recognize the setaf/setab
+	  strings from xterm+256color and xterm+88color, and provide a reduced
+	  version which works with termcap.
+	+ remove obsolete emacs "Local Variables" section from documentation
+	  (request by Sven Joachim).
+	+ update doc/html/index.html to include NCURSES-Programming-HOWTO.html 
+	  (report by Sven Joachim).
 
 20101128
 	+ modify test/configure and test/Makefile.in to handle this special
@@ -3677,7 +3766,7 @@ it is not possible to add this information.
 
 20030208
 	+ add checking in tic for incomplete line-drawing character mapping.
-	+ update configure script to reflect fix for AC_PROG_GCC_TRADITIONAL,
+	+ updated configure script to reflect fix for AC_PROG_GCC_TRADITIONAL,
 	  which is broken in autoconf 2.5x for Mac OS X 10.2.3 (report by
 	  Gerben Wierda <Sherlock@rna.nl>).
 	+ make return value from _nc_printf_string() consistent.  Before,
@@ -4396,7 +4485,7 @@ it is not possible to add this information.
 	+ restore special case from 20010922 changes to omit SA_RESTART when
 	  setting up SIGWINCH handler, which is needed to allow wgetch() to be
 	  interrupted by that signal.
-	+ update configure macro CF_WITH_PATHLIST, to omit some double quotes
+	+ updated configure macro CF_WITH_PATHLIST, to omit some double quotes
 	  not needed with autoconf 2.52
 	+ revert configure script to autoconf 2.13 patched with
 		autoconf-2.13-19990117.patch.gz (or later)

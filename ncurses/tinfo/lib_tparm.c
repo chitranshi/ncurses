@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2008,2010 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2010,2011 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -42,7 +42,7 @@
 #include <ctype.h>
 #include <tic.h>
 
-MODULE_ID("$Id: lib_tparm.c,v 1.79 2010/01/16 16:47:46 tom Exp $")
+MODULE_ID("$Id: lib_tparm.c,v 1.82 2011/01/15 22:19:12 tom Exp $")
 
 /*
  *	char *
@@ -454,8 +454,9 @@ tparam_internal(bool use_TPARM_ARG, const char *string, va_list ap)
 {
     char *p_is_s[NUM_PARM];
     TPARM_ARG param[NUM_PARM];
-    int popcount;
+    int popcount = 0;
     int number;
+    int num_args;
     int len;
     int level;
     int x, y;
@@ -478,7 +479,13 @@ tparam_internal(bool use_TPARM_ARG, const char *string, va_list ap)
     if (TPS(fmt_buff) == 0)
 	return NULL;
 
-    for (i = 0; i < max(popcount, number); i++) {
+    if (number > NUM_PARM)
+	number = NUM_PARM;
+    if (popcount > NUM_PARM)
+	popcount = NUM_PARM;
+    num_args = max(popcount, number);
+
+    for (i = 0; i < num_args; i++) {
 	/*
 	 * A few caps (such as plab_norm) have string-valued parms.
 	 * We'll have to assume that the caller knows the difference, since
@@ -488,6 +495,7 @@ tparam_internal(bool use_TPARM_ARG, const char *string, va_list ap)
 	 */
 	if (p_is_s[i] != 0) {
 	    p_is_s[i] = va_arg(ap, char *);
+	    param[i] = 0;
 	} else if (use_TPARM_ARG) {
 	    param[i] = va_arg(ap, TPARM_ARG);
 	} else {
@@ -509,7 +517,7 @@ tparam_internal(bool use_TPARM_ARG, const char *string, va_list ap)
 	    if (p_is_s[i])
 		spush(p_is_s[i]);
 	    else
-		npush(param[i]);
+		npush((int) param[i]);
 	}
     }
 #ifdef TRACE
@@ -518,7 +526,7 @@ tparam_internal(bool use_TPARM_ARG, const char *string, va_list ap)
 	    if (p_is_s[i] != 0)
 		save_text(", %s", _nc_visbuf(p_is_s[i]), 0);
 	    else
-		save_number(", %d", param[i], 0);
+		save_number(", %d", (int) param[i], 0);
 	}
 	_tracef(T_CALLED("%s(%s%s)"), TPS(tname), _nc_visbuf(cp), TPS(out_buff));
 	TPS(out_used) = 0;
@@ -565,7 +573,7 @@ tparam_internal(bool use_TPARM_ARG, const char *string, va_list ap)
 		    if (p_is_s[i])
 			spush(p_is_s[i]);
 		    else
-			npush(param[i]);
+			npush((int) param[i]);
 		}
 		break;
 

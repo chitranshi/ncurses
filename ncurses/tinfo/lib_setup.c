@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2010,2011 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -51,7 +51,7 @@
 #include <locale.h>
 #endif
 
-MODULE_ID("$Id: lib_setup.c,v 1.130 2010/07/31 22:16:26 tom Exp $")
+MODULE_ID("$Id: lib_setup.c,v 1.135 2011/02/06 01:04:21 tom Exp $")
 
 /****************************************************************************
  *
@@ -546,25 +546,31 @@ _nc_unicode_locale(void)
 NCURSES_EXPORT(int)
 _nc_locale_breaks_acs(TERMINAL * termp)
 {
+    const char *env_name = "NCURSES_NO_UTF8_ACS";
     char *env;
+    int value;
+    int result = 0;
 
-    if ((env = getenv("NCURSES_NO_UTF8_ACS")) != 0) {
-	return atoi(env);
+    if ((env = getenv(env_name)) != 0) {
+	result = _nc_getenv_num(env_name);
+    } else if ((value = tigetnum("U8")) >= 0) {
+	result = value;		/* use extension feature */
     } else if ((env = getenv("TERM")) != 0) {
-	if (strstr(env, "linux"))
-	    return 1;		/* always broken */
-	if (strstr(env, "screen") != 0
-	    && ((env = getenv("TERMCAP")) != 0
-		&& strstr(env, "screen") != 0)
-	    && strstr(env, "hhII00") != 0) {
+	if (strstr(env, "linux")) {
+	    result = 1;		/* always broken */
+	} else if (strstr(env, "screen") != 0
+		   && ((env = getenv("TERMCAP")) != 0
+		       && strstr(env, "screen") != 0)
+		   && strstr(env, "hhII00") != 0) {
 	    if (CONTROL_N(enter_alt_charset_mode) ||
 		CONTROL_O(enter_alt_charset_mode) ||
 		CONTROL_N(set_attributes) ||
-		CONTROL_O(set_attributes))
-		return 1;
+		CONTROL_O(set_attributes)) {
+		result = 1;
+	    }
 	}
     }
-    return 0;
+    return result;
 }
 
 NCURSES_EXPORT(int)
@@ -587,7 +593,7 @@ TINFO_SETUP_TERM(TERMINAL ** tp,
 
 #ifdef USE_TERM_DRIVER
     T((T_CALLED("_nc_setupterm_ex(%p,%s,%d,%p)"),
-       tp, _nc_visbuf(tname), Filedes, errret));
+       (void *) tp, _nc_visbuf(tname), Filedes, (void *) errret));
 
     if (tp == 0) {
 	ret_error0(TGETENT_ERR,
@@ -660,7 +666,7 @@ TINFO_SETUP_TERM(TERMINAL ** tp,
 	TCB = (TERMINAL_CONTROL_BLOCK *) termp;
 	code = _nc_globals.term_driver(TCB, tname, errret);
 	if (code == OK) {
-	    termp->Filedes = Filedes;
+	    termp->Filedes = (short) Filedes;
 	    termp->_termname = strdup(tname);
 	} else {
 	    ret_error0(TGETENT_ERR,
@@ -696,7 +702,7 @@ TINFO_SETUP_TERM(TERMINAL ** tp,
 	ttytype[NAMESIZE - 1] = '\0';
 #endif
 
-	termp->Filedes = Filedes;
+	termp->Filedes = (short) Filedes;
 	termp->_termname = strdup(tname);
 
 	set_curterm(termp);
