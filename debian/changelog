@@ -1,4 +1,4 @@
-ncurses (5.8-1) UNRELEASED; urgency=low
+ncurses (5.8-1) unstable; urgency=low
 
   * New upstream release.
   * Drop patch 01-debian-kfreebsd-terminfo.patch, applied upstream.
