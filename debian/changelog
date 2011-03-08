@@ -1,4 +1,4 @@
-ncurses (5.8+20110307-1) UNRELEASED; urgency=low
+ncurses (5.8+20110307-1) unstable; urgency=low
 
   * New upstream patchlevel.
     - Fixes bad bound checks in newwin() (Closes: #616711, #617210).
