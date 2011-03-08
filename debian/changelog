@@ -1,3 +1,9 @@
+ncurses (5.8-2) UNRELEASED; urgency=low
+
+  * Update years in debian/copyright.
+
+ -- Sven Joachim <svenjoac@gmx.de>  Tue, 08 Mar 2011 19:54:45 +0100
+
 ncurses (5.8-1) unstable; urgency=low
 
   * New upstream release.
