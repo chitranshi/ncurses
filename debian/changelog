@@ -1,10 +1,12 @@
-ncurses (5.8-2) UNRELEASED; urgency=low
+ncurses (5.8+20110307-1) UNRELEASED; urgency=low
 
+  * New upstream patchlevel.
+    - Fixes bad bound checks in newwin() (Closes: #616711, #617210).
   * Update years in debian/copyright.
   * Add a debian/watch.patchlevel file for checking/downloading weekly
     snapshots with uscan.
 
- -- Sven Joachim <svenjoac@gmx.de>  Tue, 08 Mar 2011 19:54:45 +0100
+ -- Sven Joachim <svenjoac@gmx.de>  Tue, 08 Mar 2011 20:32:23 +0100
 
 ncurses (5.8-1) unstable; urgency=low
 
