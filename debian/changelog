@@ -1,6 +1,8 @@
 ncurses (5.8-2) UNRELEASED; urgency=low
 
   * Update years in debian/copyright.
+  * Add a debian/watch.patchlevel file for checking/downloading weekly
+    snapshots with uscan.
 
  -- Sven Joachim <svenjoac@gmx.de>  Tue, 08 Mar 2011 19:54:45 +0100
 

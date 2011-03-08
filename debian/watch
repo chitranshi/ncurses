@@ -1,9 +1,6 @@
 version=3
 
+# By default we check for releases only.  If you want to
+# check/download weekly snapshots, use the watch.patchlevel file.
+
 opts=passive ftp://invisible-island.net/ncurses/ncurses-(.*)\.tar\.gz
-
-# Above entry is for releases, if you want to check for the weekly snapshots,
-# uncomment the following entry.
-
-# opts=passive,uversionmangle=s/-/+/ \
-#  ftp://invisible-island.net/ncurses/current/ncurses-(.*)\.tgz
