@@ -364,11 +364,9 @@ binary-arch: build install
 	dh_installchangelogs -s NEWS
 	dh_installdirs -s
 
-	# Strip the packages, shipping detached debugging symbols. Need to strip
-	# $(package-devw) separately, because -X$(package-libw) excludes it.
-	dh_strip -s -X$(package-dbg) -X$(package-dbgw) -X$(package-libw) \
+	# Strip the packages, shipping detached debugging symbols.
+	dh_strip -s -N$(package-dbg) -N$(package-dbgw) -N$(package-libw) \
 		--dbg-package=$(package-dbg)
-	dh_strip -p$(package-devw)
 	dh_strip -p$(package-libw) --dbg-package=$(package-dbgw)
 	dh_lintian -s
 	dh_compress -p$(package-examples) usr/lib/ncurses/examples/README

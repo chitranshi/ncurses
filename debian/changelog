@@ -1,3 +1,9 @@
+ncurses (5.8+20110307-2) UNRELEASED; urgency=low
+
+  * Correct dh_strip usage in debian/rules (Closes: #619939).
+
+ -- Sven Joachim <svenjoac@gmx.de>  Mon, 28 Mar 2011 19:22:02 +0200
+
 ncurses (5.8+20110307-1) unstable; urgency=low
 
   * New upstream patchlevel.
