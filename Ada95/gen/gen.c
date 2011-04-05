@@ -32,7 +32,7 @@
 
 /*
     Version Control
-    $Id: gen.c,v 1.55 2011/03/05 20:24:22 tom Exp $
+    $Id: gen.c,v 1.59 2011/03/31 23:50:24 tom Exp $
   --------------------------------------------------------------------------*/
 /*
   This program generates various record structures and constants from the
@@ -274,7 +274,10 @@ static void
 gen_attr_set(const char *name)
 {
   /* All of the A_xxx symbols are defined in ncurses, but not all are nonzero
-   * if "configure --enable-widec" is specified.
+   * if "configure --enable-widec" is not specified.  Originally (in
+   * 1999-2000), the ifdef's also were needed since the proposed bit-layout
+   * for wide characters allocated 16-bits for A_CHARTEXT, leaving too few
+   * bits for a few of the A_xxx symbols.
    */
   static const name_attribute_pair nap[] =
   {
@@ -365,6 +368,7 @@ gen_trace(const char *name)
     {"Internal_Calls", TRACE_ICALLS},
     {"Character_Calls", TRACE_CCALLS},
     {"Termcap_TermInfo", TRACE_DATABASE},
+    {"Attributes_And_Colors", TRACE_ATTRS},
     {(char *)0, 0}
   };
   gen_reps(nap, name, sizeof(int), 0);
@@ -803,7 +807,7 @@ gen_keydefs(int mode)
 static void
 acs_def(const char *name, chtype *a)
 {
-  int c = a - &acs_map[0];
+  int c = (int)(a - &acs_map[0]);
 
   printf("   %-24s : constant Character := ", name);
   if (isprint(UChar(c)) && (c != '`'))
@@ -1311,12 +1315,6 @@ gen_offsets(void)
   printf("   Sizeof%-*s : constant Natural := %2ld; --  %s\n",
 	 12, "_bool", (long)sizeof(bool), "bool");
 
-  /* In ncurses _maxy and _maxx needs an offset for the "public"
-   * value
-   */
-  printf("   Offset%-*s : constant Natural := %2d; --  %s\n",
-	 12, "_XY", 1, "int");
-  printf("\n");
   printf("   type Curses_Bool is mod 2 ** Interfaces.C.%s'Size;\n", s_bool);
 }
 
