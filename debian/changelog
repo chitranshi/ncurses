@@ -1,4 +1,4 @@
-ncurses (5.9-1) UNRELEASED; urgency=low
+ncurses (5.9-1) unstable; urgency=low
 
   * New upstream release.
   * Correct dh_strip usage in debian/rules (Closes: #619939).
