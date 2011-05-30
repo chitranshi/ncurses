@@ -1,3 +1,10 @@
+ncurses (5.9-2) UNRELEASED; urgency=low
+
+  * Configure all library builds except libncurses5 with "--without-progs"
+    to reduce build time a bit.
+
+ -- Sven Joachim <svenjoac@gmx.de>  Mon, 30 May 2011 17:17:46 +0200
+
 ncurses (5.9-1) unstable; urgency=low
 
   * New upstream release.

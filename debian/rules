@@ -96,6 +96,7 @@ CONFARGS =	--prefix=/usr \
 		--enable-pc-files \
 		--without-ada \
 		--without-tests \
+		--without-progs \
 		$(with_gpm) \
 		--enable-symlinks \
 		--disable-lp64 \
@@ -138,6 +139,7 @@ $(objdir)/config.status:
 	test -d $(objdir) || mkdir $(objdir)
 	cd $(objdir) && CFLAGS="$(CFLAGS)" $(srcdir)/configure \
 		$(CONFARGS) \
+		--with-progs \
 		--with-install-prefix=$(fulltempdir) \
 		--enable-overwrite
 
