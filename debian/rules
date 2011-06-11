@@ -315,6 +315,9 @@ install: build
 	GZIP='-9' $(MAKE) -C $(objdir) install
 	$(MAKE) -C $(wobjdir) install.libs
 
+	install -m 644 -t $(fulltempdir)/usr/lib $(objdir-static)/lib/*.a
+	install -m 644 -t $(fulltempdir)/usr/lib $(wobjdir-static)/lib/*.a
+
 	# Remove blacklisted terminal types.
 	cd $(tempdir)/usr/share/terminfo && rm -f $(badterminfo)
 
