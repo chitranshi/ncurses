@@ -318,8 +318,9 @@ install: build
 	install -m 644 -t $(fulltempdir)/usr/lib $(objdir-static)/lib/*.a
 	install -m 644 -t $(fulltempdir)/usr/lib $(wobjdir-static)/lib/*.a
 
-	# Remove blacklisted terminal types.
+	# Remove blacklisted terminal types and other stuff we don't install
 	cd $(tempdir)/usr/share/terminfo && rm -f $(badterminfo)
+	rm -f $(tempdir)/usr/lib/terminfo $(tempdir)/usr/lib/libcurses.so
 
 	# Compile Debian-specific terminfo entries before copying files
 	# into their packages.  Hurd uses gsbom/grbom, so pass -x to tic.
