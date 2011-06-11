@@ -3,6 +3,7 @@ ncurses (5.9-2) UNRELEASED; urgency=low
   * Configure all library builds except libncurses5 with "--without-progs"
     to reduce build time a bit.
   * Add build-arch and build-indep targets to debian/rules.
+  * Use dh_install's "--fail-missing" option.
   * Upgrade Standards-Version to 3.9.2, no changes needed.
 
  -- Sven Joachim <svenjoac@gmx.de>  Mon, 30 May 2011 17:17:46 +0200
