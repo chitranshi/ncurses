@@ -16,3 +16,4 @@ usr/lib/pkgconfig/ncurses++.pc
 usr/lib/pkgconfig/ncurses.pc
 usr/lib/pkgconfig/panel.pc
 usr/lib/pkgconfig/tic.pc
+usr/lib/libcurses.a
