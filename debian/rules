@@ -233,6 +233,8 @@ $(objdir-test)/config.status: build-normal
 	cd $(objdir-test) && CFLAGS="$(CFLAGS)" $(srcdir)/test/configure \
 		$(CONFARGS-TEST)
 
+build-arch build-indep: build
+
 build: build-normal build-static build-wide build-debug build-wide-debug \
 	build-wide-static build-test $(build_64) $(build_32)
 
