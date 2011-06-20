@@ -48,6 +48,11 @@ DEB_BUILD_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 DEB_HOST_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_HOST_GNU_SYSTEM ?= $(shell dpkg-architecture -qDEB_HOST_GNU_SYSTEM)
 DEB_HOST_ARCH ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
+DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+
+autogen-files := debian/libncurses5-dev.links debian/libncursesw5-dev.links \
+		 debian/libncurses5.install debian/libncursesw5.install \
+		 debian/libncurses5-dev.install debian/libncursesw5-dev.install
 
 ifeq ($(DEB_HOST_ARCH),i386)
 build_64_target = x86_64-$(DEB_HOST_GNU_SYSTEM)
@@ -141,7 +146,7 @@ $(objdir)/config.status:
 		$(CONFARGS) \
 		--with-progs \
 		--with-install-prefix=$(fulltempdir) \
-		--enable-overwrite
+		--enable-overwrite --libdir=/usr/lib/$(DEB_HOST_MULTIARCH)
 
 $(objdir-static)/config.status:
 	test -d $(objdir-static) || mkdir $(objdir-static)
@@ -150,7 +155,7 @@ $(objdir-static)/config.status:
 		--without-shared \
 		--without-dlsym \
 		--with-install-prefix=$(fulltempdir) \
-		--enable-overwrite
+		--enable-overwrite --libdir=/usr/lib/$(DEB_HOST_MULTIARCH)
 
 $(objdir-32)/config.status:
 	test -d $(objdir-32) || mkdir $(objdir-32)
@@ -188,14 +193,15 @@ $(objdir-debug)/config.status:
 		CFLAGS="$(CFLAGS) -DTRACE" $(srcdir)/configure \
 		$(CONFARGS) \
 		--with-install-prefix=$(fulltempdir) \
-		--enable-overwrite
+		--enable-overwrite --libdir=/usr/lib/$(DEB_HOST_MULTIARCH)
 
 $(wobjdir)/config.status:
 	test -d $(wobjdir) || mkdir $(wobjdir)
 	cd $(wobjdir) && CFLAGS="$(CFLAGS)" $(srcdir)/configure \
 		$(CONFARGS) \
 		--with-install-prefix=$(fulltempdir) \
-		--disable-overwrite --enable-widec
+		--disable-overwrite --enable-widec \
+		--libdir=/usr/lib/$(DEB_HOST_MULTIARCH)
 
 $(wobjdir-static)/config.status:
 	test -d $(wobjdir-static) || mkdir $(wobjdir-static)
@@ -204,7 +210,8 @@ $(wobjdir-static)/config.status:
 		--without-shared \
 		--without-dlsym \
 		--with-install-prefix=$(fulltempdir) \
-		--disable-overwrite --enable-widec
+		--disable-overwrite --enable-widec \
+		--libdir=/usr/lib/$(DEB_HOST_MULTIARCH)
 
 $(wobjdir-debug)/config.status:
 	test -d $(wobjdir-debug) || mkdir $(wobjdir-debug)
@@ -212,7 +219,8 @@ $(wobjdir-debug)/config.status:
 		CFLAGS="$(CFLAGS) -DTRACE" $(srcdir)/configure \
 		$(CONFARGS) \
 		--with-install-prefix=$(fulltempdir) \
-		--disable-overwrite --enable-widec
+		--disable-overwrite --enable-widec \
+		--libdir=/usr/lib/$(DEB_HOST_MULTIARCH)
 
 $(wobjdir-32)/config.status:
 	test -d $(wobjdir-32) || mkdir $(wobjdir-32)
@@ -295,6 +303,7 @@ clean:
 	rm -rf $(objdir-debug)
 	rm -rf $(wobjdir-debug)
 	rm -rf $(objdir-test)
+	rm -f $(autogen-files)
 	dh_clean
 
 install: build
@@ -315,12 +324,12 @@ install: build
 	GZIP='-9' $(MAKE) -C $(objdir) install
 	$(MAKE) -C $(wobjdir) install.libs
 
-	install -m 644 -t $(fulltempdir)/usr/lib $(objdir-static)/lib/*.a
-	install -m 644 -t $(fulltempdir)/usr/lib $(wobjdir-static)/lib/*.a
+	install -m 644 -t $(fulltempdir)/usr/lib/$(DEB_HOST_MULTIARCH) $(objdir-static)/lib/*.a
+	install -m 644 -t $(fulltempdir)/usr/lib/$(DEB_HOST_MULTIARCH) $(wobjdir-static)/lib/*.a
 
 	# Remove blacklisted terminal types and other stuff we don't install
 	cd $(tempdir)/usr/share/terminfo && rm -f $(badterminfo)
-	rm -f $(tempdir)/usr/lib/terminfo $(tempdir)/usr/lib/libcurses.so
+	rm -f $(tempdir)/usr/lib/terminfo $(tempdir)/usr/lib/$(DEB_HOST_MULTIARCH)/libcurses.so
 
 	# Compile Debian-specific terminfo entries before copying files
 	# into their packages.  Hurd uses gsbom/grbom, so pass -x to tic.
@@ -361,9 +370,12 @@ endif
 	# Install the test programs, sparing the detour to debian/tmp.
 	$(MAKE) -C $(objdir-test) DESTDIR=$(workdir)/debian/$(package-examples) install
 
+debian/%: debian/%.in
+	sed -e 's/$${DEB_HOST_MULTIARCH}/$(DEB_HOST_MULTIARCH)/g' $< > $@
+
 binary:	binary-arch binary-indep
 
-binary-arch: build install
+binary-arch: build install $(autogen-files)
 	dh_testdir
 	dh_testroot
 	dh_install -s --fail-missing

@@ -1,4 +1,10 @@
 files
+libncurses5-dev.links
+libncursesw5-dev.links
+libncurses5.install
+libncursesw5.install
+libncurses5-dev.install
+libncursesw5-dev.install
 *.substvars
 *.debhelper
 *.debhelper.log
