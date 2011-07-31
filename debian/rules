@@ -335,7 +335,7 @@ install: build
 	# into their packages.  Hurd uses gsbom/grbom, so pass -x to tic.
 ifeq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
 	for ti in xterm hurd rxvt rxvt-unicode; do \
-	  LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$(fulltempdir)/usr/lib:$(fulltempdir)/lib \
+	  LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$(fulltempdir)/usr/lib/$(DEB_HOST_MULTIARCH):$(fulltempdir)/lib/$(DEB_HOST_MULTIARCH) \
 		TERMINFO=$(fulltempdir)/usr/share/terminfo \
 		$(tempdir)/usr/bin/tic -x debian/$$ti.ti; \
 	done
