@@ -5,6 +5,8 @@ ncurses (5.9-2) UNRELEASED; urgency=low
   * Add build-arch and build-indep targets to debian/rules.
   * Use dh_install's "--fail-missing" option.
   * Build libncurses5 and libncursesw5 for multiarch.
+  * New patch 03-debian-ncursesconfig-omit-L.diff to omit the "-L" part
+    from "ncurses5-config --libs" (see #638281).
   * Bump debhelper compatibility level to 8.
   * Upgrade Standards-Version to 3.9.2, no changes needed.
 
