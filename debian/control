@@ -30,6 +30,7 @@ Package: libncurses5-dev
 Architecture: any
 Section: libdevel
 Priority: optional
+Multi-Arch: same
 Depends: libncurses5 (= ${binary:Version}), ncurses-bin (= ${binary:Version}),
 	 libc-dev, ${misc:Depends}
 Conflicts: ncurses-dev, libncurses-dev
@@ -74,6 +75,7 @@ Package: libncursesw5-dev
 Architecture: any
 Section: libdevel
 Priority: optional
+Multi-Arch: same
 Depends: libncursesw5 (= ${binary:Version}), ncurses-bin (= ${binary:Version}),
 	 libc-dev, ${misc:Depends}
 Suggests: ncurses-doc
@@ -207,6 +209,7 @@ Architecture: any
 Section: utils
 Essential: yes
 Pre-Depends: ${shlibs:Depends}, ${misc:Depends}
+Multi-Arch: foreign
 Description: terminal-related programs and man pages
  The ncurses library routines are a terminal-independent method of
  updating character screens with reasonable optimization.
