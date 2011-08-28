@@ -1,4 +1,3 @@
-lib/libncurses.so.5   usr/lib/libncurses.so
 usr/lib/libncurses.so usr/lib/libcurses.so
 usr/lib/libncurses.so usr/lib/libtermcap.so
 usr/lib/libncurses.a  usr/lib/libtermcap.a

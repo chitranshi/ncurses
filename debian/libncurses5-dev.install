@@ -10,4 +10,9 @@ usr/lib/pkgconfig/ncurses++.pc
 usr/lib/pkgconfig/ncurses.pc
 usr/lib/pkgconfig/panel.pc
 usr/lib/pkgconfig/tic.pc
-obj-static/lib/*.a usr/lib
+obj-static/lib/libncurses.a usr/lib
+obj-static/lib/libncurses++.a usr/lib
+obj-static/lib/libtic.a usr/lib
+obj-static/lib/libform.a usr/lib
+obj-static/lib/libmenu.a usr/lib
+obj-static/lib/libpanel.a usr/lib

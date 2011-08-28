@@ -16,15 +16,22 @@ package-bin=ncurses-bin
 package-lib=libncurses$(soname)
 package-lib-32=lib32ncurses$(soname)
 package-lib-64=lib64ncurses$(soname)
+package-ti=libtinfo$(soname)
+package-ti-32=lib32tinfo$(soname)
+package-ti-64=lib64tinfo$(soname)
 package-libw=libncursesw$(soname)
 package-libw-32=lib32ncursesw$(soname)
 package-dev=libncurses$(soname)-dev
 package-dev-32=lib32ncurses$(soname)-dev
 package-dev-64=lib64ncurses$(soname)-dev
+package-devti=libtinfo$(soname)-dev
+package-devti-32=lib32tinfo$(soname)-dev
+package-devti-64=lib64tinfo$(soname)-dev
 package-devw=libncursesw$(soname)-dev
 package-devw-32=lib32ncursesw$(soname)-dev
 package-dbg=libncurses$(soname)-dbg
 package-dbgw=libncursesw$(soname)-dbg
+package-dbgti=libtinfo$(soname)-dbg
 package-term=ncurses-term
 package-examples=ncurses-examples
 
@@ -104,7 +111,8 @@ CONFARGS =	--prefix=/usr \
 		--disable-termcap \
 		--with-default-terminfo-dir=/usr/share/terminfo \
 		--with-terminfo-dirs="/etc/terminfo:/lib/terminfo:/usr/share/terminfo" \
-		--with-ticlib
+		--with-ticlib \
+		--with-termlib=tinfo
 
 CONFARGS-TEST =	--prefix=/usr \
 		--bindir=/usr/lib/ncurses/examples \
@@ -238,6 +246,9 @@ build: build-normal build-static build-wide build-debug build-wide-debug \
 
 build-normal: $(objdir)/config.status
 	cd $(objdir) && $(MAKE)
+	# needed for building the examples
+	mv $(objdir)/lib/libncurses.so $(objdir)/lib/libncurses.so.saved
+	echo "INPUT(libncurses.so.5 -ltinfo)" > $(objdir)/lib/libncurses.so
 	touch $@
 
 build-static: $(objdir-static)/config.status
@@ -311,6 +322,24 @@ install: build
 	GZIP='-9' $(MAKE) -C $(objdir) install
 	$(MAKE) -C $(wobjdir) install.libs
 
+	# Always add -ltinfo when linking with -lncurses or -lnursesw
+	rm -f $(tempdir)/usr/lib/libncurses.so
+	echo "INPUT(libncurses.so.5 -ltinfo)" > $(tempdir)/usr/lib/libncurses.so
+	rm -f $(tempdir)/usr/lib/libncursesw.so
+	echo "INPUT(libncursesw.so.5 -ltinfo)" > $(tempdir)/usr/lib/libncursesw.so
+ifneq (,$(build_32))
+	mkdir -p $(tempdir)/$(usr_lib32)
+	rm -f $(tempdir)/$(usr_lib32)/libncurses.so
+	echo "INPUT(libncurses.so.5 -ltinfo)" > $(tempdir)/$(usr_lib32)/libncurses.so
+	rm -f $(tempdir)/$(usr_lib32)/libncursesw.so
+	echo "INPUT(libncursesw.so.5 -ltinfo)" > $(tempdir)/$(usr_lib32)/libncursesw.so
+endif
+ifneq (,$(build_64))
+	mkdir -p $(tempdir)/usr/lib64
+	rm -f $(tempdir)/usr/lib64/libncurses.so
+	echo "INPUT(libncurses.so.5 -ltinfo)" > $(tempdir)/usr/lib64/libncurses.so
+endif
+
 	# Remove blacklisted terminal types.
 	cd $(tempdir)/usr/share/terminfo && rm -f $(badterminfo)
 
@@ -364,6 +393,20 @@ binary-arch: build install
 	dh_installchangelogs -s NEWS
 	dh_installdirs -s
 
+	# avoid further copies of th 160k changelog
+	rm -rf debian/$(package-devti)/usr/share/doc/$(package-devti)
+	ln -s $(package-ti) debian/$(package-devti)/usr/share/doc/$(package-devti)
+	rm -rf debian/$(package-dbgti)/usr/share/doc/$(package-dbgti)
+	ln -s $(package-devti) debian/$(package-dbgti)/usr/share/doc/$(package-dbgti)
+ifneq ($(build_32),)
+	rm -rf debian/$(package-devti-32)/usr/share/doc/$(package-devti-32)
+	ln -s $(package-ti-32) debian/$(package-devti-32)/usr/share/doc/$(package-devti-32)
+endif
+ifneq ($(build_64),)
+	rm -rf debian/$(package-devti-64)/usr/share/doc/$(package-devti-64)
+	ln -s $(package-ti-64) debian/$(package-devti-64)/usr/share/doc/$(package-devti-64)
+endif
+
 	# Strip the packages, shipping detached debugging symbols.
 	dh_strip -s -N$(package-dbg) -N$(package-dbgw) -N$(package-libw) \
 		--dbg-package=$(package-dbg)
@@ -373,13 +416,16 @@ binary-arch: build install
 	dh_compress -s -N$(package-examples)
 	dh_fixperms -s
 	dh_link -s
+	dh_makeshlibs -p$(package-ti) -V "$(package-ti) $(sodepver)" -- -c4
 	dh_makeshlibs -p$(package-lib) -V "$(package-lib) $(sodepver)" -- -c4
 	dh_makeshlibs -p$(package-libw) -V "$(package-libw) $(sodepver)" -- -c4
 ifneq ($(build_32),)
+	dh_makeshlibs -p$(package-ti-32) -V "$(package-ti-32) $(sodepver)" -- -c4
 	dh_makeshlibs -p$(package-lib-32) -V "$(package-lib-32) $(sodepver)" -- -c4
 	dh_makeshlibs -p$(package-libw-32) -V "$(package-libw-32) $(sodepver)" -- -c4
 endif
 ifneq ($(build_64),)
+	dh_makeshlibs -p$(package-ti-64) -V "$(package-ti-64) $(sodepver)" -- -c4
 	dh_makeshlibs -p$(package-lib-64) -V "$(package-lib-64) $(sodepver)" -- -c4
 endif
 	dh_shlibdeps -s

@@ -10,4 +10,4 @@ usr/lib/pkgconfig/ncurses++w.pc
 usr/lib/pkgconfig/ncursesw.pc
 usr/lib/pkgconfig/panelw.pc
 usr/lib/pkgconfig/ticw.pc
-obj-wide-static/lib/*.a usr/lib
+obj-wide-static/lib/*w.a usr/lib

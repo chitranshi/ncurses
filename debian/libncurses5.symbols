@@ -176,74 +176,20 @@ libmenu.so.5 #PACKAGE# #MINVER#
  top_row@Base 5.5-5~
  unpost_menu@Base 5.5-5~
 libncurses.so.5 #PACKAGE# #MINVER#
- BC@Base 5.5-5~
  COLORS@Base 5.5-5~
  COLOR_PAIR@Base 5.5-5~
  COLOR_PAIRS@Base 5.5-5~
- COLS@Base 5.5-5~
  ESCDELAY@Base 5.5-5~
- LINES@Base 5.5-5~
  PAIR_NUMBER@Base 5.5-5~
- PC@Base 5.5-5~
- SP@Base 5.5-5~
- TABSIZE@Base 5.5-5~
- UP@Base 5.5-5~
- (optional)_nc_access@Base 5.5-5~
- (optional)_nc_add_to_try@Base 5.5-5~
- _nc_align_termtype@Base 5.5-5~
- _nc_basename@Base 5.5-5~
- (optional)_nc_baudrate@Base 5.5-5~
- _nc_copy_termtype@Base 5.5-5~
- _nc_curr_col@Base 5.5-5~
- _nc_curr_line@Base 5.5-5~
- (optional)_nc_delink_entry@Base 5.5-5~
  (optional)_nc_do_color@Base 5.5-5~
- (optional)_nc_doalloc@Base 5.5-5~
- _nc_err_abort@Base 5.5-5~
- (optional)_nc_expand_try@Base 5.5-5~
  (optional)_nc_expanded@Base 5.5-5~
- _nc_fallback@Base 5.5-5~
- _nc_find_entry@Base 5.7+20090711
- _nc_find_type_entry@Base 5.7+20090711
- _nc_first_db@Base 5.5-5~
- _nc_first_name@Base 5.5-5~
- (optional)_nc_flush@Base 5.5-5~
  (optional)_nc_format_slks@Base 5.7+20090711
  _nc_free_and_exit@Base 5.6+20080920
- _nc_free_entries@Base 5.5-5~
- _nc_free_entry@Base 5.5-5~
- _nc_free_termtype@Base 5.5-5~
  _nc_freeall@Base 5.5-5~
  (optional)_nc_freewin@Base 5.5-5~
- _nc_get_alias_table@Base 5.7+20090711
- _nc_get_hash_info@Base 5.7+20100313
- _nc_get_hash_table@Base 5.7+20090711
- (optional)_nc_get_locale@Base 5.5-5~
- (optional)_nc_get_screensize@Base 5.6+20070908
- _nc_get_source@Base 5.5-5~
- _nc_get_table@Base 5.7+20090711
- _nc_get_tty_mode@Base 5.5-5~
- _nc_get_type@Base 5.5-5~
- (optional)_nc_getenv_num@Base 5.5-5~
- (optional)_nc_globals@Base 5.6+20070908
- (optional)_nc_handle_sigwinch@Base 5.5-5~
  _nc_has_mouse@Base 5.5-5~
  (optional)_nc_hash_map@Base 5.5-5~
- (optional)_nc_hashed_db@Base 5.6+20070908
- _nc_head@Base 5.5-5~
- _nc_home_terminfo@Base 5.5-5~
- _nc_init_acs@Base 5.5-5~
- (optional)_nc_init_keytry@Base 5.5-5~
  (optional)_nc_insert_ch@Base 5.5-5~
- _nc_is_abs_path@Base 5.6+20070908
- _nc_is_dir_path@Base 5.6+20070908
- _nc_is_file_path@Base 5.6+20070908
- (optional)_nc_keep_tic_dir@Base 5.5-5~
- (optional)_nc_keyname@Base 5.6+20080614
- (optional)_nc_keypad@Base 5.5-5~
- _nc_last_db@Base 5.5-5~
- (optional)_nc_leaks_tinfo@Base 5.6+20070908
- (optional)_nc_locale_breaks_acs@Base 5.5-5~
  (optional)_nc_make_oldhash@Base 5.5-5~
  (optional)_nc_makenew@Base 5.5-5~
  (optional)_nc_memmove@Base 5.5-5~
@@ -251,78 +197,28 @@ libncurses.so.5 #PACKAGE# #MINVER#
  (optional)_nc_mvcur_init@Base 5.5-5~
  (optional)_nc_mvcur_resume@Base 5.5-5~
  (optional)_nc_mvcur_wrap@Base 5.5-5~
- _nc_name_match@Base 5.5-5~
- _nc_next_db@Base 5.5-5~
- _nc_nulls_sent@Base 5.5-5~
  (optional)_nc_oldnums@Base 5.5-5~
- (optional)_nc_ospeed@Base 5.5-5~
- (optional)_nc_outch@Base 5.5-5~
  (optional)_nc_panelhook@Base 5.5-5~
- _nc_pathlast@Base 5.5-5~
- (optional)_nc_prescreen@Base 5.6+20070908
  (optional)_nc_printf_string@Base 5.5-5~
- (optional)_nc_putp@Base 5.7+20090404
- (optional)_nc_putp_flush@Base 5.7+20090404
- _nc_read_entry@Base 5.5-5~
- _nc_read_file_entry@Base 5.5-5~
- (optional)_nc_read_termcap@Base 5.5-5~
- _nc_read_termtype@Base 5.6+20070908
- (optional)_nc_remove_key@Base 5.5-5~
- (optional)_nc_remove_string@Base 5.5-5~
  (optional)_nc_render@Base 5.5-5~
  (optional)_nc_reset_colors@Base 5.5-5~
  _nc_ripoffline@Base 5.5-5~
- _nc_rootname@Base 5.5-5~
- (optional)_nc_safe_strcat@Base 5.5-5~
- (optional)_nc_safe_strcpy@Base 5.5-5~
- (optional)_nc_screen_chain@Base 5.5-5~
  (optional)_nc_screen_init@Base 5.5-5~
- (optional)_nc_screen_of@Base 5.6+20080614
  (optional)_nc_screen_resume@Base 5.5-5~
  (optional)_nc_screen_wrap@Base 5.5-5~
  (optional)_nc_scroll_oldhash@Base 5.5-5~
  (optional)_nc_scroll_optimize@Base 5.5-5~
  (optional)_nc_scroll_window@Base 5.5-5~
  (optional)_nc_scrolln@Base 5.5-5~
- (optional)_nc_set_buffer@Base 5.5-5~
- (optional)_nc_set_no_padding@Base 5.6+20080713
- _nc_set_source@Base 5.5-5~
- _nc_set_tty_mode@Base 5.5-5~
- _nc_set_type@Base 5.5-5~
- (optional)_nc_setup_tinfo@Base 5.7+20101113
  (optional)_nc_setupscreen@Base 5.5-5~
- (optional)_nc_setupterm@Base 5.5-5~
  (optional)_nc_signal_handler@Base 5.5-5~
  (optional)_nc_slk_initialize@Base 5.5-5~
- (optional)_nc_str_copy@Base 5.5-5~
- (optional)_nc_str_init@Base 5.5-5~
- (optional)_nc_str_null@Base 5.5-5~
- _nc_suppress_warnings@Base 5.5-5~
  (optional)_nc_synchook@Base 5.5-5~
- _nc_syserr_abort@Base 5.5-5~
- _nc_tail@Base 5.5-5~
- _nc_tic_dir@Base 5.5-5~
- (optional)_nc_timed_wait@Base 5.5-5~
- (optional)_nc_tinfo_cmdch@Base 5.7+20100313
- _nc_tinfo_fkeys@Base 5.5-5~
- _nc_tparm_analyze@Base 5.5-5~
- _nc_tparm_err@Base 5.5-5~
- _nc_tracing@Base 5.5-5~
- _nc_trim_sgr0@Base 5.5-5~
- (optional)_nc_unctrl@Base 5.6+20080614
  (optional)_nc_ungetch@Base 5.6+20080503
- (optional)_nc_unicode_locale@Base 5.5-5~
- (optional)_nc_update_screensize@Base 5.5-5~
- _nc_user_definable@Base 5.5-5~
  (optional)_nc_varargs@Base 5.5-5~
- _nc_visbuf2@Base 5.5-5~
- _nc_visbuf@Base 5.5-5~
- (optional)_nc_visbufn@Base 5.5-5~
  _nc_vsscanf@Base 5.5-5~
  (optional)_nc_waddch_nosync@Base 5.5-5~
- _nc_warning@Base 5.5-5~
  (optional)_nc_wgetch@Base 5.5-5~
- acs_map@Base 5.5-5~
  addch@Base 5.5-5~
  addchnstr@Base 5.5-5~
  addchstr@Base 5.5-5~
@@ -336,17 +232,12 @@ libncurses.so.5 #PACKAGE# #MINVER#
  attroff@Base 5.5-5~
  attron@Base 5.5-5~
  attrset@Base 5.5-5~
- baudrate@Base 5.5-5~
  beep@Base 5.5-5~
  bkgd@Base 5.5-5~
  bkgdset@Base 5.5-5~
- boolcodes@Base 5.5-5~
- boolfnames@Base 5.5-5~
- boolnames@Base 5.5-5~
  border@Base 5.5-5~
  box@Base 5.5-5~
  can_change_color@Base 5.5-5~
- cbreak@Base 5.5-5~
  chgat@Base 5.5-5~
  clear@Base 5.5-5~
  clearok@Base 5.5-5~
@@ -355,15 +246,6 @@ libncurses.so.5 #PACKAGE# #MINVER#
  color_content@Base 5.5-5~
  color_set@Base 5.5-5~
  copywin@Base 5.5-5~
- cur_term@Base 5.5-5~
- curs_set@Base 5.5-5~
- curscr@Base 5.5-5~
- curses_version@Base 5.5-5~
- def_prog_mode@Base 5.5-5~
- def_shell_mode@Base 5.5-5~
- define_key@Base 5.5-5~
- del_curterm@Base 5.5-5~
- delay_output@Base 5.5-5~
  delch@Base 5.5-5~
  deleteln@Base 5.5-5~
  delscreen@Base 5.5-5~
@@ -375,10 +257,8 @@ libncurses.so.5 #PACKAGE# #MINVER#
  echochar@Base 5.5-5~
  endwin@Base 5.5-5~
  erase@Base 5.5-5~
- erasechar@Base 5.5-5~
  filter@Base 5.5-5~
  flash@Base 5.5-5~
- flushinp@Base 5.5-5~
  get_escdelay@Base 5.7+20090711
  getattrs@Base 5.6+20070908
  getbegx@Base 5.6+20070908
@@ -395,15 +275,9 @@ libncurses.so.5 #PACKAGE# #MINVER#
  getpary@Base 5.6+20070908
  getstr@Base 5.5-5~
  getwin@Base 5.5-5~
- halfdelay@Base 5.5-5~
  has_colors@Base 5.5-5~
- has_ic@Base 5.5-5~
- has_il@Base 5.5-5~
- has_key@Base 5.5-5~
  has_mouse@Base 5.7+20081129
  hline@Base 5.5-5~
- idcok@Base 5.5-5~
- idlok@Base 5.5-5~
  immedok@Base 5.5-5~
  inch@Base 5.5-5~
  inchnstr@Base 5.5-5~
@@ -418,7 +292,6 @@ libncurses.so.5 #PACKAGE# #MINVER#
  insnstr@Base 5.5-5~
  insstr@Base 5.5-5~
  instr@Base 5.5-5~
- intrflush@Base 5.5-5~
  is_cleared@Base 5.6+20070908
  is_idcok@Base 5.6+20070908
  is_idlok@Base 5.6+20070908
@@ -435,16 +308,8 @@ libncurses.so.5 #PACKAGE# #MINVER#
  is_term_resized@Base 5.5-5~
  is_wintouched@Base 5.5-5~
  isendwin@Base 5.5-5~
- key_defined@Base 5.5-5~
- keybound@Base 5.5-5~
- keyname@Base 5.5-5~
- keyok@Base 5.5-5~
- keypad@Base 5.5-5~
- killchar@Base 5.5-5~
  leaveok@Base 5.5-5~
- longname@Base 5.5-5~
  mcprint@Base 5.5-5~
- meta@Base 5.5-5~
  mouse_trafo@Base 5.5-5~
  mouseinterval@Base 5.5-5~
  mousemask@Base 5.5-5~
@@ -496,24 +361,13 @@ libncurses.so.5 #PACKAGE# #MINVER#
  mvwprintw@Base 5.5-5~
  mvwscanw@Base 5.5-5~
  mvwvline@Base 5.5-5~
- napms@Base 5.5-5~
  newpad@Base 5.5-5~
- newscr@Base 5.5-5~
  newterm@Base 5.5-5~
  newwin@Base 5.5-5~
  nl@Base 5.5-5~
- nocbreak@Base 5.5-5~
- nodelay@Base 5.5-5~
  noecho@Base 5.5-5~
  nofilter@Base 5.5-5~
  nonl@Base 5.5-5~
- noqiflush@Base 5.5-5~
- noraw@Base 5.5-5~
- notimeout@Base 5.5-5~
- numcodes@Base 5.5-5~
- numfnames@Base 5.5-5~
- numnames@Base 5.5-5~
- ospeed@Base 5.5-5~
  overlay@Base 5.5-5~
  overwrite@Base 5.5-5~
  pair_content@Base 5.5-5~
@@ -521,20 +375,13 @@ libncurses.so.5 #PACKAGE# #MINVER#
  pnoutrefresh@Base 5.5-5~
  prefresh@Base 5.5-5~
  printw@Base 5.5-5~
- putp@Base 5.5-5~
  putwin@Base 5.5-5~
- qiflush@Base 5.5-5~
- raw@Base 5.5-5~
  redrawwin@Base 5.5-5~
  refresh@Base 5.5-5~
- reset_prog_mode@Base 5.5-5~
- reset_shell_mode@Base 5.5-5~
- resetty@Base 5.5-5~
  resize_term@Base 5.5-5~
  resizeterm@Base 5.5-5~
  restartterm@Base 5.5-5~
  ripoffline@Base 5.5-5~
- savetty@Base 5.5-5~
  scanw@Base 5.5-5~
  scr_dump@Base 5.5-5~
  scr_init@Base 5.5-5~
@@ -543,12 +390,9 @@ libncurses.so.5 #PACKAGE# #MINVER#
  scrl@Base 5.5-5~
  scroll@Base 5.5-5~
  scrollok@Base 5.5-5~
- set_curterm@Base 5.5-5~
  set_escdelay@Base 5.6+20080119
- set_tabsize@Base 5.6+20080119
  set_term@Base 5.5-5~
  setscrreg@Base 5.5-5~
- setupterm@Base 5.5-5~
  slk_attr@Base 5.5-5~
  slk_attr_set@Base 5.5-5~
  slk_attroff@Base 5.5-5~
@@ -566,38 +410,17 @@ libncurses.so.5 #PACKAGE# #MINVER#
  standend@Base 5.5-5~
  standout@Base 5.5-5~
  start_color@Base 5.5-5~
- stdscr@Base 5.5-5~
- strcodes@Base 5.5-5~
- strfnames@Base 5.5-5~
- strnames@Base 5.5-5~
  subpad@Base 5.5-5~
  subwin@Base 5.5-5~
  syncok@Base 5.5-5~
  termattrs@Base 5.5-5~
- termname@Base 5.5-5~
- tgetent@Base 5.5-5~
- tgetflag@Base 5.5-5~
- tgetnum@Base 5.5-5~
- tgetstr@Base 5.5-5~
- tgoto@Base 5.5-5~
- tigetflag@Base 5.5-5~
- tigetnum@Base 5.5-5~
- tigetstr@Base 5.5-5~
  timeout@Base 5.5-5~
- tiparm@Base 5.7+20100313
  touchline@Base 5.5-5~
  touchwin@Base 5.5-5~
- tparm@Base 5.5-5~
- tputs@Base 5.5-5~
- ttytype@Base 5.5-5~
- typeahead@Base 5.5-5~
- unctrl@Base 5.5-5~
  ungetch@Base 5.5-5~
  ungetmouse@Base 5.5-5~
  untouchwin@Base 5.5-5~
  use_default_colors@Base 5.5-5~
- use_env@Base 5.5-5~
- use_extended_names@Base 5.5-5~
  use_legacy_coding@Base 5.5-5~
  use_screen@Base 5.6+20070908
  use_window@Base 5.6+20070908
@@ -664,7 +487,6 @@ libncurses.so.5 #PACKAGE# #MINVER#
  wstandout@Base 5.5-5~
  wsyncdown@Base 5.5-5~
  wsyncup@Base 5.5-5~
- wtimeout@Base 5.5-5~
  wtouchln@Base 5.5-5~
  wvline@Base 5.5-5~
 libpanel.so.5 #PACKAGE# #MINVER#
