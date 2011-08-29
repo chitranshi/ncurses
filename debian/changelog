@@ -1,5 +1,9 @@
 ncurses (5.9-2) UNRELEASED; urgency=low
 
+  * Build libncurses and libncursesw with "--with-termlib" and split out
+    libtinfo* packages to allow building a libreadline that does not link
+    against libncurses.  Thanks to Matthias Klose for the initial patch.
+    (Closes: #631592)
   * Configure all library builds except libncurses5 with "--without-progs"
     to reduce build time a bit.
   * Add build-arch and build-indep targets to debian/rules.
@@ -14,7 +18,7 @@ ncurses (5.9-2) UNRELEASED; urgency=low
   * Bump debhelper compatibility level to 8.
   * Upgrade Standards-Version to 3.9.2, no changes needed.
 
- -- Sven Joachim <svenjoac@gmx.de>  Mon, 30 May 2011 17:17:46 +0200
+ -- Sven Joachim <svenjoac@gmx.de>  Mon, 29 Aug 2011 22:09:16 +0200
 
 ncurses (5.9-1) unstable; urgency=low
 

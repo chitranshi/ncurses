@@ -1,0 +1,2 @@
+obj-debug/lib/libtinfo.so.* usr/lib/debug
+obj-debug/lib/libtinfo_g.a usr/lib

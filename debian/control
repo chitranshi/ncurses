@@ -17,7 +17,7 @@ Package: libncurses5
 Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
 Multi-Arch: same
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: libtinfo5 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Recommends: libgpm2 [linux-any]
 Description: shared libraries for terminal handling
  The ncurses library routines are a terminal-independent method of
@@ -26,13 +26,48 @@ Description: shared libraries for terminal handling
  This package contains the shared libraries necessary to run programs
  compiled with ncurses.
 
+Package: libtinfo5
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: shared low-level terminfo library for terminal handling
+ The ncurses library routines are a terminal-independent method of
+ updating character screens with reasonable optimization.
+ .
+ This package contains the shared low-level terminfo library.
+
+Package: libtinfo5-dev
+Architecture: any
+Section: libdevel
+Priority: optional
+Depends: libtinfo5 (= ${binary:Version}), ${misc:Depends}
+Description: developer's library for the low-level terminfo library
+ The ncurses library routines are a terminal-independent method of
+ updating character screens with reasonable optimization.
+ .
+ This package contains the static library and symbolic link that developers
+ using the low-level terminfo library will need.  Packages should not
+ build-depend on this package.
+
+Package: libtinfo5-dbg
+Architecture: any
+Section: debug
+Priority: extra
+Depends: ${shlibs:Depends}, libtinfo5-dev (= ${binary:Version}), ${misc:Depends}
+Description: debugging/profiling library for the low-level terminfo library
+ The ncurses library routines are a terminal-independent method of
+ updating character screens with reasonable optimization.
+ .
+ This package contains a special library version of the low-level terminfo
+ library suitable for debugging and profiling. Also included are detached
+ debugging symbols for libtinfo5.
+
 Package: libncurses5-dev
 Architecture: any
 Section: libdevel
 Priority: optional
 Multi-Arch: same
-Depends: libncurses5 (= ${binary:Version}), ncurses-bin (= ${binary:Version}),
-	 libc-dev, ${misc:Depends}
+Depends: libncurses5 (= ${binary:Version}), libtinfo5-dev (= ${binary:Version}),
+	 ncurses-bin (= ${binary:Version}), libc-dev, ${misc:Depends}
 Conflicts: ncurses-dev, libncurses-dev
 Replaces: ncurses-dev, libncurses-dev
 Provides: libncurses-dev, ncurses-dev
@@ -48,7 +83,8 @@ Package: libncurses5-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: ${shlibs:Depends}, libncurses5-dev (= ${binary:Version}), ${misc:Depends}
+Depends: ${shlibs:Depends}, libncurses5-dev (= ${binary:Version}),
+	  libtinfo5-dbg (= ${binary:Version}), ${misc:Depends}
 Description: debugging/profiling libraries for ncurses
  The ncurses library routines are a terminal-independent method of
  updating character screens with reasonable optimization.
@@ -62,7 +98,7 @@ Architecture: any
 Priority: important
 Pre-Depends: ${misc:Pre-Depends}
 Multi-Arch: same
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: libtinfo5 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Recommends: libgpm2 [linux-any]
 Description: shared libraries for terminal handling (wide character support)
  The ncurses library routines are a terminal-independent method of
@@ -76,8 +112,8 @@ Architecture: any
 Section: libdevel
 Priority: optional
 Multi-Arch: same
-Depends: libncursesw5 (= ${binary:Version}), ncurses-bin (= ${binary:Version}),
-	 libc-dev, ${misc:Depends}
+Depends: libncursesw5 (= ${binary:Version}), libtinfo5-dev (= ${binary:Version}),
+         ncurses-bin (= ${binary:Version}), libc-dev, ${misc:Depends}
 Suggests: ncurses-doc
 Description: developer's libraries for ncursesw
  The ncurses library routines are a terminal-independent method of
@@ -92,7 +128,8 @@ Package: libncursesw5-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: ${shlibs:Depends}, libncursesw5-dev (= ${binary:Version}), ${misc:Depends}
+Depends: ${shlibs:Depends}, libtinfo5-dbg (= ${binary:Version}),
+         libncursesw5-dev (= ${binary:Version}), ${misc:Depends}
 Description: debugging/profiling libraries for ncursesw
  The ncurses library routines are a terminal-independent method of
  updating character screens with reasonable optimization.
@@ -106,7 +143,7 @@ Description: debugging/profiling libraries for ncursesw
 Package: lib64ncurses5
 Architecture: i386 powerpc sparc s390
 Priority: optional
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: lib64tinfo5 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Replaces: amd64-libs (<= 1.2)
 Description: shared libraries for terminal handling (64-bit)
  The ncurses library routines are a terminal-independent method of
@@ -123,6 +160,7 @@ Architecture: i386 powerpc sparc s390
 Section: libdevel
 Priority: optional
 Depends: lib64ncurses5 (= ${binary:Version}),
+	 lib64tinfo5-dev (= ${binary:Version}),
 	 libncurses5-dev (= ${binary:Version}), lib64c-dev, ${misc:Depends}
 Suggests: ncurses-doc
 Replaces: amd64-libs-dev (<= 1.2)
@@ -139,7 +177,7 @@ Description: developer's libraries for ncurses (64-bit)
 Package: lib32ncurses5
 Architecture: amd64 ppc64
 Priority: optional
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: lib32tinfo5 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libc6-i386 (<= 2.9-18)
 Replaces: ia32-libs (<< 1.10)
 Description: shared libraries for terminal handling (32-bit)
@@ -157,6 +195,7 @@ Architecture: amd64 ppc64
 Section: libdevel
 Priority: optional
 Depends: lib32ncurses5 (= ${binary:Version}),
+	 lib32tinfo5-dev (= ${binary:Version}),
 	 libncurses5-dev (= ${binary:Version}), lib32c-dev, ${misc:Depends}
 Suggests: ncurses-doc
 Conflicts: libc6-i386 (<= 2.9-18)
@@ -173,7 +212,7 @@ Description: developer's libraries for ncurses (32-bit)
 Package: lib32ncursesw5
 Architecture: amd64 ppc64
 Priority: optional
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: lib32tinfo5 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libc6-i386 (<= 2.9-18)
 Description: shared libraries for terminal handling (wide character support) (32-bit)
  The ncurses library routines are a terminal-independent method of
@@ -190,6 +229,7 @@ Architecture: amd64 ppc64
 Section: libdevel
 Priority: optional
 Depends: lib32ncursesw5 (= ${binary:Version}),
+	 lib32tinfo5-dev (= ${binary:Version}),
 	 libncursesw5-dev (= ${binary:Version}), lib32c-dev, ${misc:Depends}
 Conflicts: libc6-i386 (<= 2.9-18)
 Suggests: ncurses-doc
@@ -203,6 +243,60 @@ Description: developer's libraries for ncursesw (32-bit)
  This package includes support for wide characters.
  This package supports the 32-bit ABI variant of your system's
  architecure.
+
+Package: lib64tinfo5
+Architecture: i386 powerpc sparc s390
+Priority: optional
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: shared low-level terminfo library for terminal handling (64-bit)
+ The ncurses library routines are a terminal-independent method of
+ updating character screens with reasonable optimization.
+ .
+ This package contains the shared low-level terminfo library.
+ .
+ This package supports the 64-bit ABI variant of your system's architecure.
+
+Package: lib64tinfo5-dev
+Architecture: i386 powerpc sparc s390
+Section: libdevel
+Priority: optional
+Depends: lib64tinfo5 (= ${binary:Version}), lib64c-dev, ${misc:Depends}
+Description: developer's library for the low-level terminfo library (64-bit)
+ The ncurses library routines are a terminal-independent method of
+ updating character screens with reasonable optimization.
+ .
+ This package contains the static library and symbolic link that developers
+ using the low-level terminfo library will need.  Packages should not
+ build-depend on this package.
+ .
+ This package supports the 64-bit ABI variant of your system's architecure.
+
+Package: lib32tinfo5
+Architecture: amd64 ppc64
+Priority: optional
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: shared low-level terminfo library for terminal handling (32-bit)
+ The ncurses library routines are a terminal-independent method of
+ updating character screens with reasonable optimization.
+ .
+ This package contains the shared low-level terminfo library.
+ .
+ This package supports the 32-bit ABI variant of your system's architecure.
+
+Package: lib32tinfo5-dev
+Architecture: amd64 ppc64
+Section: libdevel
+Priority: optional
+Depends: lib32tinfo5 (= ${binary:Version}), lib32c-dev, ${misc:Depends}
+Description: developer's library for the low-level terminfo library (32-bit)
+ The ncurses library routines are a terminal-independent method of
+ updating character screens with reasonable optimization.
+ .
+ This package contains the static library and symbolic link that developers
+ using the low-level terminfo library will need.  Packages should not
+ build-depend on this package.
+ .
+ This package supports the 32-bit ABI variant of your system's architecure.
 
 Package: ncurses-bin
 Architecture: any

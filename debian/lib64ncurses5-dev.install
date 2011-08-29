@@ -1,4 +1,4 @@
-obj-64/lib/libncurses.so usr/lib64
+usr/lib64/libncurses.so
 obj-64/lib/libtic.so usr/lib64
 obj-64/lib/libform.so usr/lib64
 obj-64/lib/libmenu.so usr/lib64
