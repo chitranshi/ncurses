@@ -26,7 +26,6 @@ package-dev-32=lib32ncurses$(soname)-dev
 package-dev-64=lib64ncurses$(soname)-dev
 package-devti=libtinfo$(soname)-dev
 package-devti-32=lib32tinfo$(soname)-dev
-package-devti-64=lib64tinfo$(soname)-dev
 package-devw=libncursesw$(soname)-dev
 package-devw-32=lib32ncursesw$(soname)-dev
 package-dbg=libncurses$(soname)-dbg
@@ -424,10 +423,6 @@ binary-arch: build install $(autogen-files)
 ifneq ($(build_32),)
 	rm -rf debian/$(package-devti-32)/usr/share/doc/$(package-devti-32)
 	ln -s $(package-ti-32) debian/$(package-devti-32)/usr/share/doc/$(package-devti-32)
-endif
-ifneq ($(build_64),)
-	rm -rf debian/$(package-devti-64)/usr/share/doc/$(package-devti-64)
-	ln -s $(package-ti-64) debian/$(package-devti-64)/usr/share/doc/$(package-devti-64)
 endif
 
 	# Strip the packages, shipping detached debugging symbols.
