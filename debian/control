@@ -28,6 +28,8 @@ Description: shared libraries for terminal handling
 
 Package: libtinfo5
 Architecture: any
+Pre-Depends: ${misc:Pre-Depends}
+Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: shared low-level terminfo library for terminal handling
  The ncurses library routines are a terminal-independent method of
@@ -39,6 +41,7 @@ Package: libtinfo5-dev
 Architecture: any
 Section: libdevel
 Priority: optional
+Multi-Arch: same
 Depends: libtinfo5 (= ${binary:Version}), ${misc:Depends}
 Description: developer's library for the low-level terminfo library
  The ncurses library routines are a terminal-independent method of
