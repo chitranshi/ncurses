@@ -24,8 +24,8 @@ package-libw-32=lib32ncursesw$(soname)
 package-dev=libncurses$(soname)-dev
 package-dev-32=lib32ncurses$(soname)-dev
 package-dev-64=lib64ncurses$(soname)-dev
-package-devti=libtinfo$(soname)-dev
-package-devti-32=lib32tinfo$(soname)-dev
+package-devti=libtinfo-dev
+package-devti-32=lib32tinfo-dev
 package-devw=libncursesw$(soname)-dev
 package-devw-32=lib32ncursesw$(soname)-dev
 package-dbg=libncurses$(soname)-dbg
@@ -56,10 +56,10 @@ DEB_HOST_GNU_SYSTEM ?= $(shell dpkg-architecture -qDEB_HOST_GNU_SYSTEM)
 DEB_HOST_ARCH ?= $(shell dpkg-architecture -qDEB_HOST_ARCH)
 DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
 
-autogen-files := debian/libncurses5-dev.links debian/libtinfo5-dev.links \
+autogen-files := debian/libncurses5-dev.links debian/libtinfo-dev.links \
 		 debian/libncurses5.install debian/libncursesw5.install \
 		 debian/libncurses5-dev.install debian/libncursesw5-dev.install \
-		 debian/libtinfo5.install debian/libtinfo5-dev.install
+		 debian/libtinfo5.install debian/libtinfo-dev.install
 
 ifeq ($(DEB_HOST_ARCH),i386)
 build_64_target = x86_64-$(DEB_HOST_GNU_SYSTEM)

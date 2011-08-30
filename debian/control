@@ -37,7 +37,7 @@ Description: shared low-level terminfo library for terminal handling
  .
  This package contains the shared low-level terminfo library.
 
-Package: libtinfo5-dev
+Package: libtinfo-dev
 Architecture: any
 Section: libdevel
 Priority: optional
@@ -55,7 +55,7 @@ Package: libtinfo5-dbg
 Architecture: any
 Section: debug
 Priority: extra
-Depends: ${shlibs:Depends}, libtinfo5-dev (= ${binary:Version}), ${misc:Depends}
+Depends: ${shlibs:Depends}, libtinfo-dev (= ${binary:Version}), ${misc:Depends}
 Description: debugging/profiling library for the low-level terminfo library
  The ncurses library routines are a terminal-independent method of
  updating character screens with reasonable optimization.
@@ -69,7 +69,7 @@ Architecture: any
 Section: libdevel
 Priority: optional
 Multi-Arch: same
-Depends: libncurses5 (= ${binary:Version}), libtinfo5-dev (= ${binary:Version}),
+Depends: libncurses5 (= ${binary:Version}), libtinfo-dev (= ${binary:Version}),
 	 ncurses-bin (= ${binary:Version}), libc-dev, ${misc:Depends}
 Conflicts: ncurses-dev, libncurses-dev
 Replaces: ncurses-dev, libncurses-dev
@@ -115,7 +115,7 @@ Architecture: any
 Section: libdevel
 Priority: optional
 Multi-Arch: same
-Depends: libncursesw5 (= ${binary:Version}), libtinfo5-dev (= ${binary:Version}),
+Depends: libncursesw5 (= ${binary:Version}), libtinfo-dev (= ${binary:Version}),
          ncurses-bin (= ${binary:Version}), libc-dev, ${misc:Depends}
 Suggests: ncurses-doc
 Description: developer's libraries for ncursesw
@@ -198,7 +198,7 @@ Architecture: amd64 ppc64
 Section: libdevel
 Priority: optional
 Depends: lib32ncurses5 (= ${binary:Version}),
-	 lib32tinfo5-dev (= ${binary:Version}),
+	 lib32tinfo-dev (= ${binary:Version}),
 	 libncurses5-dev (= ${binary:Version}), lib32c-dev, ${misc:Depends}
 Suggests: ncurses-doc
 Conflicts: libc6-i386 (<= 2.9-18)
@@ -232,7 +232,7 @@ Architecture: amd64 ppc64
 Section: libdevel
 Priority: optional
 Depends: lib32ncursesw5 (= ${binary:Version}),
-	 lib32tinfo5-dev (= ${binary:Version}),
+	 lib32tinfo-dev (= ${binary:Version}),
 	 libncursesw5-dev (= ${binary:Version}), lib32c-dev, ${misc:Depends}
 Conflicts: libc6-i386 (<= 2.9-18)
 Suggests: ncurses-doc
@@ -271,7 +271,7 @@ Description: shared low-level terminfo library for terminal handling (32-bit)
  .
  This package supports the 32-bit ABI variant of your system's architecure.
 
-Package: lib32tinfo5-dev
+Package: lib32tinfo-dev
 Architecture: amd64 ppc64
 Section: libdevel
 Priority: optional
