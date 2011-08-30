@@ -4,6 +4,9 @@ ncurses (5.9-2) UNRELEASED; urgency=low
     libtinfo* packages to allow building a libreadline that does not link
     against libncurses.  Thanks to Matthias Klose for the initial patch.
     (Closes: #631592)
+    - Replace the libncurses{w,}.so symlinks with linker scripts.  Since
+      lintian does not like those in multiarch paths, temporarily add
+      overrides (see #639735).
   * Configure all library builds except libncurses5 with "--without-progs"
     to reduce build time a bit.
   * Add build-arch and build-indep targets to debian/rules.
