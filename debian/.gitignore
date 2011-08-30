@@ -1,13 +1,16 @@
 files
 libncurses5-dev.links
-libncursesw5-dev.links
 libncurses5.install
 libncursesw5.install
 libncurses5-dev.install
 libncursesw5-dev.install
+libtinfo5-dev.install
+libtinfo5-dev.links
+libtinfo5.install
 *.substvars
 *.debhelper
 *.debhelper.log
 lib*ncurses*/
+lib*tinfo*/
 ncurses-*/
 tmp/
