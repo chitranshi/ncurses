@@ -9,6 +9,7 @@ ncurses (5.9-2) UNRELEASED; urgency=low
       overrides (see #639735).
     - Remove spurious leftover libncurses5.so.5 symlinks (Closes: #224250,
       LP: #836246).
+  * Ship the ncurses.supp file in libtinfo-dev (Closes: #627474).
   * Configure all library builds except libncurses5 with "--without-progs"
     to reduce build time a bit.
   * Add build-arch and build-indep targets to debian/rules.
