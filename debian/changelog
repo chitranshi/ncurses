@@ -7,6 +7,8 @@ ncurses (5.9-2) UNRELEASED; urgency=low
     - Replace the libncurses{w,}.so symlinks with linker scripts.  Since
       lintian does not like those in multiarch paths, temporarily add
       overrides (see #639735).
+    - Remove spurious leftover libncurses5.so.5 symlinks (Closes: #224250,
+      LP: #836246).
   * Configure all library builds except libncurses5 with "--without-progs"
     to reduce build time a bit.
   * Add build-arch and build-indep targets to debian/rules.

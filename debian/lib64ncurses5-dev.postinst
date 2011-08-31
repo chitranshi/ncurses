@@ -1,0 +1,9 @@
+#!/bin/sh
+set -e
+
+# Remove spurious symlink created by ldconfig (see #224450)
+if [ "$1" = "configure" -a  -L /usr/lib64/libncurses.so.5 ]; then
+    rm -f /usr/lib64/libncurses.so.5
+fi
+
+#DEBHELPER#
