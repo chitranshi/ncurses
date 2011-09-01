@@ -411,19 +411,14 @@ binary-arch: build install $(autogen-files)
 	dh_testroot
 	dh_install -s --fail-missing
 	dh_installman -s
-	dh_installdocs -s debian/FAQ
+	dh_installdocs -s -N$(package-devti) -N$(package-dbgti) -N$(package-devti-32) debian/FAQ
+	dh_installdocs -p$(package-devti) --link-doc=$(package-ti)
+	dh_installdocs -p$(package-dbgti) --link-doc=$(package-devti)
+ifneq ($(build_32),)
+	dh_installdocs -p$(package-devti-32) --link-doc=$(package-ti-32)
+endif
 	dh_installchangelogs -s NEWS
 	dh_installdirs -s
-
-	# avoid further copies of th 160k changelog
-	rm -rf debian/$(package-devti)/usr/share/doc/$(package-devti)
-	ln -s $(package-ti) debian/$(package-devti)/usr/share/doc/$(package-devti)
-	rm -rf debian/$(package-dbgti)/usr/share/doc/$(package-dbgti)
-	ln -s $(package-devti) debian/$(package-dbgti)/usr/share/doc/$(package-dbgti)
-ifneq ($(build_32),)
-	rm -rf debian/$(package-devti-32)/usr/share/doc/$(package-devti-32)
-	ln -s $(package-ti-32) debian/$(package-devti-32)/usr/share/doc/$(package-devti-32)
-endif
 
 	# Strip the packages, shipping detached debugging symbols.
 	dh_strip -s -N$(package-dbg) -N$(package-dbgw) -N$(package-libw) \
