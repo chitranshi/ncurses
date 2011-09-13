@@ -166,7 +166,7 @@ Depends: lib64ncurses5 (= ${binary:Version}),
 	 lib64tinfo5 (= ${binary:Version}),
 	 libncurses5-dev (= ${binary:Version}), lib64c-dev, ${misc:Depends}
 Suggests: ncurses-doc
-Replaces: amd64-libs-dev (<= 1.2)
+Replaces: amd64-libs-dev (<= 1.2), lib64tinfo5-dev
 Description: developer's libraries for ncurses (64-bit)
  The ncurses library routines are a terminal-independent method of
  updating character screens with reasonable optimization.
@@ -276,6 +276,7 @@ Architecture: amd64 ppc64
 Section: libdevel
 Priority: optional
 Depends: lib32tinfo5 (= ${binary:Version}), lib32c-dev, ${misc:Depends}
+Replaces: lib32tinfo5-dev
 Description: developer's library for the low-level terminfo library (32-bit)
  The ncurses library routines are a terminal-independent method of
  updating character screens with reasonable optimization.
