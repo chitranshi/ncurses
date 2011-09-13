@@ -22,12 +22,10 @@ ncurses (5.9-2) UNRELEASED; urgency=low
     from "ncurses5-config --libs" (see #638281).
   * Add rxvt-256color and rxvt-88color entries to debian/rxvt.ti
     (Closes: #638189).
-  * Install a lintian override into ncurses-term for the symlinks added
-    in version 5.7+20100313-3, which are falsely reported as broken.
   * Bump debhelper compatibility level to 8.
   * Upgrade Standards-Version to 3.9.2, no changes needed.
 
- -- Sven Joachim <svenjoac@gmx.de>  Thu, 01 Sep 2011 17:09:59 +0200
+ -- Sven Joachim <svenjoac@gmx.de>  Mon, 29 Aug 2011 22:09:16 +0200
 
 ncurses (5.9-1) unstable; urgency=low
 

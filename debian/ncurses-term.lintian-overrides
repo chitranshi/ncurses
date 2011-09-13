@@ -1,8 +1,0 @@
-# The files which these symlinks point to are in ncurses-base
-# on which ncurses-term does not depend because it is essential
-ncurses-term: package-contains-broken-symlink usr/share/terminfo/c/cons25 lib/terminfo/c/cons25
-ncurses-term: package-contains-broken-symlink usr/share/terminfo/s/sun lib/terminfo/s/sun
-ncurses-term: package-contains-broken-symlink usr/share/terminfo/v/vt100 lib/terminfo/v/vt100
-ncurses-term: package-contains-broken-symlink usr/share/terminfo/v/vt220 lib/terminfo/v/vt220
-ncurses-term: package-contains-broken-symlink usr/share/terminfo/x/xterm-color lib/terminfo/x/xterm-color
-ncurses-term: package-contains-broken-symlink usr/share/terminfo/x/xterm-r6 lib/terminfo/x/xterm-r6
