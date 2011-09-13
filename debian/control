@@ -15,7 +15,7 @@ Homepage: http://invisible-island.net/ncurses/
 
 Package: libncurses5
 Architecture: any
-Pre-Depends: ${misc:Pre-Depends}
+Pre-Depends: ${misc:Pre-Depends}, libtinfo5
 Multi-Arch: same
 Depends: libtinfo5 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Recommends: libgpm2 [linux-any]
