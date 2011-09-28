@@ -1,4 +1,4 @@
-ncurses (5.9-2) UNRELEASED; urgency=low
+ncurses (5.9-2) unstable; urgency=low
 
   * Build libncurses and libncursesw with "--with-termlib" and split out
     libtinfo* packages to allow building a libreadline that does not link
