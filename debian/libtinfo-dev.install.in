@@ -1,3 +1,4 @@
 usr/lib/${DEB_HOST_MULTIARCH}/libtinfo.a
 usr/lib/pkgconfig/tinfo.pc usr/lib/${DEB_HOST_MULTIARCH}/pkgconfig
+debian/libtermcap.so  usr/lib/${DEB_HOST_MULTIARCH}
 misc/ncurses.supp  usr/lib/valgrind/
