@@ -1,1 +1,3 @@
 lib/${DEB_HOST_MULTIARCH}/libtinfo.so.5 usr/lib/${DEB_HOST_MULTIARCH}/libtinfo.so
+usr/lib/${DEB_HOST_MULTIARCH}/libinfo.so usr/lib/${DEB_HOST_MULTIARCH}/libtermcap.so
+usr/lib/${DEB_HOST_MULTIARCH}/libtinfo.a usr/lib/${DEB_HOST_MULTIARCH}/libtermcap.a

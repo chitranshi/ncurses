@@ -1,1 +1,3 @@
 lib32/libtinfo.so.5 usr/lib32/libtinfo.so
+usr/lib32/libtinfo.so usr/lib32/libtermcap.so
+usr/lib32/libtinfo.a  usr/lib32/libtermcap.a

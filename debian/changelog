@@ -1,5 +1,7 @@
 ncurses (5.9-3) UNRELEASED; urgency=low
 
+  * Symlink libtinfo.{so,a} to libtermcap.{so,a}, replacing the previous
+    libncurses{.so,a} symlinks (Closes: #644426).
   * Obtain CPPFLAGS from dpkg-buildflags.
   * Drop the lintian overrides introduced in 5.9-2.
 
