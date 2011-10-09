@@ -1,3 +1,0 @@
-# Lintian wrongly complains about the libncurses.so linker script,
-# see http://bugs.debian.org/639735.
-libncurses5-dev: missing-pre-dependency-on-multiarch-support

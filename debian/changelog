@@ -1,6 +1,7 @@
 ncurses (5.9-3) UNRELEASED; urgency=low
 
   * Obtain CPPFLAGS from dpkg-buildflags.
+  * Drop the lintian overrides introduced in 5.9-2.
 
  -- Sven Joachim <svenjoac@gmx.de>  Fri, 07 Oct 2011 18:42:52 +0200
 
