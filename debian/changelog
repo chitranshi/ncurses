@@ -4,6 +4,8 @@ ncurses (5.9-3) UNRELEASED; urgency=low
     - Symlink libtinfo.a to libtermcap.a.
     - Use a linker script for libtermcap.so to work around ldconfig
       bug #249122.
+  * Move the libtic libraries from lib*ncurses5 to lib*tinfo5
+    (Closes: #644933).
   * Obtain CPPFLAGS from dpkg-buildflags.
   * Drop the lintian overrides introduced in 5.9-2.
 

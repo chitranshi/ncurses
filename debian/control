@@ -15,7 +15,7 @@ Homepage: http://invisible-island.net/ncurses/
 
 Package: libncurses5
 Architecture: any
-Pre-Depends: ${misc:Pre-Depends}, libtinfo5
+Pre-Depends: ${misc:Pre-Depends}, libtinfo5 (>= 5.9-3)
 Multi-Arch: same
 Depends: libtinfo5 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Recommends: libgpm2 [linux-any]
@@ -31,6 +31,7 @@ Architecture: any
 Pre-Depends: ${misc:Pre-Depends}
 Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Replaces: libncurses5 (<< 5.9-3)
 Description: shared low-level terminfo library for terminal handling
  The ncurses library routines are a terminal-independent method of
  updating character screens with reasonable optimization.
@@ -252,6 +253,8 @@ Package: lib64tinfo5
 Architecture: i386 powerpc sparc s390
 Priority: optional
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Replaces: lib64ncurses5 (<< 5.9-3)
+Breaks: lib64ncurses5 (<< 5.9-3)
 Description: shared low-level terminfo library for terminal handling (64-bit)
  The ncurses library routines are a terminal-independent method of
  updating character screens with reasonable optimization.
@@ -264,6 +267,8 @@ Package: lib32tinfo5
 Architecture: amd64 ppc64
 Priority: optional
 Depends: ${shlibs:Depends}, ${misc:Depends}
+Replaces: lib32ncurses5 (<< 5.9-3)
+Breaks: lib32ncurses5 (<< 5.9-3)
 Description: shared low-level terminfo library for terminal handling (32-bit)
  The ncurses library routines are a terminal-independent method of
  updating character screens with reasonable optimization.
