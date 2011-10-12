@@ -58,6 +58,8 @@ Architecture: any
 Section: debug
 Priority: extra
 Depends: ${shlibs:Depends}, libtinfo-dev (= ${binary:Version}), ${misc:Depends}
+Replaces: libncurses5-dbg (<< 5.9-3)
+Breaks: libncurses5-dbg (<< 5.9-3)
 Description: debugging/profiling library for the low-level terminfo library
  The ncurses library routines are a terminal-independent method of
  updating character screens with reasonable optimization.
@@ -283,6 +285,7 @@ Section: libdevel
 Priority: optional
 Depends: lib32tinfo5 (= ${binary:Version}), lib32c-dev, ${misc:Depends}
 Replaces: lib32ncurses5-dev (<< 5.9-3), lib32tinfo5-dev
+Breaks: lib32ncurses5-dev (<< 5.9-3)
 Description: developer's library for the low-level terminfo library (32-bit)
  The ncurses library routines are a terminal-independent method of
  updating character screens with reasonable optimization.
