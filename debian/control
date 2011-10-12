@@ -77,6 +77,7 @@ Depends: libncurses5 (= ${binary:Version}), libtinfo-dev (= ${binary:Version}),
 	 ncurses-bin (= ${binary:Version}), libc-dev, ${misc:Depends}
 Conflicts: ncurses-dev, libncurses-dev
 Replaces: ncurses-dev, libncurses-dev
+Breaks: binutils-gold (<< 2.21.53.20110910)
 Provides: libncurses-dev, ncurses-dev
 Suggests: ncurses-doc
 Description: developer's libraries for ncurses
@@ -121,6 +122,7 @@ Priority: optional
 Multi-Arch: same
 Depends: libncursesw5 (= ${binary:Version}), libtinfo-dev (= ${binary:Version}),
          ncurses-bin (= ${binary:Version}), libc-dev, ${misc:Depends}
+Breaks: binutils-gold (<< 2.21.53.20110910)
 Suggests: ncurses-doc
 Description: developer's libraries for ncursesw
  The ncurses library routines are a terminal-independent method of
