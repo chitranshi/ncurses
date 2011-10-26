@@ -7,6 +7,7 @@ ncurses (5.9-3) UNRELEASED; urgency=low
   * Move the libtic libraries from lib*ncurses5 to lib*tinfo5
     (Closes: #644933) and their development files from lib*ncurses5-dev
     to lib*tinfo-dev.
+  * Link the example programs against ncursesw rather than ncurses.
   * Drop libticw from libncursesw5 and configure with "--with-ticlib=tic"
     to share the same tic library between libncurses5 and libncursesw5.
   * Add Breaks against binutils-gold (<< 2.21.53.20110910) to
@@ -14,7 +15,7 @@ ncurses (5.9-3) UNRELEASED; urgency=low
   * Obtain CPPFLAGS from dpkg-buildflags.
   * Drop the lintian overrides introduced in 5.9-2.
 
- -- Sven Joachim <svenjoac@gmx.de>  Fri, 07 Oct 2011 18:42:52 +0200
+ -- Sven Joachim <svenjoac@gmx.de>  Wed, 26 Oct 2011 17:38:10 +0200
 
 ncurses (5.9-2) unstable; urgency=low
 

@@ -123,7 +123,8 @@ CONFARGS =	--prefix=/usr \
 
 CONFARGS-TEST =	--prefix=/usr \
 		--bindir=/usr/lib/ncurses/examples \
-		--with-curses-dir=$(objdir)
+		--with-ncursesw \
+		--with-curses-dir=$(wobjdir)
 
 ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
 CONFARGS += --with-build-cc=gcc --host=$(DEB_HOST_GNU_TYPE)
@@ -245,7 +246,7 @@ $(wobjdir-32)/config.status:
 		--disable-overwrite --enable-widec \
 		--libdir=$(usr_lib32)
 
-$(objdir-test)/config.status: build-normal
+$(objdir-test)/config.status: build-wide
 	test -d $(objdir-test) || mkdir $(objdir-test)
 	cd $(objdir-test) && CFLAGS="$(CFLAGS)" $(srcdir)/test/configure \
 		$(CONFARGS-TEST)
@@ -259,9 +260,6 @@ build: build-normal build-static build-wide build-debug build-wide-debug \
 
 build-normal: $(objdir)/config.status
 	cd $(objdir) && $(MAKE)
-	# needed for building the examples
-	mv $(objdir)/lib/libncurses.so $(objdir)/lib/libncurses.so.saved
-	echo "INPUT(libncurses.so.5 -ltinfo)" > $(objdir)/lib/libncurses.so
 	touch $@
 
 build-static: $(objdir-static)/config.status
@@ -282,6 +280,9 @@ build-debug: $(objdir-debug)/config.status
 
 build-wide: $(wobjdir)/config.status
 	cd $(wobjdir) && $(MAKE)
+	# needed for building the examples
+	mv $(wobjdir)/lib/libncursesw.so $(wobjdir)/lib/libncursesw.so.saved
+	echo "INPUT(libncursesw.so.5 -ltinfo)" > $(wobjdir)/lib/libncursesw.so
 	touch $@
 
 build-wide-static: $(wobjdir-static)/config.status
