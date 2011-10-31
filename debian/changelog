@@ -1,4 +1,4 @@
-ncurses (5.9-3) UNRELEASED; urgency=low
+ncurses (5.9-3) unstable; urgency=low
 
   * Move the libtermcap symlinks to lib{32,}tinfo-dev (Closes: #644426).
     - Symlink libtinfo.a to libtermcap.a.
