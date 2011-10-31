@@ -14,6 +14,8 @@ ncurses (5.9-3) UNRELEASED; urgency=low
   * Link the example programs against ncursesw rather than ncurses.
   * Add Breaks against binutils-gold (<< 2.21.53.20110910) to
     libncurses5-dev and libncursesw5-dev (see #644708).
+  * Mention in /etc/terminfo/README that ${HOME}/.terminfo is the first 
+    directory where ncurses looks for terminfo files (LP: #384285).
   * Obtain CPPFLAGS from dpkg-buildflags.
   * Drop the lintian overrides introduced in 5.9-2.
 
