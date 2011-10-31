@@ -72,7 +72,6 @@ Package: libncurses5-dev
 Architecture: any
 Section: libdevel
 Priority: optional
-Multi-Arch: same
 Depends: libncurses5 (= ${binary:Version}), libtinfo-dev (= ${binary:Version}),
 	 ncurses-bin (= ${binary:Version}), libc-dev, ${misc:Depends}
 Conflicts: ncurses-dev, libncurses-dev
@@ -119,7 +118,6 @@ Package: libncursesw5-dev
 Architecture: any
 Section: libdevel
 Priority: optional
-Multi-Arch: same
 Depends: libncursesw5 (= ${binary:Version}), libtinfo-dev (= ${binary:Version}),
          ncurses-bin (= ${binary:Version}), libc-dev, ${misc:Depends}
 Breaks: binutils-gold (<< 2.21.53.20110910)
