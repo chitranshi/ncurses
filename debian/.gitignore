@@ -7,6 +7,7 @@ libncursesw5-dev.install
 libtinfo-dev.install
 libtinfo-dev.links
 libtinfo5.install
+libtermcap.so
 *.substvars
 *.debhelper
 *.debhelper.log

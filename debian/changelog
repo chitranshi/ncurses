@@ -1,3 +1,10 @@
+ncurses (5.9-4) UNRELEASED; urgency=low
+
+  * Create debian/libtermcap.so at build time rather than trying to ship
+    it, since dpkg-source does not like to do the latter (Closes: #647253).
+
+ -- Sven Joachim <svenjoac@gmx.de>  Tue, 01 Nov 2011 20:27:49 +0100
+
 ncurses (5.9-3) unstable; urgency=low
 
   * Move the libtermcap symlinks to lib{32,}tinfo-dev (Closes: #644426).
