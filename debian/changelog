@@ -1,4 +1,4 @@
-ncurses (5.9-4) UNRELEASED; urgency=low
+ncurses (5.9-4) unstable; urgency=low
 
   * Create debian/libtermcap.so at build time rather than trying to ship
     it, since dpkg-source does not like to do the latter (Closes: #647253).
