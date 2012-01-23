@@ -11,8 +11,6 @@ Forwarded: http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=653435#18
 Last-Update: 2012-01-23
 
 ---
-
----
  misc/Makefile.in |    2 +-
  misc/gen_edit.sh |    4 ++--
  2 files changed, 3 insertions(+), 3 deletions(-)
