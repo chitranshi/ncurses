@@ -6,6 +6,7 @@ ncurses (5.9-5) UNRELEASED; urgency=low
       directory in compiled terminfo descriptions (see #509919).
   * Update xterm.ti from xterm 276.  All xterm-* terminfo entries should
     have kbs=\177 now.
+  * Drop patch 05-emdebian-wchar.diff, no longer needed.
 
  -- Sven Joachim <svenjoac@gmx.de>  Mon, 23 Jan 2012 17:32:46 +0100
 
