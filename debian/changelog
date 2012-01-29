@@ -6,6 +6,8 @@ ncurses (5.9-5) UNRELEASED; urgency=low
       directory in compiled terminfo descriptions (see #509919).
   * New patch 00-terminfo-update.diff, updating terminfo descriptions to
     the 20120128 upstream patchlevel.
+    - Includes entries for gnu-mach and gnu-mach-color, installed into
+      the ncurses-base package (Closes: #614316).
   * Update xterm.ti from xterm 276.  All xterm-* terminfo entries should
     have kbs=\177 now.
   * Drop patch 05-emdebian-wchar.diff, no longer needed.
