@@ -11,6 +11,8 @@ ncurses (5.9-5) UNRELEASED; urgency=low
   * Update xterm.ti from xterm 276.  All xterm-* terminfo entries should
     have kbs=\177 now.
   * Drop patch 05-emdebian-wchar.diff, no longer needed.
+  * Protect shell loops in debian/rules with "set -e" to ensure that
+    any errors in them are caught (see Policy §4.6).
 
  -- Sven Joachim <svenjoac@gmx.de>  Mon, 23 Jan 2012 17:32:46 +0100
 

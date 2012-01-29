@@ -327,9 +327,11 @@ install: build
 	dh_prep
 
 	# Static debug libraries need _g suffix to avoid file clashes
+	set -e; \
 	for lib in $(objdir-debug)/lib/*.a; do \
 	  cp -p $$lib `echo $$lib | sed 's/\.a$$/_g.a/'`; \
 	done
+	set -e;	\
 	for lib in $(wobjdir-debug)/lib/*.a; do \
 	  cp -p $$lib `echo $$lib | sed 's/\.a$$/_g.a/'`; \
 	done
@@ -371,6 +373,7 @@ endif
 	# Compile Debian-specific terminfo entries before copying files
 	# into their packages.  Hurd uses gsbom/grbom, so pass -x to tic.
 ifeq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
+	set -e; \
 	for ti in xterm hurd rxvt rxvt-unicode; do \
 	  LD_LIBRARY_PATH=$${LD_LIBRARY_PATH}:$(fulltempdir)/usr/lib/$(DEB_HOST_MULTIARCH):$(fulltempdir)/lib/$(DEB_HOST_MULTIARCH) \
 		TERMINFO=$(fulltempdir)/usr/share/terminfo \
@@ -385,6 +388,7 @@ else
 	  exit 1;						\
 	fi
 
+	set -e; \
 	for ti in xterm hurd rxvt rxvt-unicode; do \
 		TERMINFO=$(fulltempdir)/usr/share/terminfo \
 		tic -x debian/$$ti.ti; \
@@ -393,6 +397,7 @@ else
 endif
 
 	# Move ncurses-base terminfo entries to /lib/terminfo.
+	set -e; \
 	for f in $(libterminfofiles); do \
 		dir=$(tempdir)/lib/terminfo/$$(dirname $$f); \
 		mkdir -p $$dir; \
