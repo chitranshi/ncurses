@@ -4,15 +4,24 @@ Description: Fix backspace key description in some terminfo entries
 Bug-Debian: http://bugs.debian.org/237997
 Bug-Debian: http://bugs.debian.org/602300
 Forwarded: not-needed
-Last-Update: 2010-11-29
+Last-Update: 2012-02-29
 
 ---
- misc/terminfo.src |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ misc/terminfo.src |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 --- a/misc/terminfo.src
 +++ b/misc/terminfo.src
-@@ -4245,7 +4245,7 @@
+@@ -3387,7 +3387,7 @@
+ # This fragment is for people who cannot agree on what the backspace key
+ # should send.
+ xterm+kbs|fragment for backspace key,
+-	kbs=^H,
++	kbs=\177,
+ #
+ # This fragment describes as much of XFree86 xterm's "pc-style" function
+ # keys as will fit into terminfo's 60 function keys.
+@@ -4462,7 +4462,7 @@
  	ich1=\E[@, il=\E[%p1%dL, il1=\E[L, ind=^J,
  	is1=\E[?47l\E>\E[?1l,
  	is2=\E[r\E[m\E[2J\E[H\E[?7h\E[?1;3;4;6l\E[4l, kNXT@,
@@ -21,7 +30,7 @@ Last-Update: 2010-11-29
  	kc1=\E[8~, kc3=\E[6~, kent=\EOM, khlp=\E[28~, kmous=\E[M,
  	mc4=\E[4i, mc5=\E[5i, rc=\E8, rev=\E[7m, ri=\EM, rmacs=^O,
  	rmam=\E[?7l, rmcup=\E[2J\E[?47l\E8, rmir=\E[4l, rmkx=,
-@@ -4678,7 +4678,7 @@
+@@ -4952,7 +4952,7 @@
  	cvvis=\E[34l, dch=\E[%p1%dP, dch1=\E[P, dl=\E[%p1%dM,
  	dl1=\E[M, ed=\E[J, el=\E[K, el1=\E[1K, enacs=\E(B\E)0,
  	flash=\Eg, home=\E[H, ht=^I, hts=\EH, ich=\E[%p1%d@,

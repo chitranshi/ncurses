@@ -11,7 +11,7 @@ ncurses (5.9-5) UNRELEASED; urgency=low
     - Includes entries for gnu-mach and gnu-mach-color, installed into
       the ncurses-base package (Closes: #614316).
   * Update xterm.ti from xterm 276.  All xterm-* terminfo entries should
-    have kbs=\177 now.
+    have kbs=\177 now.  Update patch 02-debian-backspace.diff accordingly.
   * Drop patch 05-emdebian-wchar.diff, no longer needed.
   * Protect shell loops in debian/rules with "set -e" to ensure that
     any errors in them are caught (see Policy §4.6).
