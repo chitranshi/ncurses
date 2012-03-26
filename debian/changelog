@@ -1,4 +1,4 @@
-ncurses (5.9-5) UNRELEASED; urgency=low
+ncurses (5.9-5) unstable; urgency=low
 
   * Configure with /etc/terminfo as default terminfo dir
     (Closes: #653435, #654672).
