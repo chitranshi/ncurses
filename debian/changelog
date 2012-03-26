@@ -1,3 +1,9 @@
+ncurses (5.9-6) UNRELEASED; urgency=low
+
+  * Permit DMs to upload
+
+ -- Craig Small <csmall@debian.org>  Tue, 27 Mar 2012 08:34:08 +1100
+
 ncurses (5.9-5) unstable; urgency=low
 
   * Configure with /etc/terminfo as default terminfo dir
