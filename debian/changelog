@@ -6,6 +6,10 @@ ncurses (5.9-6) UNRELEASED; urgency=low
   [ Sven Joachim ]
   * Blacklist st and st-256color terminfo entries until suckless-tools
     stops shipping them (Closes: #665877).
+  * New patch 01-use-linux2.2-terminfo.diff: use linux2.2 rather than
+    linux3.0 as the base for the linux terminfo entry, since the latter
+    breaks display of line drawing characters in non-UTF-8 locales
+    (closes: #665959).
 
  -- Sven Joachim <svenjoac@gmx.de>  Sun, 01 Apr 2012 14:25:29 +0200
 
