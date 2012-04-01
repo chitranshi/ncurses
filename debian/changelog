@@ -1,8 +1,13 @@
 ncurses (5.9-6) UNRELEASED; urgency=low
 
+  [ Craig Small ]
   * Permit DMs to upload
 
- -- Craig Small <csmall@debian.org>  Tue, 27 Mar 2012 08:34:08 +1100
+  [ Sven Joachim ]
+  * Blacklist st and st-256color terminfo entries until suckless-tools
+    stops shipping them (Closes: #665877).
+
+ -- Sven Joachim <svenjoac@gmx.de>  Sun, 01 Apr 2012 14:25:29 +0200
 
 ncurses (5.9-5) unstable; urgency=low
 
