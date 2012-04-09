@@ -1,4 +1,4 @@
-ncurses (5.9-6) UNRELEASED; urgency=low
+ncurses (5.9-6) unstable; urgency=low
 
   [ Craig Small ]
   * Permit DMs to upload
