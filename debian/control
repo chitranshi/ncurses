@@ -74,7 +74,7 @@ Architecture: any
 Section: libdevel
 Priority: optional
 Depends: libncurses5 (= ${binary:Version}), libtinfo-dev (= ${binary:Version}),
-	 ncurses-bin (= ${binary:Version}), libc-dev, ${misc:Depends}
+         ncurses-bin (= ${binary:Version}), libc-dev, ${misc:Depends}
 Conflicts: ncurses-dev, libncurses-dev
 Replaces: ncurses-dev, libncurses-dev
 Breaks: binutils-gold (<< 2.21.53.20110910)
@@ -92,7 +92,7 @@ Architecture: any
 Section: debug
 Priority: extra
 Depends: ${shlibs:Depends}, libncurses5-dev (= ${binary:Version}),
-	  libtinfo5-dbg (= ${binary:Version}), ${misc:Depends}
+          libtinfo5-dbg (= ${binary:Version}), ${misc:Depends}
 Description: debugging/profiling libraries for ncurses
  The ncurses library routines are a terminal-independent method of
  updating character screens with reasonable optimization.
@@ -168,8 +168,8 @@ Architecture: i386 powerpc sparc s390
 Section: libdevel
 Priority: optional
 Depends: lib64ncurses5 (= ${binary:Version}),
-	 lib64tinfo5 (= ${binary:Version}),
-	 libncurses5-dev (= ${binary:Version}), lib64c-dev, ${misc:Depends}
+         lib64tinfo5 (= ${binary:Version}),
+         libncurses5-dev (= ${binary:Version}), lib64c-dev, ${misc:Depends}
 Suggests: ncurses-doc
 Replaces: amd64-libs-dev (<= 1.2), lib64tinfo5-dev
 Description: developer's libraries for ncurses (64-bit)
@@ -203,8 +203,8 @@ Architecture: amd64 ppc64
 Section: libdevel
 Priority: optional
 Depends: lib32ncurses5 (= ${binary:Version}),
-	 lib32tinfo-dev (= ${binary:Version}),
-	 libncurses5-dev (= ${binary:Version}), lib32c-dev, ${misc:Depends}
+         lib32tinfo-dev (= ${binary:Version}),
+         libncurses5-dev (= ${binary:Version}), lib32c-dev, ${misc:Depends}
 Suggests: ncurses-doc
 Conflicts: libc6-i386 (<= 2.9-18)
 Description: developer's libraries for ncurses (32-bit)
@@ -237,8 +237,8 @@ Architecture: amd64 ppc64
 Section: libdevel
 Priority: optional
 Depends: lib32ncursesw5 (= ${binary:Version}),
-	 lib32tinfo-dev (= ${binary:Version}),
-	 libncursesw5-dev (= ${binary:Version}), lib32c-dev, ${misc:Depends}
+         lib32tinfo-dev (= ${binary:Version}),
+         libncursesw5-dev (= ${binary:Version}), lib32c-dev, ${misc:Depends}
 Conflicts: libc6-i386 (<= 2.9-18)
 Suggests: ncurses-doc
 Description: developer's libraries for ncursesw (32-bit)
