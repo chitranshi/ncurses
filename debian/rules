@@ -422,12 +422,9 @@ binary-arch: build install $(autogen-files)
 	dh_testroot
 	dh_install -s --fail-missing
 	dh_installman -s
-	dh_installdocs -s -N$(package-devti) -N$(package-dbgti) -N$(package-devti-32) debian/FAQ
-	dh_installdocs -p$(package-devti) --link-doc=$(package-ti)
-	dh_installdocs -p$(package-dbgti) --link-doc=$(package-devti)
-ifneq ($(build_32),)
-	dh_installdocs -p$(package-devti-32) --link-doc=$(package-ti-32)
-endif
+	dh_installdocs -p$(package-bin) -p$(package-ti) -p$(package-examples) debian/FAQ
+	dh_installdocs -s -N$(package-bin) -N$(package-ti) -N$(package-examples) \
+		       --link-doc=$(package-ti)
 	dh_installchangelogs -s NEWS
 	dh_installdirs -s
 
