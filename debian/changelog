@@ -2,6 +2,7 @@ ncurses (5.9-7) UNRELEASED; urgency=low
 
   * Make libtinfo5 rather than libncurses5 the main package where the
     Debian FAQ and TODO files are installed.
+  * Let all library, -dev and -dbg packages directly depend on libtinfo5.
 
  -- Sven Joachim <svenjoac@gmx.de>  Mon, 23 Apr 2012 19:37:55 +0200
 
