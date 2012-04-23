@@ -1,3 +1,10 @@
+ncurses (5.9-7) UNRELEASED; urgency=low
+
+  * Make libtinfo5 rather than libncurses5 the main package where the
+    Debian FAQ and TODO files are installed.
+
+ -- Sven Joachim <svenjoac@gmx.de>  Mon, 23 Apr 2012 19:37:55 +0200
+
 ncurses (5.9-6) unstable; urgency=low
 
   [ Craig Small ]
