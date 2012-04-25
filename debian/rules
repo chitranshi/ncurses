@@ -144,8 +144,8 @@ libterminfofiles=a/ansi c/cons25 c/cons25-debian c/cygwin d/dumb h/hurd l/linux 
 
 # Blacklist terminfo entries shipped by other Debian packages so that we do
 # not begin shipping them by accident.
-badterminfo = 5/5250 i/iterm i/iterm-am i/iterm-color \
-	j/jfbterm k/kon k/kon2 l/linux-5250 s/st s/st-256color
+badterminfo = 5/5250 f/fbterm i/iterm i/iterm-am i/iterm-color j/jfbterm \
+	k/kon k/kon2 l/linux-5250 s/st s/st-256color s/stterm s/stterm-256color
 
 # The ncurses configure test won't work when cross compiling (e.g. for
 # 64 bit libraries), so force the libgpm soname to the correct value.
