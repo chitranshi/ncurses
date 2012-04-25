@@ -7,6 +7,7 @@ ncurses (5.9-7) UNRELEASED; urgency=low
   * Let all library, -dev and -dbg packages directly depend on libtinfo5
     and replace their /usr/share/doc directories with symlinks to save
     some space.
+  * Mark ncurses-base and ncurses-term as Multi-Arch: foreign.
 
  -- Sven Joachim <svenjoac@gmx.de>  Mon, 23 Apr 2012 19:37:55 +0200
 
