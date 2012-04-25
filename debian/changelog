@@ -1,5 +1,7 @@
 ncurses (5.9-7) UNRELEASED; urgency=low
 
+  * Take over bterm terminfo entry from bogl-bterm in ncurses-term
+    (Closes: #562134).
   * Make libtinfo5 rather than libncurses5 the main package where the
     Debian FAQ and TODO files are installed.
   * Let all library, -dev and -dbg packages directly depend on libtinfo5
