@@ -1,4 +1,4 @@
-ncurses (5.9-7) UNRELEASED; urgency=low
+ncurses (5.9-7) unstable; urgency=low
 
   * Take over bterm terminfo entry from bogl-bterm in ncurses-term
     (Closes: #562134).
@@ -11,7 +11,7 @@ ncurses (5.9-7) UNRELEASED; urgency=low
   * Explicitly blacklist fbterm and stterm terminfo entries to prevent
     accidents like #665877.
 
- -- Sven Joachim <svenjoac@gmx.de>  Mon, 23 Apr 2012 19:37:55 +0200
+ -- Sven Joachim <svenjoac@gmx.de>  Tue, 01 May 2012 10:07:23 +0200
 
 ncurses (5.9-6) unstable; urgency=low
 
