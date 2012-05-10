@@ -320,7 +320,7 @@ Description: terminal-related programs and man pages
 
 Package: ncurses-base
 Architecture: all
-Section: utils
+Section: misc
 Essential: yes
 Multi-Arch: foreign
 Depends: ${misc:Depends}
@@ -337,7 +337,7 @@ Description: basic terminal type definitions
 
 Package: ncurses-term
 Architecture: all
-Section: admin
+Section: misc
 Priority: standard
 Multi-Arch: foreign
 Depends: ${misc:Depends}
