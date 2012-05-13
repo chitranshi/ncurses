@@ -1,5 +1,7 @@
 ncurses (5.9-8) UNRELEASED; urgency=low
 
+  * Update terminfo descriptions to the 20120512 upstream patchlevel.
+    - Correct 'op' for bterm (Closes: #671227).
   * Change section of ncurses-{base,term} to misc (see #671616).
 
  -- Sven Joachim <svenjoac@gmx.de>  Thu, 10 May 2012 21:03:47 +0200

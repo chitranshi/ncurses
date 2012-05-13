@@ -1,13 +1,13 @@
 Description: Update terminfo entries
- Update terminfo entries to the 2012011 upstream patchlevel
+ Update terminfo entries to the 20120512 upstream patchlevel
 Origin: upstream
 Forwarded: not-needed
 Author: Sven Joachim <svenjoac@gmx.de>     
-Last-Update: 2012-04-09
+Last-Update: 2012-05-13
 
 ---
- misc/terminfo.src |  635 ++++++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 497 insertions(+), 138 deletions(-)
+ misc/terminfo.src | 1100 +++++++++++++++++++++++++++++++++++++++---------------
+ 1 file changed, 803 insertions(+), 297 deletions(-)
 
 --- a/misc/terminfo.src
 +++ b/misc/terminfo.src
@@ -17,12 +17,43 @@ Last-Update: 2012-04-09
  #
 -#	$Revision: 1.383 $
 -#	$Date: 2011/02/20 20:46:53 $
-+#	$Revision: 1.428 $
-+#	$Date: 2012/04/01 13:58:39 $
++#	$Revision: 1.455 $
++#	$Date: 2012/05/12 23:31:44 $
  #
  # The original header is preserved below for reference.  It is noted that there
  # is a "newer" version which differs in some cosmetic details (but actually
-@@ -690,9 +690,7 @@ nansi.sysk|nansisysk|PC-DOS Public Domai
+@@ -376,11 +376,19 @@ ansi+sgrdim|ansi graphic renditions; ass
+ 	dim=\E[2m,
+ 	sgr=\E[%?%p1%t7;%;%?%p2%t4;%;%?%p3%t7;%;%?%p4%t5;%;%?%p5%t2;%;%?%p7%t8;%;m,
+ 	use=ansi+sgr, use=ansi+sgrso, use=ansi+sgrul,
+-ansi+pp|ansi printer port,
+-	mc0=\E[0i, mc4=\E[4i, mc5=\E[5i,
+ ansi+csr|ansi scroll-region plus cursor save & restore,
+ 	csr=\E[%i%p1%d;%p2%dr, rc=\E8, sc=\E7,
+ 
++# The normal (ANSI) flavor of "media copy" building block asserts that
++# characters sent to the printer do not echo on the screen. DEC terminals
++# can also be put into autoprinter mode, where each line is sent to the
++# printer as you move off that line, e.g., by a carriage return.
++ansi+pp|ansi printer port,
++	mc5i,
++	mc0=\E[i, mc4=\E[4i, mc5=\E[5i,
++dec+pp|DEC autoprinter mode,
++	mc0=\E[i, mc4=\E[?4i, mc5=\E[?5i,
++
+ # The IBM PC alternate character set.  Plug this into any Intel console entry.
+ # We use \E[11m for rmacs rather than \E[12m so the <acsc> string can use the
+ # ROM graphics for control characters such as the diamond, up- and down-arrow.
+@@ -488,7 +496,7 @@ ansi-mini|any ansi terminal with pessimi
+ # ansi-mtabs adds relative addressing and minimal tab support
+ ansi-mtabs|any ansi terminal with pessimistic assumptions,
+ 	it#8,
+-	ht=^I, use=ansi+local1, use=ansi-mini,
++	ht=^I, use=ansi-mini, use=ansi+local1,
+ 
+ # ANSI X3.64 from emory!mlhhh (Hugh Hansard) via BRL
+ #
+@@ -690,9 +698,7 @@ nansi.sysk|nansisysk|PC-DOS Public Domai
  	use=ansi.sysk,
  
  #### ANSI console types
@@ -32,7 +63,7 @@ Last-Update: 2012-04-09
  #
  # Atari ST terminals.
  # From Guido Flohr <gufl0000@stud.uni-sb.de>.
-@@ -909,7 +907,7 @@ linux-basic|linux console,
+@@ -909,7 +915,7 @@ linux-basic|linux console,
  	khome=\E[1~, kich1=\E[2~, kmous=\E[M, knp=\E[6~, kpp=\E[5~,
  	kspd=^Z, nel=^M^J, rc=\E8, rev=\E[7m, ri=\EM, rmam=\E[?7l,
  	rmir=\E[4l, rmso=\E[27m, rmul=\E[24m, rs1=\Ec\E]R, sc=\E7,
@@ -41,7 +72,7 @@ Last-Update: 2012-04-09
  	smam=\E[?7h, smir=\E[4h, smul=\E[4m, tbc=\E[3g,
  	vpa=\E[%i%p1%dd, use=vt102+enq, use=klone+sgr,
  	use=ecma+color,
-@@ -936,10 +934,29 @@ linux-c|linux console 1.3.6+ for older n
+@@ -936,10 +942,29 @@ linux-c|linux console 1.3.6+ for older n
  # The 2.2.x kernels add a private mode that sets the cursor type; use that to
  # get a block cursor for cvvis.
  # reported by Frank Heckenbach <frank@g-n-u.de>.
@@ -72,7 +103,7 @@ Last-Update: 2012-04-09
  # Subject: linux 2.6.26 vt back_color_erase
  # Changes to the Linux console driver broke bce model as reported in
  #	https://bugzilla.novell.com/show_bug.cgi?id=418613
-@@ -947,7 +964,7 @@ linux|linux console,
+@@ -947,7 +972,7 @@ linux|linux console,
  #	http://lkml.org/lkml/2008/4/26/305
  #	http://groups.google.com/group/fa.linux.kernel/browse_thread/thread/87f98338f0d636bb/aa96e8b86cee0d1e?lnk=st&q=#aa96e8b86cee0d1e
  linux2.6.26|linux console w/o bce,
@@ -81,7 +112,16 @@ Last-Update: 2012-04-09
  
  # See the note on ICH/ICH1 VERSUS RMIR/SMIR near the end of file
  linux-nic|linux with ich/ich1 suppressed for non-curses programs,
-@@ -1053,6 +1070,24 @@ mach-color|Mach Console with ANSI color,
+@@ -1024,7 +1049,7 @@ bterm|bogl virtual terminal,
+ 	kf3=\E[[C, kf4=\E[[D, kf5=\E[[E, kf6=\E[17~, kf7=\E[18~,
+ 	kf8=\E[19~, kf9=\E[20~, khome=\E[1~, kich1=\E[2~,
+ 	kmous=\E[M, knp=\E[6~, kpp=\E[5~, kspd=^Z, nel=^M^J,
+-	op=\E49;39m, rev=\E[7m, ri=\EM, rmacs=^O, rmso=\E[27m,
++	op=\E[49m\E[39m, rev=\E[7m, ri=\EM, rmacs=^O, rmso=\E[27m,
+ 	rmul=\E[24m, setab=\E[4%p1%dm, setaf=\E[3%p1%dm,
+ 	sgr0=\E[0m, smacs=^N, smso=\E[7m, smul=\E[4m,
+ 
+@@ -1053,6 +1078,24 @@ mach-color|Mach Console with ANSI color,
  	dim=\E[2m, invis=\E[8m, op=\E[37;40m, rmso=\E[27m,
  	setab=\E[4%p1%dm, setaf=\E[3%p1%dm, use=mach,
  
@@ -106,7 +146,16 @@ Last-Update: 2012-04-09
  # From: Marcus Brinkmann
  # http://savannah.gnu.org/cgi-bin/viewcvs/*checkout*/hurd/hurd/console/
  #
-@@ -1649,6 +1684,56 @@ qansi-m|QNX ansi with mouse,
+@@ -1183,7 +1226,7 @@ scoansi-new|SCO Extended ANSI standard c
+ 	civis=\E[=0c, cnorm=\E[=1c, csr=\E[%i%p1%d;%p2%dr,
+ 	cvvis=\E[=2c, mgc=\E[=r, oc=\E[51m, op=\E[50m,
+ 	rep=\E[%p1%d;%p2%db, rmm=\E[=11L,
+-	sgr=\E[0%?%p1%p3%|%t;7%;%?%p2%t;4%;%?%p4%t;5%;%?%p6%t;1%;%?%p7%t;8%;%?%p9%t;12%;m,
++	sgr=\E[0%?%p1%p3%|%t;7%;%?%p2%t;4%;%?%p4%t;5%;%?%p6%t;1%;%?%p7%t;8%;%?%p9%t;12%e;10%;m,
+ 	smgb=\E[=1;0m, smgbp=\E[=1;%i%p1%dm,
+ 	smglp=\E[=2;%i%p1%dm, smgr=\E[=3;0m,
+ 	smgrp=\E[=3;%i%p1%dm, smgt=\E[=0;0m,
+@@ -1649,6 +1692,56 @@ qansi-m|QNX ansi with mouse,
  qansi-w|QNX ansi for windows,
  	xvpa, use=qansi-m,
  
@@ -163,7 +212,7 @@ Last-Update: 2012-04-09
  #### NetBSD consoles
  #
  # pcvt termcap database entries (corresponding to release 3.31)
-@@ -1786,7 +1871,7 @@ x68k|x68k-ite|NetBSD/x68k ITE,
+@@ -1786,7 +1879,7 @@ x68k|x68k-ite|NetBSD/x68k ITE,
  ofcons|DNARD OpenFirmware console,
  	bw,
  	cols#80, lines#30,
@@ -172,7 +221,7 @@ Last-Update: 2012-04-09
  	cub=\233%p1%dD, cub1=\233D, cud=\233%p1%dB, cud1=\233B,
  	cuf=\233%p1%dC, cuf1=\233C, cup=\233%i%p1%d;%p2%dH,
  	cuu=\233%p1%dA, cuu1=\233A, dch=\233%p1%dP, dch1=\233P,
-@@ -1798,8 +1883,8 @@ ofcons|DNARD OpenFirmware console,
+@@ -1798,8 +1891,8 @@ ofcons|DNARD OpenFirmware console,
  	kf4=\2330x, kf5=\2330t, kf6=\2330u, kf7=\2330q, kf8=\2330r,
  	kf9=\2330p, knp=\233/, kpp=\233?, nel=^M^J, rev=\2337m,
  	rmso=\2330m, rmul=\2330m,
@@ -183,7 +232,251 @@ Last-Update: 2012-04-09
  
  # NetBSD "wscons" emulator in vt220 mode.
  # This entry is based on the NetBSD termcap entry, correcting the ncv value.
-@@ -2937,6 +3022,28 @@ putty-vt100|VT100+ keyboard layout,
+@@ -2377,8 +2470,9 @@ vt132|DEC vt132,
+ # with the key marked (ESC) on the vt220.  See vt220d for an alternate mapping.
+ # PF1--PF4 are used as F1--F4.
+ #
++# added msgr -TD
+ vt220-old|vt200-old|DEC VT220 in vt100 emulation mode,
+-	OTbs, OTpt, am, mir, xenl, xon,
++	OTbs, OTpt, am, mir, msgr, xenl, xon,
+ 	cols#80, lines#24, vt#3,
+ 	OTnl=^J,
+ 	acsc=``aaffggjjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
+@@ -2405,7 +2499,7 @@ vt220-old|vt200-old|DEC VT220 in vt100 e
+ # changed rmacs/smacs from shift-in/shift-out to vt200-old's explicit G0/G1
+ # designation to accommodate bug in pcvt -TD
+ vt220|vt200|dec vt220,
+-	OTbs, am, mc5i, mir, msgr, xenl, xon,
++	OTbs, am, mir, msgr, xenl, xon,
+ 	cols#80, it#8, lines#24, vt#3,
+ 	acsc=``aaffggjjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
+ 	bel=^G, blink=\E[5m, bold=\E[1m, clear=\E[H\E[J, cr=^M,
+@@ -2424,13 +2518,13 @@ vt220|vt200|dec vt220,
+ 	kf20=\E[34~, kf3=\EOR, kf4=\EOS, kf6=\E[17~, kf7=\E[18~,
+ 	kf8=\E[19~, kf9=\E[20~, kfnd=\E[1~, khlp=\E[28~,
+ 	kich1=\E[2~, knp=\E[6~, kpp=\E[5~, krdo=\E[29~, kslt=\E[4~,
+-	lf1=pf1, lf2=pf2, lf3=pf3, lf4=pf4, mc0=\E[i, mc4=\E[4i,
+-	mc5=\E[5i, nel=\EE, rc=\E8, rev=\E[7m, ri=\EM,
+-	rmacs=\E(B$<4>, rmam=\E[?7l, rmir=\E[4l, rmso=\E[27m,
+-	rmul=\E[24m, rs1=\E[?3l, sc=\E7,
++	lf1=pf1, lf2=pf2, lf3=pf3, lf4=pf4, nel=\EE, rc=\E8, rev=\E[7m,
++	ri=\EM, rmacs=\E(B$<4>, rmam=\E[?7l, rmir=\E[4l,
++	rmso=\E[27m, rmul=\E[24m, rs1=\E[?3l, sc=\E7,
+ 	sgr=\E[0%?%p6%t;1%;%?%p2%t;4%;%?%p4%t;5%;%?%p1%p3%|%t;7%;m%?%p9%t\E(0%e\E(B%;$<2>,
+ 	sgr0=\E[m\E(B, smacs=\E(0$<2>, smam=\E[?7h, smir=\E[4h,
+-	smso=\E[7m, smul=\E[4m, tbc=\E[3g,
++	smso=\E[7m, smul=\E[4m, tbc=\E[3g, use=ansi+pp,
++	use=ansi+enq,
+ vt220-w|vt200-w|DEC vt220 in wide mode,
+ 	cols#132,
+ 	rs3=\E[?3h, use=vt220,
+@@ -2495,8 +2589,9 @@ vt220-nam|v200-nam|VT220 in vt100 mode w
+ #
+ # From: Alexander Latzko <latzko@marsenius.rutgers.edu>, 30 Dec 1996
+ # (Added vt100 <rc>,<sc> to quiet a tic warning -- esr)
++# added msgr -TD
+ vt200-js|vt220-js|dec vt200 series with jump scroll,
+-	am,
++	am, msgr,
+ 	cols#80,
+ 	bel=^G, clear=\E[H\E[J, cr=^M, csr=\E[%i%p1%d;%p2%dr,
+ 	cub1=^H, cud1=^J, cuf1=\E[C, cup=\E[%i%p1%d;%p2%dH,
+@@ -2534,7 +2629,7 @@ vt320nam|v320n|DEC VT320 in vt100 emul.
+ # From: Adam Thompson <athompso@pangea.ca> Sept 10 1995
+ # (vt320: uncommented <fsl> --esr)
+ vt320|vt300|dec vt320 7 bit terminal,
+-	am, eslok, hs, mir, msgr, xenl,
++	am, hs, mir, msgr, xenl,
+ 	cols#80, lines#24, wsl#80,
+ 	acsc=``aaffggjjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
+ 	bel=^G, blink=\E[5m, bold=\E[1m, civis=\E[?25l,
+@@ -2543,9 +2638,8 @@ vt320|vt300|dec vt320 7 bit terminal,
+ 	cud=\E[%p1%dB, cud1=^J, cuf=\E[%p1%dC, cuf1=\E[C,
+ 	cup=\E[%i%p1%d;%p2%dH, cuu=\E[%p1%dA, cuu1=\E[A,
+ 	dch=\E[%p1%dP, dch1=\E[P, dl=\E[%p1%dM, dl1=\E[M,
+-	ech=\E[%p1%dX, ed=\E[J, el=\E[K, el1=\E[1K, fsl=\E[0$},
+-	home=\E[H, ht=^I, hts=\EH, ich=\E[%p1%d@, il=\E[%p1%dL,
+-	il1=\E[L, ind=\ED,
++	ech=\E[%p1%dX, ed=\E[J, el=\E[K, el1=\E[1K, home=\E[H, ht=^I,
++	hts=\EH, ich=\E[%p1%d@, il=\E[%p1%dL, il1=\E[L, ind=\ED,
+ 	is2=\E>\E[?3l\E[?4l\E[?5l\E[?7h\E[?8h\E[1;24r\E[24;1H,
+ 	kbs=\177, kcub1=\EOD, kcud1=\EOB, kcuf1=\EOC, kcuu1=\EOA,
+ 	kdch1=\E[3~, kel=\E[4~, kf10=\E[21~, kf11=\E[23~,
+@@ -2553,8 +2647,7 @@ vt320|vt300|dec vt320 7 bit terminal,
+ 	kf16=\E[29~, kf17=\E[31~, kf18=\E[32~, kf19=\E[33~,
+ 	kf20=\E[34~, kf6=\E[17~, kf7=\E[18~, kf8=\E[19~,
+ 	kf9=\E[20~, khome=\E[1~, kich1=\E[2~, knp=\E[6~, knxt=^I,
+-	kpp=\E[5~, kprv=\E[Z, kslt=\E[4~, mc0=\E[i, mc4=\E[?4i,
+-	mc5=\E[?5i, nel=\EE, rc=\E8, rev=\E[7m,
++	kpp=\E[5~, kprv=\E[Z, kslt=\E[4~, nel=\EE, rc=\E8, rev=\E[7m,
+ 	rf=/usr/share/tabset/vt300, ri=\EM, rmacs=\E(B,
+ 	rmam=\E[?7l, rmir=\E[4l, rmkx=\E[?1l\E>, rmso=\E[m,
+ 	rmul=\E[m,
+@@ -2563,7 +2656,7 @@ vt320|vt300|dec vt320 7 bit terminal,
+ 	sgr=\E[0%?%p6%t;1%;%?%p2%t;4%;%?%p4%t;5%;%?%p1%p3%|%t;7%;m%?%p9%t\E(0%e\E(B%;$<2>,
+ 	sgr0=\E[m\E(B, smacs=\E(0, smam=\E[?7h, smir=\E[4h,
+ 	smkx=\E[?1h\E=, smso=\E[7m, smul=\E[4m, tbc=\E[3g,
+-	tsl=\E[1$}\E[H\E[K, use=vt220+keypad,
++	use=dec+pp, use=vt220+keypad, use=dec+sl, use=ansi+enq,
+ vt320-nam|vt300-nam|dec vt320 7 bit terminal with no am to make SAS happy,
+ 	am@,
+ 	is2=\E>\E[?3l\E[?4l\E[?5l\E[?7l\E[?8h\E[1;24r\E[24;1H,
+@@ -2673,33 +2766,38 @@ vt400|vt400-24|dec-vt400|dec vt400 24x80
+ 	sgr=\E[0%?%p6%t;1%;%?%p2%t;4%;%?%p4%t;5%;%?%p1%p3%|%t;7%;m%?%p9%t\E(0%e\E(B%;$<2>,
+ 	sgr0=\E[m\E(B, smacs=\E(0, smam=\E[?7h, smir=\E[4h,
+ 	smkx=\E[?1h\E=, smso=\E[7m, smul=\E[4m, tbc=\E[3g,
+-	tsl=\E[2$~\E[1$}\E[1;%dH,
++	tsl=\E[2$~\E[1$}\E[1;%dH, use=dec+sl,
+ 
+ # (vt420: I removed <kf0>, it collided with <kf10>.  I also restored
+ # a missing <sc> -- esr)
++# add msgr and other capabilities from vt220 -TD
+ vt420|DEC VT420,
+-	am, mir, xenl, xon,
+-	cols#80, lines#24, vt#3,
++	am, mir, msgr, xenl, xon,
++	cols#80, it#8, lines#24, vt#3,
+ 	acsc=``aaffggjjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
+-	bel=^G, blink=\E[5m$<2>, bold=\E[1m$<2>,
+-	clear=\E[H\E[2J$<50>, cr=^M, csr=\E[%i%p1%d;%p2%dr,
+-	cub1=^H, cud1=\E[B, cuf1=\E[C,
+-	cup=\E[%i%p1%d;%p2%dH$<10>, cuu1=\E[A, dch1=\E[P,
+-	dl1=\E[M, ed=\E[J$<50>, el=\E[K$<3>, home=\E[H, ht=^I,
+-	if=/usr/share/tabset/vt300, il1=\E[L, ind=\ED,
+-	is2=\E[1;24r\E[24;1H, is3=\E[?67h\E[64;1"p, kbs=^H,
+-	kcub1=\E[D, kcud1=\E[B, kcuf1=\E[C, kcuu1=\E[A,
+-	kdch1=\E[3~, kf1=\EOP, kf10=\E[29~, kf2=\EOQ, kf3=\EOR,
+-	kf4=\EOS, kf5=\E[17~, kf6=\E[18~, kf7=\E[19~, kf8=\E[20~,
+-	kf9=\E[21~, kfnd=\E[1~, kich1=\E[2~, knp=\E[6~, kpp=\E[5~,
+-	kslt=\E[4~, rc=\E8, rev=\E[7m$<2>,
+-	rf=/usr/share/tabset/vt300, ri=\EM, rmacs=\E(B$<4>,
+-	rmam=\E[?7l, rmir=\E[4l, rmkx=\E>,
++	bel=^G, blink=\E[5m$<2>, bold=\E[1m$<2>, civis=\E[?25l,
++	clear=\E[H\E[2J$<50>, cnorm=\E[?25h, cr=^M,
++	csr=\E[%i%p1%d;%p2%dr, cub=\E[%p1%dD, cub1=^H,
++	cud=\E[%p1%dB, cud1=^J, cuf=\E[%p1%dC, cuf1=\E[C,
++	cup=\E[%i%p1%d;%p2%dH$<10>, cuu=\E[%p1%dA, cuu1=\E[A,
++	dch=\E[%p1%dP, dch1=\E[P, dl=\E[%p1%dM, dl1=\E[M,
++	ech=\E[%p1%dX, ed=\E[J$<50>, el=\E[K$<3>, el1=\E[1K,
++	enacs=\E)0, flash=\E[?5h$<200/>\E[?5l, home=\E[H, ht=^I,
++	hts=\EH, ich=\E[%p1%d@, if=/usr/share/tabset/vt300,
++	il=\E[%p1%dL, il1=\E[L, ind=\ED, is2=\E[1;24r\E[24;1H,
++	is3=\E[?67h\E[64;1"p, kbs=^H, kcub1=\E[D, kcud1=\E[B,
++	kcuf1=\E[C, kcuu1=\E[A, kdch1=\E[3~, kf1=\EOP, kf10=\E[29~,
++	kf2=\EOQ, kf3=\EOR, kf4=\EOS, kf5=\E[17~, kf6=\E[18~,
++	kf7=\E[19~, kf8=\E[20~, kf9=\E[21~, kfnd=\E[1~,
++	kich1=\E[2~, knp=\E[6~, kpp=\E[5~, kslt=\E[4~, nel=\EE,
++	rc=\E8, rev=\E[7m$<2>, rf=/usr/share/tabset/vt300,
++	ri=\EM, rmacs=\E(B$<4>, rmam=\E[?7l, rmir=\E[4l, rmkx=\E>,
+ 	rmsc=\E[?0;0r\E>\E[?3l\E[?4l\E[?5l\E[?7h\E[?8h,
+-	rmso=\E[m, rmul=\E[m, rs3=\E[?67h\E[64;1"p, sc=\E7,
++	rmso=\E[27m, rmul=\E[24m, rs3=\E[?67h\E[64;1"p, sc=\E7,
+ 	sgr=\E[0%?%p6%t;1%;%?%p2%t;4%;%?%p4%t;5%;%?%p1%p3%|%t;7%;m%?%p9%t\E(0%e\E(B%;$<2>,
+-	sgr0=\E[m$<2>, smacs=\E(0$<2>, smam=\E[?7h, smir=\E[4h,
+-	smkx=\E=, smso=\E[7m, smul=\E[4m,
++	sgr0=\E[m\E(B$<2>, smacs=\E(0$<2>, smam=\E[?7h,
++	smir=\E[4h, smkx=\E=, smso=\E[7m, smul=\E[4m, tbc=\E[3g,
++	use=ansi+pp, use=dec+sl, use=ansi+enq,
+ 
+ # DEC VT220 and up support DECUDK (user-defined keys).  DECUDK (i.e., pfx)
+ # takes two parameters, the key and the string.  Translating the key is
+@@ -2772,58 +2870,11 @@ vt510pcdos|DEC VT510 w/PC for DOS Merge,
+ # terminal mode is being used.  If Set-Up has been disabled or
+ # assigned to an unknown key, Set-Up may be entered by pressing
+ # [F3] as the first key after power up, regardless of keyboard type.
+-# (vt520: I added <rmam>/<smam> based on the init string, also <sc> -- esr)
+ vt520|DEC VT520,
+-	am, mir, xenl, xon,
+-	cols#80, lines#24, vt#3,
+-	acsc=``aaffggjjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
+-	bel=^G, blink=\E[5m$<2>, bold=\E[1m$<2>,
+-	clear=\E[H\E[2J$<50>, cr=^M, csr=\E[%i%p1%d;%p2%dr,
+-	cub1=^H, cud1=\E[B, cuf1=\E[C,
+-	cup=\E[%i%p1%d;%p2%dH$<10>, cuu1=\E[A, dch1=\E[P,
+-	dl1=\E[M, ed=\E[J$<50>, el=\E[K$<3>, home=\E[H, ht=^I,
+-	if=/usr/share/tabset/vt300, il1=\E[L, ind=\ED,
+-	is2=\E[1;24r\E[24;1H, is3=\E[?67h\E[64;1"p, kbs=^H,
+-	kcub1=\E[D, kcud1=\E[B, kcuf1=\E[C, kcuu1=\E[A,
+-	kdch1=\E[3~, kf1=\EOP, kf10=\E[29~, kf2=\EOQ, kf3=\EOR,
+-	kf4=\EOS, kf5=\E[17~, kf6=\E[18~, kf7=\E[19~, kf8=\E[20~,
+-	kf9=\E[21~, kfnd=\E[1~, kich1=\E[2~, knp=\E[6~, kpp=\E[5~,
+-	kslt=\E[4~,
+-	pfx=\EP1;1|%?%{16}%p1%>%t%{0}%e%{21}%p1%>%t%{1}%e%{25}%p1%>%t%{2}%e%{27}%p1%>%t%{3}%e%{30}%p1%>%t%{4}%e%{5}%;%p1%+%d/%p2%s\E\\,
+-	rc=\E8, rev=\E[7m$<2>, rf=/usr/share/tabset/vt300,
+-	ri=\EM, rmacs=\E(B$<4>, rmam=\E[?7l, rmir=\E[4l,
+-	rmsc=\E[?0;0r\E>\E[?3l\E[?4l\E[?5l\E[?7h\E[?8h,
+-	rmso=\E[m, rmul=\E[m, rs3=\E[?67h\E[64;1"p, sc=\E7,
+-	sgr=\E[0%?%p6%t;1%;%?%p2%t;4%;%?%p4%t;5%;%?%p1%p3%|%t;7%;m%?%p9%t\E(0%e\E(B%;$<2>,
+-	sgr0=\E[m$<2>, smacs=\E(0$<2>, smam=\E[?7h, smir=\E[4h,
+-	smso=\E[7m, smul=\E[4m,
++	use=ansi+rca, use=vt420, use=ansi+tabs,
+ 
+-# (vt525: I added <rmam>/<smam> based on the init string;
+-# removed <rmso>=\E[m, <rmul>=\E[m, added <sc> -- esr)
+ vt525|DEC VT525,
+-	am, mir, xenl, xon,
+-	cols#80, lines#24, vt#3,
+-	acsc=``aaffggjjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
+-	bel=^G, blink=\E[5m$<2>, bold=\E[1m$<2>,
+-	clear=\E[H\E[2J$<50>, cr=^M, csr=\E[%i%p1%d;%p2%dr,
+-	cub1=^H, cud1=\E[B, cuf1=\E[C,
+-	cup=\E[%i%p1%d;%p2%dH$<10>, cuu1=\E[A, dch1=\E[P,
+-	dl1=\E[M, ed=\E[J$<50>, el=\E[K$<3>, home=\E[H, ht=^I,
+-	if=/usr/share/tabset/vt300, il1=\E[L, ind=\ED,
+-	is2=\E[1;24r\E[24;1H, is3=\E[?67h\E[64;1"p, kbs=^H,
+-	kcub1=\E[D, kcud1=\E[B, kcuf1=\E[C, kcuu1=\E[A,
+-	kdch1=\E[3~, kf1=\EOP, kf10=\E[29~, kf2=\EOQ, kf3=\EOR,
+-	kf4=\EOS, kf5=\E[17~, kf6=\E[18~, kf7=\E[19~, kf8=\E[20~,
+-	kf9=\E[21~, kfnd=\E[1~, kich1=\E[2~, knp=\E[6~, kpp=\E[5~,
+-	kslt=\E[4~,
+-	pfx=\EP1;1|%?%{16}%p1%>%t%{0}%e%{21}%p1%>%t%{1}%e%{25}%p1%>%t%{2}%e%{27}%p1%>%t%{3}%e%{30}%p1%>%t%{4}%e%{5}%;%p1%+%d/%p2%s\E\\,
+-	rc=\E8, rev=\E[7m$<2>, rf=/usr/share/tabset/vt300,
+-	ri=\EM, rmacs=\E(B$<4>, rmam=\E[?7l, rmir=\E[4l,
+-	rmsc=\E[?0;0r\E>\E[?3l\E[?4l\E[?5l\E[?7h\E[?8h,
+-	rmso=\E[m, rmul=\E[m, rs3=\E[?67h\E[64;1"p, sc=\E7,
+-	sgr=\E[0%?%p6%t;1%;%?%p2%t;4%;%?%p4%t;5%;%?%p1%p3%|%t;7%;m%?%p9%t\E(0%e\E(B%;$<2>,
+-	sgr0=\E[m$<2>, smacs=\E(0$<2>, smam=\E[?7h, smir=\E[4h,
+-	smso=\E[7m, smul=\E[4m,
++	use=vt520,
+ 
+ #### VT100 emulations
+ #
+@@ -2887,7 +2938,7 @@ crt|crt-vt220|CRT 2.3 emulating VT220,
+ # the default behavior -TD
+ 
+ putty|PuTTY terminal emulator,
+-	am, bce, bw, ccc, hs, mir, msgr, xenl, xon, XT,
++	am, bce, bw, ccc, mir, msgr, xenl, xon, XT,
+ 	colors#8, it#8, ncv#22, pairs#64, U8#1,
+ 	acsc=``aaffggjjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
+ 	bel=^G, blink=\E[5m, bold=\E[1m, cbt=\E[Z, civis=\E[?25l,
+@@ -2897,11 +2948,10 @@ putty|PuTTY terminal emulator,
+ 	cup=\E[%i%p1%d;%p2%dH, cuu=\E[%p1%dA, cuu1=\EM,
+ 	dch=\E[%p1%dP, dch1=\E[P,
+ 	dispc=%?%p1%{8}%=%t\E%%G\342\227\230\E%%@%e%p1%{10}%=%t\E%%G\342\227\231\E%%@%e%p1%{12}%=%t\E%%G\342\231\0\E%%@%e%p1%{13}%=%t\E%%G\342\231\252\E%%@%e%p1%{14}%=%t\E%%G\342\231\253\E%%@%e%p1%{15}%=%t\E%%G\342\230\274\E%%@%e%p1%{27}%=%t\E%%G\342\206\220\E%%@%e%p1%{155}%=%t\E%%G\340\202\242\E%%@%e%p1%c%;,
+-	dl=\E[%p1%dM, dl1=\E[M, dsl=\E]0;\007, ech=\E[%p1%dX,
+-	ed=\E[J, el=\E[K, el1=\E[1K, enacs=\E(B\E)0,
+-	flash=\E[?5h\E[?5l, fsl=^G, home=\E[H, hpa=\E[%i%p1%dG,
+-	ht=^I, hts=\EH, il=\E[%p1%dL, il1=\E[L, ind=^J,
+-	indn=\E[%p1%dS,
++	dl=\E[%p1%dM, dl1=\E[M, ech=\E[%p1%dX, ed=\E[J, el=\E[K,
++	el1=\E[1K, enacs=\E(B\E)0, flash=\E[?5h\E[?5l, home=\E[H,
++	hpa=\E[%i%p1%dG, ht=^I, hts=\EH, il=\E[%p1%dL, il1=\E[L,
++	ind=^J, indn=\E[%p1%dS,
+ 	initc=\E]P%p1%x%p2%{255}%*%{1000}%/%02x%p3%{255}%*%{1000}%/%02x%p4%{255}%*%{1000}%/%02x,
+ 	is2=\E7\E[r\E[m\E[?7h\E[?1;4;6l\E[4l\E8\E>\E]R,
+ 	kb2=\E[G, kbs=\177, kcbt=\E[Z, kcub1=\E[D, kcud1=\E[B,
+@@ -2922,7 +2972,7 @@ putty|PuTTY terminal emulator,
+ 	sgr=\E[0%?%p1%p6%|%t;1%;%?%p2%t;4%;%?%p1%p3%|%t;7%;%?%p4%t;5%;m%?%p9%t\016%e\017%;,
+ 	sgr0=\E[m\017, smacs=^N, smam=\E[?7h, smcup=\E[?47h,
+ 	smir=\E[4h, smpch=\E[11m, smso=\E[7m, smul=\E[4m,
+-	tbc=\E[3g, tsl=\E]0;, vpa=\E[%i%p1%dd, use=vt102+enq,
++	tbc=\E[3g, vpa=\E[%i%p1%dd, use=vt102+enq, use=xterm+sl,
+ vt100-putty|Reset PuTTY to pure vt100,
+ 	rs2=\E<\E["p\Ec\E[?3l\E]R\E[40"p\E[61"p\E[50;1;2"p,
+ 	use=vt100,
+@@ -2937,6 +2987,28 @@ putty-vt100|VT100+ keyboard layout,
  	kf3=\EOR, kf4=\EOS, kf5=\EOT, kf6=\EOU, kf7=\EOV, kf8=\EOW,
  	kf9=\EOX, use=putty,
  
@@ -212,7 +505,7 @@ Last-Update: 2012-04-09
  # This entry is for Tera Term Pro version 2.3, for MS-Windows 95/NT written by
  # T. Teranishi dated Mar 10, 1998.  It is a free software terminal emulator
  # (communication program) which supports:
-@@ -3091,7 +3198,8 @@ tt|tkterm|Don Libes' tk text widget term
+@@ -3091,7 +3163,8 @@ tt|tkterm|Don Libes' tk text widget term
  	kf9=\EOX, rmkx=\E[?1l\E>, rmso=\E[m, smkx=\E[?1h\E,
  	smso=\E[7m,
  
@@ -222,7 +515,34 @@ Last-Update: 2012-04-09
  #
  # You can add the following line to your .Xdefaults to change the terminal type
  # set by the xterms you start up to my-xterm:
-@@ -3274,12 +3382,14 @@ xterm-xfree86|xterm terminal emulator (X
+@@ -3183,7 +3256,7 @@ xterm-r6|xterm-old|xterm X11R6 version,
+ # This is the base xterm entry for the xterm supplied with XFree86 3.2 & up.
+ # The name has been changed and some aliases have been removed.
+ xterm-xf86-v32|xterm terminal emulator (XFree86 3.2 Window System),
+-	OTbs, am, bce, km, mir, msgr, xenl,
++	OTbs, am, bce, km, mir, msgr, xenl, XT,
+ 	cols#80, it#8, lines#24, ncv@,
+ 	acsc=``aaffggiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
+ 	bel=^G, bold=\E[1m, cbt=\E[Z, civis=\E[?25l,
+@@ -3227,13 +3300,13 @@ xterm-xf86-v33|xterm terminal emulator (
+ # xterm to use terminfo-based descriptions with the titeInhibit resource.
+ # -- the distribution contained incorrect khome/kend values -TD
+ xterm-xf86-v333|xterm terminal emulator (XFree86 3.3.3 Window System),
+-	mc5i,
+ 	blink=\E[5m, ich1@, invis=\E[8m,
+ 	is2=\E[!p\E[?3;4l\E[4l\E>, kdch1=\E[3~, kfnd@, kslt@,
+-	mc0=\E[i, mc4=\E[4i, mc5=\E[5i, rmcup=\E[?1047l\E[?1048l,
+-	rs1=\Ec, rs2=\E[!p\E[?3;4l\E[4l\E>,
++	rmcup=\E[?1047l\E[?1048l, rs1=\Ec,
++	rs2=\E[!p\E[?3;4l\E[4l\E>,
+ 	sgr=\E[0%?%p1%p6%|%t;1%;%?%p2%t;4%;%?%p1%p3%|%t;7%;%?%p4%t;5%;%?%p7%t;8%;m%?%p9%t\016%e\017%;,
+-	smcup=\E[?1048h\E[?1047h, use=xterm-xf86-v33,
++	smcup=\E[?1048h\E[?1047h, use=ansi+pp,
++	use=xterm-xf86-v33,
+ 
+ # This version was released in XFree86 4.0.
+ xterm-xf86-v40|xterm terminal emulator (XFree86 4.0 Window System),
+@@ -3274,12 +3347,14 @@ xterm-xfree86|xterm terminal emulator (X
  # This version reflects the current xterm features.
  xterm-new|modern xterm terminal emulator,
  	npc,
@@ -242,26 +562,45 @@ Last-Update: 2012-04-09
  #
  # This fragment describes as much of XFree86 xterm's "pc-style" function
  # keys as will fit into terminfo's 60 function keys.
-@@ -3457,7 +3567,7 @@ xterm-basic|modern xterm terminal emulat
+@@ -3445,7 +3520,7 @@ xterm+r6f2|xterm with oldFunctionKeys an
+ #
+ # This chunk is used for building the VT220/Sun/PC keyboard variants.
+ xterm-basic|modern xterm terminal emulator - common,
+-	OTbs, am, bce, km, mc5i, mir, msgr, xenl, AX,
++	OTbs, am, bce, km, mir, msgr, xenl, AX, XT,
+ 	colors#8, cols#80, it#8, lines#24, pairs#64,
+ 	acsc=``aaffggiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
+ 	bel=^G, blink=\E[5m, bold=\E[1m, cbt=\E[Z, civis=\E[?25l,
+@@ -3457,19 +3532,20 @@ xterm-basic|modern xterm terminal emulat
  	dl1=\E[M, ech=\E[%p1%dX, ed=\E[J, el=\E[K, el1=\E[1K,
  	flash=\E[?5h$<100/>\E[?5l, home=\E[H, hpa=\E[%i%p1%dG,
  	ht=^I, hts=\EH, ich=\E[%p1%d@, il=\E[%p1%dL, il1=\E[L,
 -	ind=^J, invis=\E[8m, is2=\E[!p\E[?3;4l\E[4l\E>, kbs=^H,
+-	kmous=\E[M, mc0=\E[i, mc4=\E[4i, mc5=\E[5i, meml=\El,
+-	memu=\Em, op=\E[39;49m, rc=\E8, rev=\E[7m, ri=\EM,
+-	rmacs=\E(B, rmam=\E[?7l, rmcup=\E[?1049l, rmir=\E[4l,
+-	rmkx=\E[?1l\E>, rmm=\E[?1034l, rmso=\E[27m, rmul=\E[24m,
+-	rs1=\Ec, rs2=\E[!p\E[?3;4l\E[4l\E>, sc=\E7,
+-	setab=\E[4%p1%dm, setaf=\E[3%p1%dm,
 +	ind=^J, invis=\E[8m, is2=\E[!p\E[?3;4l\E[4l\E>,
- 	kmous=\E[M, mc0=\E[i, mc4=\E[4i, mc5=\E[5i, meml=\El,
- 	memu=\Em, op=\E[39;49m, rc=\E8, rev=\E[7m, ri=\EM,
- 	rmacs=\E(B, rmam=\E[?7l, rmcup=\E[?1049l, rmir=\E[4l,
-@@ -3469,7 +3579,8 @@ xterm-basic|modern xterm terminal emulat
++	kmous=\E[M, meml=\El, memu=\Em, op=\E[39;49m, rc=\E8,
++	rev=\E[7m, ri=\EM, rmacs=\E(B, rmam=\E[?7l,
++	rmcup=\E[?1049l, rmir=\E[4l, rmkx=\E[?1l\E>,
++	rmm=\E[?1034l, rmso=\E[27m, rmul=\E[24m, rs1=\Ec,
++	rs2=\E[!p\E[?3;4l\E[4l\E>, sc=\E7, setab=\E[4%p1%dm,
++	setaf=\E[3%p1%dm,
+ 	setb=\E[4%?%p1%{1}%=%t4%e%p1%{3}%=%t6%e%p1%{4}%=%t1%e%p1%{6}%=%t3%e%p1%d%;m,
+ 	setf=\E[3%?%p1%{1}%=%t4%e%p1%{3}%=%t6%e%p1%{4}%=%t1%e%p1%{6}%=%t3%e%p1%d%;m,
  	sgr=%?%p9%t\E(0%e\E(B%;\E[0%?%p6%t;1%;%?%p2%t;4%;%?%p1%p3%|%t;7%;%?%p4%t;5%;%?%p7%t;8%;m,
  	sgr0=\E(B\E[m, smacs=\E(0, smam=\E[?7h, smcup=\E[?1049h,
  	smir=\E[4h, smkx=\E[?1h\E=, smm=\E[?1034h, smso=\E[7m,
 -	smul=\E[4m, tbc=\E[3g, vpa=\E[%i%p1%dd, use=vt100+enq,
-+	smul=\E[4m, tbc=\E[3g, vpa=\E[%i%p1%dd, use=xterm+kbs,
-+	use=vt100+enq,
++	smul=\E[4m, tbc=\E[3g, vpa=\E[%i%p1%dd, use=ansi+pp,
++	use=xterm+kbs, use=vt100+enq,
  
  # From: David J. MacKenzie <djm@va.pubnix.com>, 14 Nov 1997
  # In retrospect, something like xterm-r6 was intended here -TD
-@@ -3527,6 +3638,28 @@ xterm-1002|testing xterm-mouse,
+@@ -3527,6 +3603,28 @@ xterm-1002|testing xterm-mouse,
  xterm-1003|testing xterm-mouse,
  	XM=\E[?1003%?%p1%{1}%=%th%el%;, use=xterm-new,
  
@@ -282,7 +621,7 @@ Last-Update: 2012-04-09
 +#	function to a block or underline.
 +# Se resets the cursor style to the terminal power-on default.
 +#  
-+# Cs and Ce set and reset the cursor colour.
++# Cs and Cr set and reset the cursor colour.
 +xterm+tmux|advanced xterm features used in tmux,
 +	Cr=\E]112\007, Cs=\E]12;%p1%s\007,
 +	Ms=\E]52;%p1%s;%p2%s\007, Se=\E[2 q, Ss=\E[%p1%d q,
@@ -290,7 +629,7 @@ Last-Update: 2012-04-09
  # This is another variant, for XFree86 4.0 xterm (T.Dickey)
  # This is an 8-bit version of xterm, which emulates DEC vt220 with ANSI color.
  # To use it, your decTerminalID resource must be set to 200 or above.
-@@ -3552,8 +3685,8 @@ xterm-8bit|xterm terminal emulator 8-bit
+@@ -3552,8 +3650,8 @@ xterm-8bit|xterm terminal emulator 8-bit
  	hpa=\233%i%p1%dG, ht=^I, hts=\210, ich=\233%p1%d@,
  	il=\233%p1%dL, il1=\233L, ind=^J, invis=\2338m,
  	is2=\E[62"p\E G\233m\233?7h\E>\E7\233?1;3;4;6l\2334l\233r\E8,
@@ -301,7 +640,7 @@ Last-Update: 2012-04-09
  	kcuf1=\217C, kcuu1=\217A, kdch1=\2333~, kend=\2334~,
  	kent=\217M, kf1=\23311~, kf10=\23321~, kf11=\23323~,
  	kf12=\23324~, kf13=\23325~, kf14=\23326~, kf15=\23328~,
-@@ -3575,6 +3708,7 @@ xterm-8bit|xterm terminal emulator 8-bit
+@@ -3575,6 +3673,7 @@ xterm-8bit|xterm terminal emulator 8-bit
  	smcup=\233?1049h, smir=\2334h, smkx=\233?1h\E=,
  	smso=\2337m, smul=\2334m, tbc=\2333g, u6=\233[%i%d;%dR,
  	u7=\E[6n, u8=\233[?1;2c, u9=\E[c, vpa=\233%i%p1%dd,
@@ -309,7 +648,7 @@ Last-Update: 2012-04-09
  
  xterm-hp|xterm with hpterm function keys,
  	kclr=\EJ, kcub1=\ED, kcud1=\EB, kcuf1=\EC, kcuu1=\EA,
-@@ -3621,8 +3755,9 @@ xterm-vt52|xterm emulating dec vt52,
+@@ -3621,15 +3720,16 @@ xterm-vt52|xterm emulating dec vt52,
  	acsc=``aaffggjjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
  	bel=^G, clear=\EH\EJ, cr=^M, cub1=\ED, cud1=\EB, cuf1=\EC,
  	cup=\EY%p1%' '%+%c%p2%' '%+%c, cuu1=\EA, ed=\EJ, el=\EK,
@@ -321,10 +660,80 @@ Last-Update: 2012-04-09
  
  xterm-noapp|xterm with cursor keys in normal mode,
  	rmcup@, rmkx=\E>, smcup@, smkx=\E=, use=xterm+noapp,
-@@ -3659,6 +3794,15 @@ xterm+sl-twm|access X title line (pacify
+ 	use=xterm,
+ 
+ xterm-24|vs100|xterms|xterm terminal emulator (X Window System),
+-	lines#24, use=xterm-old,
++	lines#24, use=xterm,
+ 
+ # This is xterm for ncurses.
+ xterm|xterm terminal emulator (X Window System),
+@@ -3640,25 +3740,68 @@ xterm|xterm terminal emulator (X Window
+ xterm-utf8|xterm with no VT100 line-drawing in UTF-8 mode,
+ 	U8#1, use=xterm,
+ 
+-# These entries allow access to the X titlebar and icon name as a status line.
+-# Note that twm (and possibly window managers descended from it such as tvtwm,
+-# ctwm, and vtwm) track windows by icon-name; thus, you don't want to mess
+-# with it.
++# These building-blocks allow access to the X titlebar and icon name as a
++# status line.  There are a few problems in using them in entries:
++#
++# a) tsl should have a parameter to denote the column on which to transfer to
++#    the status line.
++# b) the "0" code for xterm updates both icon-title and window title.  Some
++#    window managers such as twm (and possibly window managers descended from
++#    it such as tvtwm, ctwm, and vtwm) track windows by icon-name. Thus, you
++#    don't want to mess with icon-name when using those window managers.
+ xterm+sl|access X title line and icon name,
+ 	hs,
+-	wsl#40,
+-	dsl=\E]0;\007, fsl=^G, tsl=\E]0;, use=xterm,
++	dsl=\E]0;\007, fsl=^G, tsl=\E]0;,
+ xterm+sl-twm|access X title line (pacify twm-descended window managers),
+ 	hs,
+-	wsl#40,
+-	dsl=\E]2;\007, fsl=^G, tsl=\E]2;, use=xterm,
++	dsl=\E]2;\007, fsl=^G, tsl=\E]2;,
++
++# In contrast, this block can be used for a DEC vt320 and up.  There are two
++# controls used.
++#
++# DECSASD (select active status display)
++#	\E[0$}	Main display
++#	\E[1$}	Status line
++#
++# DECSSDT (select status line type)
++#	\E[0$~	No status line
++#	\E[1$~	Indicator status line
++#	\E[2$~	Host-writable status line
++#
++# The building block assumes that the terminal always shows something at the
++# status line (either the indicator, or status line).  That is because if no
++# status line is used, then the terminal makes that line part of the user
++# window, changing its size without notice.
++#
++# Because there is no "esl" (enable status line) capability, the "tsl"
++# capability ensures that the status line is host-writable.  A DEC terminal
++# will clear the status line when changing from indicator to host-writable
++# mode.
++#
++# Once on the status line, the row part of cursor addressing is ignored.  Since
++# tsl expects a parameter (to specify the column), the shortest addressing that
++# can be used for this purpose is HPA, e.g., \E[5d to go to column 5.
++#
++dec+sl|DEC VTxx status line,
++	eslok, hs,
++	dsl=\E[1$~, fsl=\E[0$}, tsl=\E[2$~\E[1$}\E[%i%p1%d`,
+ 
+ #
+ # The following xterm variants don't depend on your base version
+ #
  # xterm with bold instead of underline
  xterm-bold|xterm terminal emulator (X11R6 Window System) standout w/bold,
- 	smso=\E[7m, smul=\E[1m, use=xterm-old,
+-	smso=\E[7m, smul=\E[1m, use=xterm-old,
++	sgr=%?%p9%t\E(0%e\E(B%;\E[0%?%p6%t;1%;%?%p2%t;1%;%?%p1%p3%|%t;7%;%?%p4%t;5%;%?%p7%t;8%;m,
++	smso=\E[7m, smul=\E[1m, use=xterm,
 +
 +# See the note on ICH/ICH1 VERSUS RMIR/SMIR near the end of file
 +xterm-nic|xterm with ich/ich1 suppressed for non-curses programs,
@@ -337,7 +746,7 @@ Last-Update: 2012-04-09
  # (kterm: this had extension capabilities ":KJ:TY=ascii:" -- esr)
  # (kterm should not invoke DEC Graphics as the alternate character set
  #  -- Kenji Rikitake)
-@@ -3676,12 +3820,50 @@ kterm|kterm kanji terminal emulator (X w
+@@ -3676,12 +3819,51 @@ kterm|kterm kanji terminal emulator (X w
  	tsl=\E[?E\E[?%i%p1%dT, use=xterm-r6, use=ecma+color,
  kterm-color|kterm-co|kterm with ANSI colors,
  	ncv@, use=kterm, use=ecma+color,
@@ -388,6 +797,7 @@ Last-Update: 2012-04-09
 +# color stuff, I also have a status line defined as the window manager
 +# title bar. [I have translated it to terminfo -- ESR]
 +xterm-pcolor|xterm with color used for highlights and status line,
++	wsl#40,
 +	bold=\E[1;43m, rev=\E[7;34m,
 +	sgr=%?%p9%t\E(0%e\E(B%;\E[0%?%p6%t;1;43%;%?%p2%t;4;42%;%?%p1%t;7;31%;%?%p3%t;7;34%;%?%p4%t;5%;%?%p7%t;8%;m,
 +	smso=\E[7;31m, smul=\E[4;42m, use=xterm+sl, use=xterm-r6,
@@ -427,6 +837,15 @@ Last-Update: 2012-04-09
  # this describes the alpha-version of Gnome terminal shipped with Redhat 6.0
  gnome-rh62|Gnome terminal,
  	bce,
+@@ -3782,7 +3990,7 @@ gnome-rh80|GNOME Terminal,
+ #
+ # bce and msgr are repaired.
+ gnome-rh90|GNOME Terminal,
+-	bce, msgr,
++	bce, msgr, XT,
+ 	hpa=\E[%i%p1%dG, kDC=\E[3;2~, kLFT=\EO2D, kRIT=\EO2C,
+ 	kb2=\E[E, kcbt=\E[Z, kend=\EOF, khome=\EOH, tbc=\E[3g,
+ 	vpa=\E[%i%p1%dd, use=xterm+pcf0, use=xterm+pcfkeys,
 @@ -3867,6 +4075,7 @@ gnome-256color|GNOME Terminal with xterm
  xfce|Xfce Terminal,
  	use=vte,
@@ -714,6 +1133,42 @@ Last-Update: 2012-04-09
  ######## UNIX VIRTUAL TERMINALS, VIRTUAL CONSOLES, AND TELNET CLIENTS
  #
  
+@@ -4920,18 +5191,18 @@ screen3|older VT 100/ANSI X3.64 virtual
+ # sequences for setting the window-title.  So you must use tsl and fsl in
+ # pairs, since the latter ends the string that is loaded to the window-title.
+ ncsa-m|ncsa-vt220-8|NCSA Telnet 2.6 for Macintosh in vt220-8 mode,
+-	am, hs, km, mir, msgr, xenl,
++	am, km, mir, msgr, xenl,
+ 	acsc=``aaffggiijjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
+ 	bel=^G, blink=\E[5m, bold=\E[1m, civis=\E[?25l,
+ 	clear=\E[H\E[2J, cnorm=\E[?25h, cr=^M,
+ 	csr=\E[%i%p1%d;%p2%dr, cub=\E[%p1%dD, cub1=^H,
+ 	cud=\E[%p1%dB, cud1=^J, cuf=\E[%p1%dC, cuf1=\E[C,
+ 	cup=\E[%i%p1%d;%p2%dH, cuu=\E[%p1%dA, cuu1=\E[A,
+-	dch=\E[%p1%dP, dch1=\E[P, dl=\E[%p1%dM, dl1=\E[M,
+-	dsl=\E]0;\007, ed=\E[J, el=\E[K, el1=\E[1K, enacs=\E)0,
+-	flash=\E[?5h\E[?5l, fsl=^G, home=\E[H, ht=^I, hts=\EH,
+-	ich=\E[%p1%d@, if=/usr/share/tabset/vt100,
+-	il=\E[%p1%dL, il1=\E[L, ind=\n$<150*>,
++	dch=\E[%p1%dP, dch1=\E[P, dl=\E[%p1%dM, dl1=\E[M, ed=\E[J,
++	el=\E[K, el1=\E[1K, enacs=\E)0, flash=\E[?5h\E[?5l,
++	home=\E[H, ht=^I, hts=\EH, ich=\E[%p1%d@,
++	if=/usr/share/tabset/vt100, il=\E[%p1%dL, il1=\E[L,
++	ind=\n$<150*>,
+ 	is2=\E7\E[r\E[m\E[?7h\E[?1;4;6l\E[4l\E8\E>, kbs=^H,
+ 	kcub1=\E[D, kcud1=\E[B, kcuf1=\E[C, kcuu1=\E[A,
+ 	kdch1=\E[4~, kend=\E[5~, kf1=\E[17~, kf10=\E[28~,
+@@ -4945,8 +5216,8 @@ ncsa-m|ncsa-vt220-8|NCSA Telnet 2.6 for
+ 	rs2=\E7\E[r\E8\E[m\E[?7h\E[?1;4;6l\E[4l\E>, sc=\E7,
+ 	sgr=\E[0%?%p6%t;1%;%?%p2%t;4%;%?%p4%t;5%;%?%p1%p3%|%t;7%;m%?%p9%t\E(0%e\E(B%;,
+ 	sgr0=\E[m\E(B, smacs=\E(0, smam=\E[?7h, smcup=\E7,
+-	smir=\E[4h, smso=\E[7m, smul=\E[4m, tbc=\E[3g, tsl=\E]0;,
+-	u8=\E[?62;1;6c, use=ansi+enq,
++	smir=\E[4h, smso=\E[7m, smul=\E[4m, tbc=\E[3g,
++	u8=\E[?62;1;6c, use=xterm+sl, use=ansi+enq,
+ ncsa|NCSA Telnet 2.7 for Macintosh in vt220-8 mode,
+ 	use=ncsa-m, use=klone+color,
+ ncsa-ns|NCSA Telnet 2.7 for Macintosh in vt220-8 mode,
 @@ -5064,10 +5335,10 @@ sun-il|Sun Microsystems console with wor
  	kf10=\E[233z, kf11=\E[234z, kf12=\E[235z, kf2=\E[225z,
  	kf3=\E[226z, kf4=\E[227z, kf5=\E[228z, kf6=\E[229z,
@@ -729,7 +1184,18 @@ Last-Update: 2012-04-09
  # On some versions of CGSIX framebuffer firmware (SparcStation 5), <il1>/<il>
  # flake out on the last line.  Unfortunately, without them the terminal has no
  # way to scroll.
-@@ -5131,10 +5402,11 @@ sun-type4|Sun Workstation console with t
+@@ -5077,6 +5348,10 @@ sun-cgsix|sun-ss5|Sun SparcStation 5 con
+ sun|sun1|sun2|Sun Microsystems Inc. workstation console,
+ 	use=sun-il,
+ 
++sun+sl|Sun Workstation window status line,
++	hs,
++	dsl=\E]l\E\\, fsl=\E\\, tsl=\E]l,
++
+ # From: <john@ucbrenoir>  Tue Sep 24 13:14:44 1985
+ sun-s|Sun Microsystems Workstation window with status line,
+ 	hs,
+@@ -5131,10 +5406,11 @@ sun-type4|Sun Workstation console with t
  sun-color|Sun Microsystems Workstation console with color support (IA systems),
  	colors#8, ncv#3, pairs#64,
  	cub=\E[%p1%dD, cud=\E[%p1%dB, cuf=\E[%p1%dC,
@@ -743,7 +1209,7 @@ Last-Update: 2012-04-09
  	use=sun,
  
  #### Iris consoles
-@@ -5405,7 +5677,7 @@ dtterm|CDE desktop terminal,
+@@ -5405,7 +5681,7 @@ dtterm|CDE desktop terminal,
  #### Non-Unix Consoles
  #
  
@@ -752,7 +1218,7 @@ Last-Update: 2012-04-09
  #
  # Also (possibly only EMX, so we don't put it in ansi.sys, etc): set the
  # no_color_video to inform the application that standout(1), underline(2)
-@@ -5544,7 +5816,7 @@ cygwin|ansi emulation for Cygwin,
+@@ -5544,7 +5820,7 @@ cygwin|ansi emulation for Cygwin,
  	rmacs=\E[10m, rmcup=\E[2J\E[?47l\E8, rmir=\E[4l,
  	rmpch=\E[10m, rmso=\E[27m, rmul=\E[24m, rs1=\Ec\E]R,
  	sc=\E7, setab=\E[4%p1%dm, setaf=\E[3%p1%dm,
@@ -761,7 +1227,7 @@ Last-Update: 2012-04-09
  	sgr0=\E[0;10m, smacs=\E[11m, smcup=\E7\E[?47h,
  	smir=\E[4h, smpch=\E[11m, smso=\E[7m, smul=\E[4m, tsl=\E];,
  	vpa=\E[%i%p1%dd, use=vt102+enq,
-@@ -5579,7 +5851,7 @@ cygwinDBG|Debug Version for Cygwin,
+@@ -5579,7 +5855,7 @@ cygwinDBG|Debug Version for Cygwin,
  	rc=\E8, rev=\E[7m, ri=\EM, rmacs=\E[10m, rmir=\E[4l,
  	rmso=\E[m, rmul=\E[m, rs1=\Ec\E]R, sc=\E7,
  	setab=\E[4%p1%dm, setaf=\E[3%p1%dm,
@@ -770,7 +1236,7 @@ Last-Update: 2012-04-09
  	sgr0=\E[0;10m, smacs=\E[11m, smir=\E[4h, smso=\E[7m,
  	smul=\E[4m, tbc=\E[3g, vpa=\E[%i%p1%dd, use=vt102+enq,
  
-@@ -5825,7 +6097,7 @@ pcmw|PC running Microsoft Works,
+@@ -5825,7 +6101,7 @@ pcmw|PC running Microsoft Works,
  	ht=^I, hts=\EH$<2/>, ind=\ED$<5/>, is2=\E[1;24r\E[24;1H,
  	kbs=^H, kcub1=\EOD, kcud1=\EOB, kcuf1=\EOC, kcuu1=\EOA,
  	kf1=\EOP, kf2=\EOQ, kf3=\EOR, kf4=\EOS, nel=\r\ED$<5/>,
@@ -779,7 +1245,7 @@ Last-Update: 2012-04-09
  	ri=\EM$<5/>, rmso=\E[m$<2/>, rmul=\E[m$<2/>,
  	rs2=\E>\E[?3l\E[?4l\E[?5l\E[?7h\E[?8h, sc=\E7,
  	sgr0=\E[m$<2/>, smso=\E[7m$<2/>, smul=\E[4m$<2/>,
-@@ -5968,7 +6240,7 @@ altos2|alt2|altos-2|altos II,
+@@ -5968,7 +6244,7 @@ altos2|alt2|altos-2|altos II,
  #	:cC=^Al\r:cD=^Am\r:cE=^An\r:cF=^Ao\r:
  #	:XU=^Aq\r:XD=^Ar\r:XR=^As\r:XL=^At\r:\
  #	:HL=^AP\r:SP=\E[i:\
@@ -788,7 +1254,25 @@ Last-Update: 2012-04-09
  altos3|altos5|alt3|alt5|altos-3|altos-5|altos III or V,
  	blink=\E[5p, ri=\EM, sgr0=\E[p, use=altos2,
  altos4|alt4|altos-4|altos IV,
-@@ -8212,8 +8484,8 @@ tvi9065|televideo 9065,
+@@ -6183,7 +6459,7 @@ hp2626|hp2626a|hp2626p|hp 2626,
+ 	da, db,
+ 	lm#0, pb#19200,
+ 	ed=\ED\EJ$<500>\EC, indn=\E&r%p1%dD, ip=$<4>,
+-	is2=\E&j@\r, rin=\E&r%p1%dU, use=hp+pfk+cr,
++	is2=\E&j@\r, rin=\E&r%p1%dU, use=hp+pfk-cr,
+ 	use=hp+labels, use=scrhp,
+ 
+ # This entry is for sysline. It allocates a 23 line window with
+@@ -6384,7 +6660,7 @@ hp2621b-kx-p|hp 2621b with new keyboard
+ hp2622|hp2622a|hp 2622,
+ 	da, db,
+ 	lm#0, pb#19200,
+-	is2=\E&dj@\r, use=hp+pfk+cr, use=hp+labels, use=scrhp,
++	is2=\E&dj@\r, use=hp+pfk-cr, use=hp+labels, use=scrhp,
+ 
+ # The 2623 is a 2622 with extra graphics hardware.
+ hp2623|hp2623a|hp 2623,
+@@ -8212,8 +8488,8 @@ tvi9065|televideo 9065,
  	rmxon=^N, rs1=\EC\EDF\E[0;0v\E[8;1v\E[=65l,
  	rs2=\E.b\E[10;20v\E[14;1v\E[3;0v\E[7;0v\E[=11.h\E[=12.h\E[=13.h\E[=14.h\E[=15l\E[=20h\E[=60l\E[=61h\E[=9l\E[=10l\E[=21l\E[=23l\E[=3l\E_40\E_50\En\Ew\Ee \Ex0\0\0\Ex1\0\0\Ex2\0\0\Ex3\0\0\Ex4\0\0\E1,
  	rs3=\E[=19h\E.3\E9\E0O\0\0\0\0\0\E0o\0\0\0\0\0\E0J\177\0\0\0\0,
@@ -799,7 +1283,7 @@ Last-Update: 2012-04-09
  	smir=\Eq, smln=\E[4;2v, smso=\EGt, smul=\EG8, smxon=^O,
  	tbc=\E3, tsl=\E[4;1v\E_30, uc=\EG8\EG0,
  
-@@ -9980,7 +10252,7 @@ att5410v1|att4410v1|tty5410v1|AT&T 4410/
+@@ -9980,7 +10256,7 @@ att5410v1|att4410v1|tty5410v1|AT&T 4410/
  	pln=\E[%p1%d;00q%p2%:-16s, rc=\E8, rev=\E[7m, ri=\EM,
  	rmacs=^O, rmso=\E[m, rmul=\E[m, rs2=\Ec\E[?3l\E[2;0y,
  	sc=\E7,
@@ -808,7 +1292,7 @@ Last-Update: 2012-04-09
  	sgr0=\E[m\017, smacs=^N, smso=\E[7m, smul=\E[4m,
  	tsl=\E7\E[25;%p1%{1}%+%dH,
  
-@@ -10078,7 +10350,7 @@ att4415|tty5420|att5420|AT&T 4415/5420 8
+@@ -10078,7 +10354,7 @@ att4415|tty5420|att5420|AT&T 4415/5420 8
  	pln=\E[%p1%d;0;0;0q%p2%:-16.16s, prot=\EV,
  	rin=\E[%p1%dF, rmam=\E[?7l, rmir=\E[4l,
  	rmkx=\E[19;0j\E[21;1j\212, rmln=\E|,
@@ -817,7 +1301,7 @@ Last-Update: 2012-04-09
  	sgr0=\E[m\017, smam=\E[?7h, smir=\E[4h,
  	smkx=\E[19;1j\E[21;4j\Eent, smln=\E~, tbc=\E[3g,
  	tsl=\E7\E[25;%p1%{8}%+%dH, vpa=\E[%p1%{1}%+%dd,
-@@ -10284,7 +10556,7 @@ att5425|tty5425|att4425|AT&T 4425/5425,
+@@ -10284,7 +10560,7 @@ att5425|tty5425|att4425|AT&T 4425/5425,
  	rev=\E[7m, ri=\EM, rin=\E[%p1%dF, rmacs=^O, rmam=\E[?7l,
  	rmir=\E[4l, rmkx=\E[21;0j\E[25;1j\212, rmln=\E|,
  	rmso=\E[m, rmul=\E[m, rs2=\Ec\E[?3l\E[2;0y, sc=\E7,
@@ -826,7 +1310,7 @@ Last-Update: 2012-04-09
  	sgr0=\E[m\017, smacs=^N, smam=\E[?7h, smir=\E[4h,
  	smkx=\E[21;1j\E[25;4j\Eent\E~, smln=\E~, smso=\E[7m,
  	smul=\E[4m, tbc=\E[3g, tsl=\E7\E[25;%p1%{8}%+%dH,
-@@ -10681,7 +10953,7 @@ att620|AT&T 620; 80 column; 98key keyboa
+@@ -10681,7 +10957,7 @@ att620|AT&T 620; 80 column; 98key keyboa
  	ri=\EM, rin=\E[%p1%dT, rmacs=\E(B\017, rmam=\E[?7l,
  	rmir=\E[4l, rmln=\E[2p, rmso=\E[m, rmul=\E[m,
  	rs2=\Ec\E[?3l, sc=\E7,
@@ -835,7 +1319,7 @@ Last-Update: 2012-04-09
  	sgr0=\E[m\E(B\017, smacs=\E)0\016, smam=\E[?7h,
  	smir=\E[4h, smln=\E[p, smso=\E[7m, smul=\E[4m,
  	tsl=\E7\E[25;%i%p1%dx,
-@@ -10741,7 +11013,7 @@ att630|AT&T 630 windowing terminal,
+@@ -10741,7 +11017,7 @@ att630|AT&T 630 windowing terminal,
  	mc5=\E[?5i, nel=^M^J, pfx=\E[%p1%d;%p2%l%dq%p2%s, rc=\E8,
  	rev=\E[7m, ri=\EM, rin=\E[%p1%dT, rmir=\E[4l, rmso=\E[m,
  	rmul=\E[m, rs2=\Ec, sc=\E7,
@@ -844,7 +1328,7 @@ Last-Update: 2012-04-09
  	sgr0=\E[m, smir=\E[4h, smso=\E[7m, smul=\E[4m,
  att630-24|5630-24|5630DMD-24|630MTG-24|AT&T 630 windowing terminal 24 lines,
  	lines#24, use=att630,
-@@ -11391,7 +11663,7 @@ aaa+unk|aaa-unk|ann arbor ambassador (in
+@@ -11391,7 +11667,7 @@ aaa+unk|aaa-unk|ann arbor ambassador (in
  	rep=%p1%c\E[%p2%{1}%-%db, rev=\E[7m,
  	rmkx=\EP`>y~[[J`8xy~[[A`4xy~[[D`6xy~[[C`2xy~[[B\E\\,
  	rmm=\E[>52l, rmso=\E[m, rmul=\E[m, sc=\E7,
@@ -853,7 +1337,7 @@ Last-Update: 2012-04-09
  	sgr0=\E[m,
  	smkx=\EP`>z~[[J`8xz~[[A`4xz~[[D`6xz~[[C`2xz~[[B\E\\,
  	smm=\E[>52h, smso=\E[7m, smul=\E[4m, tbc=\E[3g,
-@@ -11401,13 +11673,13 @@ aaa+rv|ann arbor ambassador in reverse v
+@@ -11401,13 +11677,13 @@ aaa+rv|ann arbor ambassador in reverse v
  	blink=\E[5;7m, bold=\E[1;7m, invis=\E[7;8m,
  	is1=\E[7m\E7\E[H\E9\E8, rev=\E[m, rmso=\E[7m, rmul=\E[7m,
  	rs1=\E[H\E[7m\E[J$<156>,
@@ -869,7 +1353,7 @@ Last-Update: 2012-04-09
  	smacs=^O,
  aaa-18|ann arbor ambassador/18 lines,
  	lines#18,
-@@ -11574,7 +11846,7 @@ aaa-rv-unk|ann arbor unknown type,
+@@ -11574,7 +11850,7 @@ aaa-rv-unk|ann arbor unknown type,
  	blink=\E[5;7m, bold=\E[1;7m, home=\E[H, invis=\E[7;8m,
  	is1=\E[7m\E7\E[H\E9\E8, rev=\E[m, rmso=\E[7m, rmul=\E[7m,
  	rs1=\E[H\E[7m\E[J,
@@ -878,7 +1362,33 @@ Last-Update: 2012-04-09
  	sgr0=\E[7m, smso=\E[m, smul=\E[4;7m,
  
  #### Applied Digital Data Systems (adds)
-@@ -12478,10 +12750,11 @@ avt-ns|concept avt no status line,
+@@ -12416,7 +12692,7 @@ oc100|oconcept|c100-1p|old 1 page concep
+ #	 and mc5= should use the \E[?4i and \E[?5i strings instead).
+ 
+ hds200|Human Designed Systems HDS200,
+-	am, bw, eslok, hs, km, mc5i, mir, msgr, xenl, xon,
++	am, bw, eslok, hs, km, mir, msgr, xenl, xon,
+ 	cols#80, it#8, lines#24, lm#0,
+ 	acsc=``aaffggjjkkllmmnnooqqssttuuvvwwxx~~, bel=^G,
+ 	blink=\E[0;5m, bold=\E[0;1m, cbt=\E[Z, civis=\E[6+{,
+@@ -12445,13 +12721,12 @@ hds200|Human Designed Systems HDS200,
+ 	kf51=^\051\r, kf52=^\052\r, kf53=^\053\r, kf6=^\006\r,
+ 	kf7=^\007\r, kf8=^\008\r, kf9=^\009\r, khome=\E[H,
+ 	kind=\E[T, knp=\E[U, kpp=\E[V, kri=\E[S, ll=\E[H\E[A,
+-	mc0=\E[i, mc4=\E[4i, mc5=\E[5i, nel=\E[E, rc=\E8,
+-	rev=\E[0;7m, ri=\EM, rmacs=^O, rmir=\E[4l, rmso=\E[m\017,
+-	rmul=\E[m\017, sc=\E7,
++	nel=\E[E, rc=\E8, rev=\E[0;7m, ri=\EM, rmacs=^O, rmir=\E[4l,
++	rmso=\E[m\017, rmul=\E[m\017, sc=\E7,
+ 	sgr=\E[0%?%p1%p6%O%t;1%;%?%p2%t;4%;%?%p4%t;5%;%?%p1%p3%O%t;7%;%?%p7%t;8%;m%?%p9%t\016%e\017%;,
+ 	sgr0=\E[m\017, smacs=^N, smir=\E[4h, smso=\E[0;1;7m,
+ 	smul=\E[0;4m, tbc=\E[3g, tsl=\E[2!w\E[%i%p1%dG,
+-	vpa=\E[%i%p1%dd,
++	vpa=\E[%i%p1%dd, use=ansi+pp,
+ 
+ # <ht> through <el> included to specify padding needed in raw mode.
+ # (avt-ns: added empty <acsc> to suppress a tic warning --esr)
+@@ -12478,10 +12753,11 @@ avt-ns|concept avt no status line,
  	ri=\EM$<4>, rmacs=\016$<1>, rmcup=\E[w\E2\r\n,
  	rmir=\E[4l, rmkx=\E[!z\E[0;2u, rmso=\E[7!{, rmul=\E[4!{,
  	sc=\E7,
@@ -894,7 +1404,7 @@ Last-Update: 2012-04-09
  avt-rv-ns|concept avt in reverse video mode/no status line,
  	flash=\E[=205l$<200>\E[=205h, is1=\E[=103l\E[=205h,
  	use=avt-ns,
-@@ -12763,7 +13036,6 @@ dg450|dg6134|data general 6134,
+@@ -12763,7 +13039,6 @@ dg450|dg6134|data general 6134,
  # backspace on all terminals.  This is not so in DG mode.
  # (dg460-ansi: removed obsolete ":kn#6:"; also removed ":mu=\EW:", on the
  # grounds that there is no matching ":ml:"
@@ -902,7 +1412,7 @@ Last-Update: 2012-04-09
  dg460-ansi|Data General Dasher 460 in ANSI-mode,
  	OTbs, am, msgr, ul,
  	cols#80, it#8, lines#24,
-@@ -12774,10 +13046,12 @@ dg460-ansi|Data General Dasher 460 in AN
+@@ -12774,10 +13049,12 @@ dg460-ansi|Data General Dasher 460 in AN
  	kcub1=\E[D, kcud1=\E[B, kcuf1=\E[C, kcuu1=\E[A,
  	kf0=\E[001z, kf1=\E[002z, kf2=\E[003z, kf3=\E[004z,
  	kf4=\E[005z, kf5=\E[006z, kf6=\E[007z, kf7=\E[008z,
@@ -919,7 +1429,40 @@ Last-Update: 2012-04-09
  # From: Wayne Throop <mcnc!rti-sel!rtp47!throopw> (not official)
  # Data General 605x
  # Ought to work for a Model 6242, Type D210 as well as a 605x.
-@@ -13757,7 +14031,7 @@ superbeeic|super bee with insert char,
+@@ -12824,7 +13101,7 @@ d210|d214|Data General DASHER D210 serie
+ 	cuu=\E[%p1%dA, cuu1=\E[A, dim=\E[2m, ed=\E[J, el=\E[K,
+ 	el1=\E[1K, home=\E[H, ind=^J, is1=\E[<0;<1;<4l,
+ 	ll=\E[H\E[A, nel=^J, rev=\E[7m, rmso=\E[m, rmul=\E[m,
+-	sgr=\E[%?%p1%p3%|%p6%|%t7;%;%?%p4%t5;%;%?%p2%p6%|%t4;%;%?%p1%p5%|%t2;%;m,
++	sgr=\E[%?%p4%t5;%;%?%p2%p6%|%t4;%;%?%p1%p5%|%t2;%;%?%p1%p3%|%p6%|%t7;%;m,
+ 	sgr0=\E[m, smso=\E[2;7m, smul=\E[4m, use=dgkeys+7b,
+ 
+ # DASHER D210 series terminals in DG mode.
+@@ -13026,7 +13303,7 @@ d410|d411|d460|d461|Data General DASHER
+ 	is2=\E[3;2;2;1;1;1v\E(B\E)4\017, mc4=\E[4i, mc5=\E[5i,
+ 	ri=\EM, rmacs=\E)4\017, rs1=\Ec\E[<2h,
+ 	rs2=\E[4;0;2;1;1;1v\E(B\E)4,
+-	sgr=\E[%?%p1%p3%|%p6%|%t7;%;%?%p4%t5;%;%?%p2%p6%|%t4;%;%?%p1%p5%|%t2;%;m\E)%?%p9%t6\016%e4\017%;,
++	sgr=\E[%?%p1%t2;7%;%?%p3%t7;%;%?%p4%t5;%;%?%p2%t4;%;%?%p1%p5%|%t2;%;%?%p6%t4;7;%;m\E)%?%p9%t6\016%e4\017%;,
+ 	sgr0=\E[m\E)4\017, smacs=\E)6\016, use=d211,
+ 
+ # Initialization string 2 sets:
+@@ -13196,12 +13473,12 @@ d430c-unix-sr-ccc|d430-unix-sr-ccc|Data
+ #
+ d470c|d470|Data General DASHER D470C,
+ 	is1=\E[<0;<1;<2;<4l\E[1;1;80w\E[1;6;<2h,
+-	sgr=\E[%?%p1%p3%|%p6%|%t7;%{1}%e%{0}%;%PR%?%p4%t5;%{1}%e%{0}%;%PB%?%p2%p6%|%t4;%{1}%e%{0}%;%PU%?%p1%p5%|%t2;%{1}%e%{0}%;%PDm\E)%?%p9%t6\016%e4\017%;,
++	sgr=\E[%?%p3%t7;%;%?%p4%t5;%;%?%p2%t4;%;%?%p6%t4;7;%;%?%p1%t2;7;%;%?%p5%t2;%;m\E)%?%p9%t6\016%e4\017%;,
+ 	use=dg+color, use=d460,
+ 
+ d470c-7b|d470-7b|Data General DASHER D470C in 7 bit mode,
+ 	is1=\E[<0;<1;<2;<4l\E[1;1;80w\E[1;6;<2h,
+-	sgr=\E[%?%p1%p3%|%p6%|%t7;%{1}%e%{0}%;%PR%?%p4%t5;%{1}%e%{0}%;%PB%?%p2%p6%|%t4;%{1}%e%{0}%;%PU%?%p1%p5%|%t2;%{1}%e%{0}%;%PDm%?%p9%t\016%e\017%;,
++	sgr=\E[%?%p3%t7;%;%?%p4%t5;%;%?%p2%t4;%;%?%p6%t4;7;%;%?%p1%t2;7;%;%?%p5%t2;%;m%?%p9%t\016%e\017%;,
+ 	use=dg+color, use=d460-7b,
+ 
+ # Initialization string 2 sets:
+@@ -13757,7 +14034,7 @@ superbeeic|super bee with insert char,
  sb2|sb3|fixed superbee,
  	xsb@, use=superbee,
  
@@ -928,7 +1471,7 @@ Last-Update: 2012-04-09
  #
  # Steve Seymour <srseymour@mindspring.com> writes (Wed, 03 Feb 1999):
  # Regarding your question though; Beehive terminals weren't made by Harris.
-@@ -14578,7 +14852,7 @@ icl6404|kds7372|icl6402|kds6402|ICL 6404
+@@ -14578,7 +14855,7 @@ icl6404|kds7372|icl6402|kds6402|ICL 6404
  	is1=\EC\E.3\EDF\EV1\Eg\E[0ZZ, nel=^_, rev=\E[4ZZ,
  	rmir=\Er, rmso=\E[%gh%{4}%^%Ph%gh%dZZ,
  	rmul=\E[%gh%{8}%^%Ph%gh%dZZ, rs2=\Eo1,
@@ -937,16 +1480,36 @@ Last-Update: 2012-04-09
  	sgr0=\E[0ZZ, smir=\Eq, smso=\E[8ZZ, smul=\E[8ZZ, tbc=\E3,
  icl6404-w|kds7372-w|ICL 6404 aka Kokusai Display Systems 7372 132 cols,
  	rs2=\Eo1, use=icl6404,
-@@ -14916,7 +15190,7 @@ prism9|p9|P9|MDC Prism-9 in ANSII mode,
- 	ri=\E[L, rmir=\E[4l, rmso=\E[27m, rmul=\E[24m,
+@@ -14895,7 +15172,7 @@ prism8-w|p8-w|P8-W|MDC Prism-8 in 132 co
+ # (esr: commented out <smacs>/<rmacs> because there's no <acsc>)
+ #
+ prism9|p9|P9|MDC Prism-9 in ANSII mode,
+-	am, bw, hs, mc5i, msgr, xenl, xon,
++	am, bw, hs, msgr, xenl, xon,
+ 	cols#80, it#8, lines#24, vt#3, wsl#72,
+ 	bel=^G, blink=\E[5m, bold=\E[1m, cbt=\E[Z, civis=\E[<4l,
+ 	clear=^L, cnorm=\E[<4h, cr=^M, csr=\E[%i%p1%d;%p2%d%%v,
+@@ -14911,14 +15188,15 @@ prism9|p9|P9|MDC Prism-9 in ANSII mode,
+ 	kf14=\E[26~, kf15=\E[28~, kf16=\E[29~, kf17=\E[31~,
+ 	kf18=\E[32~, kf2=\E[12~, kf3=\E[13~, kf4=\E[14~,
+ 	kf5=\E[15~, kf6=\E[17~, kf7=\E[18~, kf8=\E[19~, kf9=\E[20~,
+-	khome=\E[H, mc0=\E[i, mc4=\E[4i, mc5=\E[5i, nel=^M^J,
+-	prot=\E[32%{, rc=\E[%z, rep=\E[%p2%db%p1%c, rev=\E[7m,
+-	ri=\E[L, rmir=\E[4l, rmso=\E[27m, rmul=\E[24m,
++	khome=\E[H, nel=^M^J, prot=\E[32%{, rc=\E[%z,
++	rep=\E[%p2%db%p1%c, rev=\E[7m, ri=\E[L, rmir=\E[4l,
++	rmso=\E[27m, rmul=\E[24m,
  	rs2=\E[&p\E[<12l\E F\E[3g\E[9;17;25;33;41;49;57;65;73 N,
  	sc=\E[%y,
 -	sgr=\E[%{0}%?%p1%p3%|%t%{7}%+%;%?%p2%t%{2}%+%;%?%p4%t%{5}%+%;%?%p6%t%{1}%+%;m%?%p8%t\E[%{32}%+%d%%{%;%?%p9%t\016%e\017%;,
 +	sgr=\E[0%?%p1%p3%|%t;7%;%?%p2%t;4%;%?%p4%t;5%;%?%p6%t;1%;m%?%p8%t\E[32%%{%;%?%p9%t\016%e\017%;,
  	sgr0=\E[0m\017, smir=\E[4h, smso=\E[7m, smul=\E[4m,
  	tbc=\E[3g, tsl=\E[%i%p1%d%%}, vpa=\E[%i%p1%dd,
++	use=ansi+pp,
  
-@@ -15282,7 +15556,7 @@ ncr260vt100an|NCR 2900_260 vt100 with an
+ # p9-w: Prism-9 in 132 column mode
+ # --------------------------------
+@@ -15282,7 +15560,7 @@ ncr260vt100an|NCR 2900_260 vt100 with an
  	rmkx=\E[?1l\E>, rmso=\E[0m, rmul=\E[0m,
  	rs2=\E[!p\E[?7;19;67h\E[?1;3;4l\E(B\E)0\017\E[2J\E[1;1H\E>$<200>,
  	sc=\E7,
@@ -955,7 +1518,7 @@ Last-Update: 2012-04-09
  	sgr0=\E[0m\017$<20>, smacs=^N, smir=\E[4h,
  	smkx=\E[?1h\E=, smso=\E[1;7m, smul=\E[4m, tbc=\E[3g,
  	tsl=\E[2$~\E[1$}, vpa=\E[%p1%dd$<40>, use=vt220+keypad,
-@@ -15339,7 +15613,7 @@ ncr260vt200an|NCR 2900_260 vt200 with an
+@@ -15339,7 +15617,7 @@ ncr260vt200an|NCR 2900_260 vt200 with an
  	rmkx=\E[?1l\E>, rmso=\E[27m, rmul=\E[24m,
  	rs2=\E[!p\E[?7;19;67h\E[?1;3;4l\E(B\E)0\017\E[2J\E[1;1H\E>$<200>,
  	sc=\E7,
@@ -964,7 +1527,7 @@ Last-Update: 2012-04-09
  	sgr0=\E[0m\017$<20>, smacs=\016$<20>, smam=\E[?7h,
  	smir=\E[4h, smkx=\E[?1h\E=, smso=\E[7m, smul=\E[4m,
  	tbc=\E[3g, tsl=\E[2$~\E[1$}, vpa=\E[%p1%dd$<40>,
-@@ -15395,7 +15669,7 @@ ncr260vt300an|NCR 2900_260 vt300 with an
+@@ -15395,7 +15673,7 @@ ncr260vt300an|NCR 2900_260 vt300 with an
  	rmul=\E[24m,
  	rs2=\E[!p\E[?7;19;67h\E[?1;3;4l\E[1;0%w\E(B\E)0\017\E[2J\E[1;1H\E>$<200>,
  	sc=\E7,
@@ -973,7 +1536,42 @@ Last-Update: 2012-04-09
  	sgr0=\E[0m\017$<20>, smacs=\016$<20>, smam=\E[?7h,
  	smir=\E[4h, smkx=\E[?1h\E=, smso=\E[7m, smul=\E[4m,
  	tbc=\E[3g, tsl=\E[2$~\E[1$}, vpa=\E[%p1%dd$<40>,
-@@ -17752,6 +18026,23 @@ osexec|Osborne executive,
+@@ -15809,7 +16087,7 @@ ndr9500|nd9500|Newbury Data 9500,
+ 	pfloc=\E|%{48}%p1%+%c2%p2\031,
+ 	pfx=\E|%{48}%p1%+%c1%p2\031, prot=\E), ri=\Ej,
+ 	rmacs=\E%%, rmir=\Er, rmso=\E(, rmxon=^N,
+-	sgr=\E%%\E(%?%p1%p5%p8%|%|%t\E)%;%?%p9%t\E$%;,
++	sgr=\EG0\E%%%%\E(%?%p1%p5%p8%|%|%t\E)%;%?%p9%t\E$%;,
+ 	sgr0=\EG0\E%%\E(, smacs=\E$, smir=\Eq, smso=\E), smxon=^O,
+ 	tbc=\E3, tsl=\Eg\Ef\011%p1%{32}%+%c, .kbs=^H,
+ 
+@@ -16279,7 +16557,7 @@ tek4107|tek4109|tektronix terminals 4107
+ 	kbs=^H, kcub1=\ED, kcud1=\EB, kcuf1=\EC, kcuu1=\EA,
+ 	rev=\E%!1\E[7m$<2>\E%!0, ri=\EI,
+ 	rmso=\E%!1\E[m$<2>\E%!0, rmul=\E%!1\E[m$<2>\E%!0,
+-	sgr=\E%%!1\E[%?%p1%t;7%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;5%;%?%p6%t;1%;m$<2>\E%%!0,
++	sgr=\E%%!1\E[%?%p1%t;7;5%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;5%;%?%p5%t<0%;%?%p6%t;1%;m$<2>\E%%!0,
+ 	sgr0=\E%!1\E[m$<2>\E%!0, smso=\E%!1\E[7;5m$<2>\E%!0,
+ 	smul=\E%!1\E[4m$<2>\E%!0,
+ # Tektronix 4207 with sysline.  In the ancestral termcap file this was 4107-s;
+@@ -16639,7 +16917,7 @@ ibmpc|wy60-PC|wyse60-PC|IBM PC/XT runnin
+ 	kf9=\250, khome=\E[H, kich1=\E[^H, knp=\E[U, kpp=\E[V,
+ 	ll=\E[24;1H, nel=^M, rev=\E[7m, ri=\E[T\E[A,
+ 	rin=\E[%p1%dT\E[%p1%dA, rmso=\E[m, rmul=\E[m,
+-	sgr=\E[%?%p1%t;7%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;5%;%?%p6%t;1%;m,
++	sgr=\E[%?%p1%t;7%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;5%;%?%p6%t;1%;%?%p7%t30;40%;m,
+ 	sgr0=\E[m, smso=\E[7m, smul=\E[4m,
+ 
+ #### Apple II
+@@ -17101,6 +17379,7 @@ nsterm+mac|AppKit Terminal.app v41+ basi
+ 	sgr=\E[0%?%p6%t;1%;%?%p2%t;4%;%?%p1%p3%|%t;7%;%?%p4%t;5%;%?%p7%t;8%;m%?%p9%t\016%e\017%;,
+ 	sgr0=\E[m\017, smacs=^N, use=nsterm+7,
+ 
++# compare with xterm+sl-twm
+ nsterm+s|AppKit Terminal.app v41+ status-line (window titlebar) support,
+ 	hs,
+ 	wsl#50,
+@@ -17752,6 +18031,23 @@ osexec|Osborne executive,
  # See
  #	http://www.minix3.org/manpages/man4/console.4.html
  minix|minix console (v3),
@@ -997,7 +1595,7 @@ Last-Update: 2012-04-09
  	use=ecma+color, use=minix-1.7,
  
  # See
-@@ -17792,7 +18083,7 @@ minix-old-am|minix console with linewrap
+@@ -17792,7 +18088,7 @@ minix-old-am|minix console with linewrap
  	am, use=minix-old,
  
  pc-minix|minix console on an Intel box,
@@ -1006,7 +1604,182 @@ Last-Update: 2012-04-09
  
  # According to the Coherent 2.3 manual, the PC console is similar
  # to a z19. The differences seem to be (1) 25 lines, (2) no status
-@@ -21014,8 +21305,8 @@ v3220|LANPAR Vision II model 3220/3221/3
+@@ -18195,6 +18491,7 @@ dku7102-old|BULL Questar 200 DKU7102 (mi
+ 	use=tws-generic,
+ dku7202|BULL Questar 200 DKU7202 (colour/character attributes),
+ 	blink=\E[0;2;4m, dim=\E[0;5m, ht=^I, is3=\E[?3h\Eb,
++	sgr=\E[0%?%p1%t;2;4;5;7%;%?%p3%t;7%;%?%p2%t;2%;%?%p4%t;2;4%;%?%p5%t;5%;%?%p7%t;8%;m%?%p9%t\016%e\017%;,
+ 	smso=\E[0;4;5;7m, smul=\E[0;2m, use=tws-generic,
+ 
+ #=========================================================#
+@@ -18274,7 +18571,7 @@ dku7202|BULL Questar 200 DKU7202 (colour
+ 
+ # This entry covers BQ303, BQ306, BQ310, Q303, Q306, Q310
+ bq300|Bull vt320 ISO Latin 1 80 columns terminal,
+-	am, eo, eslok, hs, km, mc5i, mir, msgr, xenl, xon,
++	am, eo, eslok, hs, km, mir, msgr, xenl, xon,
+ 	cols#80, it#8, lines#24, vt#3, wsl#80,
+ 	acsc=``aaffggjjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~,
+ 	bel=^G, blink=\E[5m, bold=\E[1m, civis=\E[?25l,
+@@ -18298,14 +18595,14 @@ bq300|Bull vt320 ISO Latin 1 80 columns
+ 	kf6=\E[17~, kf7=\E[18~, kf8=\E[19~, kf9=\E[20~, kfnd=\E[1~,
+ 	khlp=\E[28~, kich1=\E[2~, knp=\E[6~, kpp=\E[5~,
+ 	krdo=\E[29~, kslt=\E[4~, lf1=pf1, lf2=pf2, lf3=pf3, lf4=pf4,
+-	mc0=\E[i, mc4=\E[4i, mc5=\E[5i, nel=\EE, rc=\E8, rev=\E[7m,
+-	ri=\EM, rmacs=\E(B, rmam=\E[?7l, rmcup=\E[?7h, rmir=\E[4l,
+-	rmkx=\E[?1l\E>, rmso=\E[27m, rmul=\E[24m, rs1=\E[!p,
+-	rs2=\E[?3l, s0ds=\E(B, s1ds=\E(0, sc=\E7,
++	nel=\EE, rc=\E8, rev=\E[7m, ri=\EM, rmacs=\E(B, rmam=\E[?7l,
++	rmcup=\E[?7h, rmir=\E[4l, rmkx=\E[?1l\E>, rmso=\E[27m,
++	rmul=\E[24m, rs1=\E[!p, rs2=\E[?3l, s0ds=\E(B, s1ds=\E(0,
++	sc=\E7,
+ 	sgr=\E[%?%p1%t;7%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;5%;%?%p6%t;1%;m%?%p9%t\E(0%e\E(B%;,
+ 	sgr0=\E[0m\E(B, smacs=\E(0, smam=\E[?7h,
+ 	smcup=\E[?7l\E[?1l\E(B, smir=\E[4h, smso=\E[7m,
+-	smul=\E[4m, tbc=\E[3g, tsl=\E[1$}\E[2$~,
++	smul=\E[4m, tbc=\E[3g, tsl=\E[1$}\E[2$~, use=ansi+pp,
+ bq300-rv|Bull vt320 reverse 80 columns,
+ 	flash=\E[?5l$<50>\E[?5h,
+ 	is2=\E[?2h\E[?3l\E[?5h\E[?7h\E[?8h\E>\E[?1l\E F\E[?42l\E[?4l,
+@@ -18401,11 +18698,12 @@ bq300-8|Bull vt320 full 8 bits 80 column
+ 	khlp=\23328~, kich1=\2332~, knp=\2336~, kpp=\2335~,
+ 	krdo=\23329~, kslt=\2334~, lf1=pf1, lf2=pf2, lf3=pf3,
+ 	lf4=pf4, mc0=\233i, mc4=\2334i, mc5=\2335i, nel=\EE, rc=\E8,
+-	rev=\2337m, ri=\EM, rmacs=^O, rmam=\233?7l, rmcup=\233?7h,
+-	rmir=\2334l, rmkx=\233?1l\E>, rmso=\23327m, rmul=\23324m,
+-	rs1=\E[!p, rs2=\E[?3l, s0ds=\E(B, s1ds=\E(0, sc=\E7,
++	rev=\2337m, ri=\EM, rmacs=\E(B, rmam=\233?7l,
++	rmcup=\233?7h, rmir=\2334l, rmkx=\233?1l\E>,
++	rmso=\23327m, rmul=\23324m, rs1=\E[!p, rs2=\E[?3l,
++	s0ds=\E(B, s1ds=\E(0, sc=\E7,
+ 	sgr=\233%?%p1%t;7%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;5%;%?%p6%t;1%;m%?%p9%t\E(0%e\E(B%;,
+-	sgr0=\2330m\E(B, smacs=^N, smam=\233?7h,
++	sgr0=\2330m\E(B, smacs=\E(0, smam=\233?7h,
+ 	smcup=\233?7l\233?1l\E(B, smir=\2334h, smso=\2337m,
+ 	smul=\2334m, tbc=\2333g, tsl=\2331$}\2332$~,
+ bq300-8rv|Bull vt320 8-bit reverse mode 80 columns,
+@@ -20217,9 +20515,9 @@ dwk|dwk-vt|dwk terminal,
+ 	sgr0=\EX, smacs=\EF, smso=\ET,
+ env230|envision230|envision 230 graphics terminal,
+ 	xenl@,
+-	mc0=\E[0i, mc4=\E[4i, mc5=\E[5i,
+-	sgr=\E[%?%p1%t;1%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;5%;%?%p6%t;1%;m$<2>,
+-	use=vt100,
++	enacs@, mc0=\E[0i, mc4=\E[4i, mc5=\E[5i, rmacs@,
++	sgr=\E[0%?%p1%t;7%;%?%p2%t;4%;%?%p3%t;7%;%?%p4%t;5%;%?%p6%t;1%;m$<2>,
++	sgr0=\E[0m$<2>, smacs@, use=vt100,
+ # These execuports were impact-printer ttys with a 30- or maybe 15-cps acoustic
+ # coupler attached, the whole rig fitting in a suitcase and more or less
+ # portable.  Hot stuff for c.1977 :-) -- esr
+@@ -20274,7 +20572,7 @@ opus3n1+|Esprit Opus3n1+ in wy60 mode wi
+ 	rmacs=\EH^C, rmam=\Ed., rmcup=, rmir=\Er, rmln=\EA11,
+ 	rmxon=\Ec20, rs1=\E~!\E~4$<150>, rs2=\EeF$<150>,
+ 	rs3=\EwG\Ee($<150>,
+-	sgr=%?%p8%t\E)%e\E(%;%?%p9%t\EH\002%e\EH\003%;\EG%{48}%?%p2%p6%|%t%{8}%|%;%?%p1%p3%|%p6%|%t%{4}%|%;%?%p4%t%{2}%|%;%?%p1%p5%|%t%{64}%|%;%?%p7%t%{1}%|%;%c,
++	sgr=%?%p8%t\E)%e\E(%;%?%p9%t\EH\002%e\EH\003%;\EG%{48}%?%p2%t%{8}%|%;%?%p1%p3%|%t%{4}%|%;%?%p4%t%{2}%|%;%?%p1%p5%|%t%{64}%|%;%?%p7%t%{1}%|%;%c,
+ 	sgr0=\E(\EH\003\EG0\EcD, smacs=\EH^B, smam=\Ed/,
+ 	smcup=\Ezz&\E[A\177\Ezz'\E[B\177\Ezz(\E[D\177\Ezz)\E[C\177\Ezz<\E[Q\177,
+ 	smir=\Eq, smln=\EA10, smxon=\Ec21, tbc=\E0, tsl=\Ez(,
+@@ -21011,11 +21309,107 @@ v3220|LANPAR Vision II model 3220/3221/3
+ # CF for civis and CO for cvvis.  Finally, they define a boolean :ct:
+ # that flags color terminals.
+ #
++# Extensions added after ncurses 5.0 generally use the "-x" option of tic and
++# infocmp to manipulate user-definable capabilities.  Those that are intended
++# for use in either terminfo or termcap use 2-character names.  Extended
++# function keys do not use 2-character names, and are available only with
++# terminfo.
++#
++# As of mid-2012, no other terminfo/termcap implementation than ncurses
++# supports this extension; termcap libraries can as noted above make limited
++# use of the feature.
++#
++# ncurses makes explicit checks for a few user-definable capabilities:  AX, U8,
++# XM.
++#
++# SCREEN Extensions:
++#
++# The screen program uses the termcap interface.  It recognizes a few useful
++# nonstandard capabilities.  Those are used in this file.
++#
++#       AX   (bool)  Does  understand  ANSI  set  default fg/bg color (\E[39m /
++#                    \E[49m).
++#       G0   (bool)  Terminal can deal with ISO 2022  font  selection sequences.
++#       E0   (str)   Switch charset 'G0' back to standard charset.
++#       S0   (str)   Switch charset 'G0' to the specified charset.
++#       XT   (bool)  Terminal understands special xterm sequences  (OSC,  mouse
++#                    tracking).
++#
++# AX is relatively straightforward; it is interpreted by ncurses to say that
++# SGR 39/49 reset the terminal's foreground and background colors to their
++# "default".
++#
++# XT is harder, since screen's manpage does not give more details.  For that,
++# we must read screen's source-code.  When XT is set, screen assumes
++#
++# a) OSC 1 sets the title string, e.g., for the icon.  Recent versions of
++#    screen may also set the terminal's name, which is (for xterm) distinct
++#    from the icon name.
++# b) OSC 20 sets the background pixmap.  This is an rxvt feature.
++# c) OSC 39 and OSC 49 set the default foreground/background colors.  Again
++#    this is an rxvt feature.
++# d) certain mode settings enable the mouse: 9, 1000, 1001, 1002, 1003.
++#    These are from xterm, although xterm accepts mouse codes that may not be
++#    recognized by screen, e.g., 1005, 1006.
++# e) colors beyond 0..7 are implemented by xterm's aixterm-like 16-color
++#    sequence.  However, because screen uses only termcap, the values returned
++#    by Af/Ab are not usable because they rely on expressions that termcap
++#    does not support.  Therefore, screen uses a hardcoded string to work
++#    around the limitation.
++# f) all entries named "*xterm*" or "*rxvt*" have the bce flag set.
++#
++# The other ISO-2022 features are rarely used, but provided here to make
++# screen's termcap features available.
++#
++# XTERM Extensions:
++#
++# Most of the xterm extensions are for function-keys.  Since patch #94 (in
++# 1999), xterm has supported shift/control/alt/meta modifiers which produce
++# additional function-key strings.  Some other developers copied the feature,
++# though they did not follow xterm's lead in patch #167 (in 2002), to make
++# these key definitions less ambiguous.
++#
++# A few terminals provide similar functionality (sending distinct keys when
++# a modifier is used), including rxvt.
++#
++# These are the extended keys defined in this file:
++#
++# kDC3 kDC4 kDC5 kDC6 kDC7 kDN kDN3 kDN4 kDN5 kDN6 kDN7 kEND3 kEND4 kEND5 kEND6
++# kEND7 kHOM3 kHOM4 kHOM5 kHOM6 kHOM7 kIC3 kIC4 kIC5 kIC6 kIC7 kLFT3 kLFT4
++# kLFT5 kLFT6 kLFT7 kNXT3 kNXT4 kNXT5 kNXT6 kNXT7 kPRV3 kPRV4 kPRV5 kPRV6 kPRV7
++# kRIT3 kRIT4 kRIT5 kRIT6 kRIT7 kUP kUP3 kUP4 kUP5 kUP6 kUP7 ka2 kb1 kb3 kc2
++#
++# Here are the other xterm-related extensions which are used in this file:
++#
++# Cr is a string capability which resets the cursor color
++# Cs is a string capability which sets the cursor color to a given value.
++#    The single string parameter is the color name/number, according to the
++#    implementation.
++# Ms modifies the selection/clipboard.  Its parameters are
++#	p1 = the storage unit (clipboard, selection or cut buffer)
++#	p2 = the base64-encoded clipboard content.
++# Se resets the cursor style to the terminal power-on default.
++# Ss is a string capability with one numeric parameter.  It is used to set the
++#    cursor style as described by the DECSCUSR function to a block or
++#    underline.
++# XM is a string capability which overrides ncurses's built-in string which
++#    enables xterm mouse mode.
++#
++# Miscellaneous extensions:
++#
++# gsbom/grbom are used to enable/disable real bold (not intensity bright) mode.
++#    This was implemented for the Hurd.
++# E3 clears the terminal's scrollback buffer.  This was implemented in the
++#    Linux 3.0 kernel as a security feature.
++# U8 is a numeric capability which denotes a terminal emulator which does not
++#    support VT100 SI/SO when processing UTF-8 encoding.  Set this to a nonzero
++#    value to enable it.
++#
  ######## CHANGE HISTORY
  #
  # The last /etc/termcap version maintained by John Kunze was 8.3, dated 8/5/94.
@@ -1017,7 +1790,7 @@ Last-Update: 2012-04-09
  #
  # This file contains all the capability information present in John Kunze's
  # last version of the termcap master file, except as noted in the change
-@@ -21115,7 +21406,7 @@ v3220|LANPAR Vision II model 3220/3221/3
+@@ -21115,7 +21509,7 @@ v3220|LANPAR Vision II model 3220/3221/3
  #	* Replaced HP entries up to hpsub with purpose-built ones.
  #	* Blank rmir/smir/rmdc/smdc capabilities removed.
  #	* Small fixes merged in from SCO entries for lpr, fos, tvi910+, tvi924.
@@ -1026,7 +1799,7 @@ Last-Update: 2012-04-09
  #	* Replaced the Ann Arbor entries with SCO's, the init strings are
  #	  more efficient (but the entries otherwise identical).
  #	* Added dg211 from Shuford archive.
-@@ -22224,7 +22515,7 @@ v3220|LANPAR Vision II model 3220/3221/3
+@@ -22224,7 +22618,7 @@ v3220|LANPAR Vision II model 3220/3221/3
  #	* add screen.rxvt -TD
  #
  # 2008-04-28
@@ -1035,7 +1808,7 @@ Last-Update: 2012-04-09
  #
  # 2008-06-28
  #	* add screen.mlterm -TD
-@@ -22354,6 +22645,74 @@ v3220|LANPAR Vision II model 3220/3221/3
+@@ -22354,6 +22748,118 @@ v3220|LANPAR Vision II model 3220/3221/3
  #	* add xterm-utf8 as a demo of the U8 feature -TD
  #
  # 2011-02-20
@@ -1109,5 +1882,49 @@ Last-Update: 2012-04-09
 +#
 +# 2012-04-01
 +#	* revert 2011-07-16 change to "linux" alias, return to "linux2.2" -TD
++#
++# 2012-04-14
++#	* document all of the user-defined capabilities in one place -TD
++#	* add XT to some places to improve usefulness for other applications
++#	  than screen, which would like to pretend that xterm's title is
++#	  a status-line. -TD
++#	* change use-clauses in ansi-mtabs, hp2626, and hp2622 based on review
++#	  of ordering and overrides -TD
++#
++# 2012-04-21
++#	* add msgr to vt420, similar DEC vtXXX entries -TD
++#	* add several missing vt420 capabilities from vt220 -TD
++#	* factor out ansi+pp from several entries -TD
++#	* change xterm+sl and xterm+sl-twm to include only the status-line
++#	  capabilities and not "use=xterm", making them more generally useful
++#	  as building-blocks -TD
++#	* add dec+sl building block, as example -TD
++#
++# 2012-04-28
++#	* fix some inconsistencies between vt320/vt420, e.g., cnorm/civis -TD
++#	* add eslok flag to dec+sl -TD
++#	* dec+sl applies to vt320 and up -TD
++#	* drop wsl width from xterm+sl -TD
++#	* reuse xterm+sl in putty and nsca-m -TD
++#	* add ansi+tabs to vt520 -TD
++#	* add ansi+enq to vt220-vt520 -TD
++#
++# 2012-05-05
++#	* remove p6 (bold) from opus3n1+ for consistency -TD
++#	* remove acs stuff from env230 per clues in Ingres termcap -TD
++#	* modify env230 sgr/sgr0 to match other capabilities -TD
++#	* modify smacs/rmacs in bq300-8 to match sgr/sgr0 -TD
++#	* make sgr for dku7202 agree with other caps -TD
++#	* make sgr for ibmpc agree with other caps -TD
++#	* make sgr for tek4107 agree with other caps -TD
++#	* make sgr for ndr9500 agree with other caps -TD
++#	* make sgr for sco-ansi agree with other caps -TD
++#	* make sgr for d410 agree with other caps -TD
++#	* make sgr for d210 agree with other caps -TD
++#	* make sgr for d470c, d470c-7b agree with other caps -TD
++#
++# 2012-05-12
++#	* rewrite vt520 entry based on vt420 -TD
++#	* corrected 'op' for bterm (report by Samuel Thibault) -TD
  #
  ######## SHANTIH!  SHANTIH!  SHANTIH!
