@@ -277,6 +277,7 @@ Priority: optional
 Depends: libtinfo5 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Replaces: lib32ncurses5 (<< 5.9-3)
 Breaks: lib32ncurses5 (<< 5.9-3)
+Conflicts: libc6-i386 (<= 2.9-18)
 Description: shared low-level terminfo library for terminal handling (32-bit)
  The ncurses library routines are a terminal-independent method of
  updating character screens with reasonable optimization.
@@ -293,6 +294,7 @@ Depends: libtinfo5 (= ${binary:Version}), lib32tinfo5 (= ${binary:Version}),
          lib32c-dev, ${misc:Depends}
 Replaces: lib32ncurses5-dev (<< 5.9-3), lib32tinfo5-dev
 Breaks: lib32ncurses5-dev (<< 5.9-3)
+Conflicts: libc6-i386 (<= 2.9-18)
 Description: developer's library for the low-level terminfo library (32-bit)
  The ncurses library routines are a terminal-independent method of
  updating character screens with reasonable optimization.
