@@ -1,6 +1,6 @@
 ncurses (5.9-8) UNRELEASED; urgency=low
 
-  * Update terminfo descriptions to the 20120512 upstream patchlevel.
+  * Update terminfo descriptions to the 20120602 upstream patchlevel.
     - Correct 'op' for bterm (Closes: #671227).
   * Change section of ncurses-{base,term} to misc (see #671616).
   * Move the Breaks against old binutils-gold versions to libtinfo-dev.
