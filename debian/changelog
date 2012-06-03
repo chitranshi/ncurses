@@ -1,4 +1,4 @@
-ncurses (5.9-8) UNRELEASED; urgency=low
+ncurses (5.9-8) unstable; urgency=low
 
   * Update terminfo descriptions to the 20120602 upstream patchlevel.
     - Correct 'op' for bterm (Closes: #671227).
@@ -6,7 +6,7 @@ ncurses (5.9-8) UNRELEASED; urgency=low
   * Move the Breaks against old binutils-gold versions to libtinfo-dev.
   * Conflict with libc6-i386 (<= 2.9-18) in lib32tinfo{5,-dev}.
 
- -- Sven Joachim <svenjoac@gmx.de>  Thu, 10 May 2012 21:03:47 +0200
+ -- Sven Joachim <svenjoac@gmx.de>  Sun, 03 Jun 2012 10:17:35 +0200
 
 ncurses (5.9-7) unstable; urgency=low
 
