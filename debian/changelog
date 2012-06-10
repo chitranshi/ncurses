@@ -1,3 +1,12 @@
+ncurses (5.9-9) UNRELEASED; urgency=low
+
+  * New patch 05-fix-poll-test.diff adapted from the 20120608 upstream
+    patchlevel, correcting the CF_FUNC_POLL test which inadvertently
+    failed if standard input was redirected, as is the case on the Debian
+    buildds (Closes: #676461).
+
+ -- Sven Joachim <svenjoac@gmx.de>  Sun, 10 Jun 2012 08:11:44 +0200
+
 ncurses (5.9-8) unstable; urgency=low
 
   * Update terminfo descriptions to the 20120602 upstream patchlevel.
