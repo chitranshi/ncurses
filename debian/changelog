@@ -4,6 +4,8 @@ ncurses (5.9-9) UNRELEASED; urgency=low
     patchlevel, correcting the CF_FUNC_POLL test which inadvertently
     failed if standard input was redirected, as is the case on the Debian
     buildds (Closes: #676461).
+  * Assume working poll() for the biarch packages where we cannot run the
+    configure check.
 
  -- Sven Joachim <svenjoac@gmx.de>  Sun, 10 Jun 2012 08:11:44 +0200
 

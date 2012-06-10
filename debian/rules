@@ -171,6 +171,11 @@ $(objdir-static)/config.status:
 $(objdir-32)/config.status:
 	test -d $(objdir-32) || mkdir $(objdir-32)
 
+	# Force necessary configure checks which do not work when
+	# cross compiling; all Debian platforms return unsigned char
+	# and working poll for these configure checks.
+	cf_cv_type_of_bool='unsigned char'; export cf_cv_type_of_bool; \
+	cf_cv_working_poll=yes; export cf_cv_working_poll; \
 	cd $(objdir-32) && CFLAGS="$(CFLAGS)" CC="gcc -m32" \
 		BUILD_CC="gcc" CXX="g++ -m32" \
 		$(srcdir)/configure \
@@ -184,10 +189,8 @@ $(objdir-32)/config.status:
 $(objdir-64)/config.status:
 	test -d $(objdir-64) || mkdir $(objdir-64)
 
-	# Force necessary configure checks which do not work when
-	# cross compiling; all Debian platforms return unsigned char
-	# for this configure check.
 	cf_cv_type_of_bool='unsigned char'; export cf_cv_type_of_bool; \
+	cf_cv_working_poll=yes; export cf_cv_working_poll; \
 	cd $(objdir-64) && CFLAGS="$(CFLAGS)" CC="gcc -m64" \
 		BUILD_CC="gcc" CXX="g++ -m64" \
 		$(srcdir)/configure \
@@ -236,6 +239,8 @@ $(wobjdir-debug)/config.status:
 $(wobjdir-32)/config.status:
 	test -d $(wobjdir-32) || mkdir $(wobjdir-32)
 
+	cf_cv_type_of_bool='unsigned char'; export cf_cv_type_of_bool; \
+	cf_cv_working_poll=yes; export cf_cv_working_poll; \
 	cd $(wobjdir-32) && CFLAGS="$(CFLAGS)" CC="gcc -m32" \
 		BUILD_CC="gcc" BUILD_CPPFLAGS="-D_GNU_SOURCE" CXX="g++ -m32" \
 		$(srcdir)/configure \
