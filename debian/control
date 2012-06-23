@@ -153,7 +153,7 @@ Description: debugging/profiling libraries for ncursesw
 Package: lib64ncurses5
 Architecture: i386 powerpc sparc s390
 Priority: optional
-Depends: libtinfo5 (= ${binary:Version}), lib64tinfo5 (= ${binary:Version}),
+Depends: lib64tinfo5 (= ${binary:Version}),
          ${shlibs:Depends}, ${misc:Depends}
 Replaces: amd64-libs (<= 1.2)
 Description: shared libraries for terminal handling (64-bit)
@@ -170,7 +170,7 @@ Package: lib64ncurses5-dev
 Architecture: i386 powerpc sparc s390
 Section: libdevel
 Priority: optional
-Depends: libtinfo5 (= ${binary:Version}), lib64ncurses5 (= ${binary:Version}),
+Depends: lib64ncurses5 (= ${binary:Version}),
          lib64tinfo5 (= ${binary:Version}),
          libncurses5-dev (= ${binary:Version}), lib64c-dev, ${misc:Depends}
 Suggests: ncurses-doc
@@ -188,7 +188,7 @@ Description: developer's libraries for ncurses (64-bit)
 Package: lib32ncurses5
 Architecture: amd64 ppc64
 Priority: optional
-Depends: libtinfo5 (= ${binary:Version}), lib32tinfo5 (= ${binary:Version}),
+Depends: lib32tinfo5 (= ${binary:Version}),
          ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libc6-i386 (<= 2.9-18)
 Replaces: ia32-libs (<< 1.10)
@@ -206,7 +206,7 @@ Package: lib32ncurses5-dev
 Architecture: amd64 ppc64
 Section: libdevel
 Priority: optional
-Depends: libtinfo5 (= ${binary:Version}), lib32ncurses5 (= ${binary:Version}),
+Depends: lib32tinfo5 (= ${binary:Version}), lib32ncurses5 (= ${binary:Version}),
          lib32tinfo-dev (= ${binary:Version}),
          libncurses5-dev (= ${binary:Version}), lib32c-dev, ${misc:Depends}
 Suggests: ncurses-doc
@@ -224,7 +224,7 @@ Description: developer's libraries for ncurses (32-bit)
 Package: lib32ncursesw5
 Architecture: amd64 ppc64
 Priority: optional
-Depends: libtinfo5 (= ${binary:Version}), lib32tinfo5 (= ${binary:Version}),
+Depends: lib32tinfo5 (= ${binary:Version}),
          ${shlibs:Depends}, ${misc:Depends}
 Conflicts: libc6-i386 (<= 2.9-18)
 Description: shared libraries for terminal handling (wide character support) (32-bit)
@@ -241,7 +241,7 @@ Package: lib32ncursesw5-dev
 Architecture: amd64 ppc64
 Section: libdevel
 Priority: optional
-Depends: libtinfo5 (= ${binary:Version}), lib32ncursesw5 (= ${binary:Version}),
+Depends: lib32tinfo5 (= ${binary:Version}), lib32ncursesw5 (= ${binary:Version}),
          lib32tinfo-dev (= ${binary:Version}),
          libncursesw5-dev (= ${binary:Version}), lib32c-dev, ${misc:Depends}
 Conflicts: libc6-i386 (<= 2.9-18)
@@ -260,7 +260,7 @@ Description: developer's libraries for ncursesw (32-bit)
 Package: lib64tinfo5
 Architecture: i386 powerpc sparc s390
 Priority: optional
-Depends: libtinfo5 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Replaces: lib64ncurses5 (<< 5.9-3)
 Breaks: lib64ncurses5 (<< 5.9-3)
 Description: shared low-level terminfo library for terminal handling (64-bit)
@@ -274,7 +274,7 @@ Description: shared low-level terminfo library for terminal handling (64-bit)
 Package: lib32tinfo5
 Architecture: amd64 ppc64
 Priority: optional
-Depends: libtinfo5 (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Replaces: lib32ncurses5 (<< 5.9-3)
 Breaks: lib32ncurses5 (<< 5.9-3)
 Conflicts: libc6-i386 (<= 2.9-18)
@@ -290,7 +290,7 @@ Package: lib32tinfo-dev
 Architecture: amd64 ppc64
 Section: libdevel
 Priority: optional
-Depends: libtinfo5 (= ${binary:Version}), lib32tinfo5 (= ${binary:Version}),
+Depends: lib32tinfo5 (= ${binary:Version}),
          lib32c-dev, ${misc:Depends}
 Replaces: lib32ncurses5-dev (<< 5.9-3), lib32tinfo5-dev
 Breaks: lib32ncurses5-dev (<< 5.9-3)

@@ -429,7 +429,21 @@ binary-arch: build install $(autogen-files)
 	dh_installman -s
 	dh_installdocs -p$(package-bin) -p$(package-ti) -p$(package-examples) debian/FAQ
 	dh_installdocs -s -N$(package-bin) -N$(package-ti) -N$(package-examples) \
+		       -N$(package-lib-32) -N$(package-libw-32) -N$(package-dev-32) \
+		       -N$(package-devw-32) -N$(package-devti-32) -N$(package-ti-32) \
+		       -N$(package-lib-64) -N$(package-dev-64) -N$(package-ti-64) \
 		       --link-doc=$(package-ti)
+ifneq ($(build_32),)
+	dh_installdocs -p$(package-ti-32)
+	dh_installdocs -p$(package-lib-32) -p$(package-libw-32) -p$(package-dev-32) \
+		       -p$(package-devw-32) -p$(package-devti-32) \
+		       --link-doc=$(package-ti-32)
+endif
+ifneq ($(build_64),)
+	dh_installdocs -p$(package-ti-64)
+	dh_installdocs -p$(package-lib-64) -p$(package-dev-64) \
+		       --link-doc=$(package-ti-64)
+endif
 	dh_installchangelogs -s NEWS
 	dh_installdirs -s
 
