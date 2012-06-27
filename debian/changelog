@@ -1,10 +1,10 @@
-ncurses (5.9-10) UNRELEASED; urgency=low
+ncurses (5.9-10) unstable; urgency=low
 
   * Drop the dependency of the biarch packages on libtinfo5
     (Closes: #678440).
     - Convert /usr/share/doc/lib{32,64}tinfo5 back to directories.
 
- -- Sven Joachim <svenjoac@gmx.de>  Sat, 23 Jun 2012 13:45:41 +0200
+ -- Sven Joachim <svenjoac@gmx.de>  Wed, 27 Jun 2012 17:20:15 +0200
 
 ncurses (5.9-9) unstable; urgency=low
 
