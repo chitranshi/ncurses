@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2010,2011 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -42,11 +42,7 @@
 
 #include <SigAction.h>
 
-#if SVR4_ACTION && !defined(_POSIX_SOURCE)
-#define _POSIX_SOURCE
-#endif
-
-MODULE_ID("$Id: lib_tstp.c,v 1.41 2010/05/15 21:31:12 tom Exp $")
+MODULE_ID("$Id: lib_tstp.c,v 1.45 2011/10/22 15:37:42 tom Exp $")
 
 #if defined(SIGTSTP) && (HAVE_SIGACTION || HAVE_SIGVEC)
 #define USE_SIGTSTP 1
@@ -244,16 +240,19 @@ cleanup(int sig)
     SCREEN *sp = CURRENT_SCREEN;
 
     /*
-     * Actually, doing any sort of I/O from within an signal handler is
-     * "unsafe".  But we'll _try_ to clean up the screen and terminal
-     * settings on the way out.
+     * Much of this is unsafe from a signal handler.  But we'll _try_ to clean
+     * up the screen and terminal settings on the way out.
+     *
+     * There are at least the following problems:
+     * 1) Walking the SCREEN list is unsafe, since all list management
+     *    is done without any signal blocking.
+     * 2) On systems which have REENTRANT turned on, set_term() uses
+     *    _nc_lock_global() which could deadlock or misbehave in other ways.
+     * 3) endwin() calls all sorts of stuff, many of which use stdio or
+     *    other library functions which are clearly unsafe.
      */
     if (!_nc_globals.cleanup_nested++
-	&& (sig == SIGINT
-#ifdef SIGQUIT
-	    || sig == SIGQUIT
-#endif
-	)) {
+	&& (sig == SIGINT || sig == SIGTERM)) {
 #if HAVE_SIGACTION || HAVE_SIGVEC
 	sigaction_t act;
 	sigemptyset(&act.sa_mask);
@@ -274,11 +273,11 @@ cleanup(int sig)
 		set_term(scan);
 		NCURSES_SP_NAME(endwin) (NCURSES_SP_ARG);
 		if (sp)
-		    sp->_endwin = FALSE;	/* in case we have an atexit! */
+		    sp->_endwin = FALSE;	/* in case of reuse */
 	    }
 	}
     }
-    exit(EXIT_FAILURE);
+    _exit(EXIT_FAILURE);
 }
 
 #if USE_SIGWINCH
@@ -364,7 +363,7 @@ CatchIfDefault(int sig, RETSIGTYPE (*handler) (int))
  * the caller later changes its mind, but that doesn't seem correct.
  */
 NCURSES_EXPORT(void)
-_nc_signal_handler(bool enable)
+_nc_signal_handler(int enable)
 {
     T((T_CALLED("_nc_signal_handler(%d)"), enable));
 #if USE_SIGTSTP			/* Xenix 2.x doesn't have SIGTSTP, for example */

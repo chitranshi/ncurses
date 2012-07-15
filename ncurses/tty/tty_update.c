@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2011,2012 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -82,7 +82,7 @@
 
 #include <ctype.h>
 
-MODULE_ID("$Id: tty_update.c,v 1.264 2010/12/19 01:21:02 tom Exp $")
+MODULE_ID("$Id: tty_update.c,v 1.268 2012/05/12 21:02:00 tom Exp $")
 
 /*
  * This define controls the line-breakout optimization.  Every once in a
@@ -288,13 +288,12 @@ PutAttrChar(NCURSES_SP_DCLx CARG_CH_T ch)
 	    int j = CharOfD(ch);
 	    chtype temp = UChar(SP_PARM->_acs_map[j]);
 
-	    if (!(SP_PARM->_screen_acs_map[j])) {
-		RemAttr(attr, A_ALTCHARSET);
-		if (temp == 0)
-		    temp = ' ';
-	    }
-	    if (temp != 0)
+	    if (temp != 0) {
 		SetChar(my_ch, temp, AttrOf(attr));
+	    } else {
+		my_ch = CHDEREF(ch);
+		RemAttr(attr, A_ALTCHARSET);
+	    }
 	}
 	ch = CHREF(my_ch);
     }
@@ -342,7 +341,7 @@ check_pending(NCURSES_SP_DCL0)
 	struct pollfd fds[1];
 	fds[0].fd = SP_PARM->_checkfd;
 	fds[0].events = POLLIN;
-	if (poll(fds, 1, 0) > 0) {
+	if (poll(fds, (size_t) 1, 0) > 0) {
 	    have_pending = TRUE;
 	}
 #elif defined(__BEOS__)
@@ -676,6 +675,9 @@ TINFO_DOUPDATE(NCURSES_SP_DCL0)
 #endif /* USE_TRACE_TIMES */
 
     T((T_CALLED("_nc_tinfo:doupdate(%p)"), (void *) SP_PARM));
+
+    if (SP_PARM == 0)
+	returnCode(ERR);
 
 #if !USE_REENTRANT
     /*
@@ -1076,7 +1078,7 @@ ClrUpdate(NCURSES_SP_DCL0)
 */
 
 static void
-ClrToEOL(NCURSES_SP_DCLx NCURSES_CH_T blank, bool needclear)
+ClrToEOL(NCURSES_SP_DCLx NCURSES_CH_T blank, int needclear)
 {
     int j;
 

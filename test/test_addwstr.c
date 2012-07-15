@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2009,2010 Free Software Foundation, Inc.                   *
+ * Copyright (c) 2009-2010,2012 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -26,7 +26,7 @@
  * authorization.                                                           *
  ****************************************************************************/
 /*
- * $Id: test_addwstr.c,v 1.6 2010/12/12 00:18:00 tom Exp $
+ * $Id: test_addwstr.c,v 1.8 2012/06/09 20:29:33 tom Exp $
  *
  * Demonstrate the waddwstr() and wadd_wch functions.
  * Thomas Dickey - 2009/9/12
@@ -233,8 +233,9 @@ test_inserts(int level)
     WINDOW *work = 0;
     WINDOW *show = 0;
     int margin = (2 * MY_TABSIZE) - 1;
-    Options option = ((m_opt ? oMove : oDefault)
-		      | ((w_opt || (level > 0)) ? oWindow : oDefault));
+    Options option = (Options) ((int) (m_opt ? oMove : oDefault)
+				| (int) ((w_opt || (level > 0))
+					 ? oWindow : oDefault));
 
     if (first) {
 	static char cmd[80];
@@ -286,7 +287,7 @@ test_inserts(int level)
     if (has_colors()) {
 	start_color();
 	init_pair(1, COLOR_WHITE, COLOR_BLUE);
-	wbkgdset(work, COLOR_PAIR(1) | ' ');
+	wbkgdset(work, (chtype) (COLOR_PAIR(1) | ' '));
     }
 
     while ((ch = read_linedata(work)) != ERR && !isQUIT(ch)) {

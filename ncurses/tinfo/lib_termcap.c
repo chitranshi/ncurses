@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2011,2012 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -48,7 +48,7 @@
 #define CUR SP_TERMTYPE
 #endif
 
-MODULE_ID("$Id: lib_termcap.c,v 1.73 2010/12/25 19:27:12 tom Exp $")
+MODULE_ID("$Id: lib_termcap.c,v 1.78 2012/02/22 22:34:31 tom Exp $")
 
 NCURSES_EXPORT_VAR(char *) UP = 0;
 NCURSES_EXPORT_VAR(char *) BC = 0;
@@ -97,7 +97,7 @@ NCURSES_SP_NAME(tgetent) (NCURSES_SP_DCLx char *bufp, const char *name)
 #ifdef USE_TERM_DRIVER
     if (termp == 0 ||
 	!((TERMINAL_CONTROL_BLOCK *) termp)->drv->isTerminfo)
-	return (rc);
+	returnCode(rc);
 #endif
 
     /*
@@ -203,10 +203,11 @@ static bool
 same_tcname(const char *a, const char *b)
 {
     fprintf(stderr, "compare(%s,%s)\n", a, b);
-    return !strncmp(a, b, 2);
+    return !strncmp(a, b, (size_t) 2);
 }
+
 #else
-#define same_tcname(a,b) !strncmp(a,b,2)
+#define same_tcname(a,b) !strncmp(a, b, (size_t) 2)
 #endif
 
 /***************************************************************************
@@ -351,7 +352,7 @@ NCURSES_SP_NAME(tgetstr) (NCURSES_SP_DCLx NCURSES_CONST char *id, char **area)
 #endif
 	if (j >= 0) {
 	    result = tp->Strings[j];
-	    TR(TRACE_DATABASE, ("found match : %s", _nc_visbuf(result)));
+	    TR(TRACE_DATABASE, ("found match %d: %s", j, _nc_visbuf(result)));
 	    /* setupterm forces canceled strings to null */
 	    if (VALID_STRING(result)) {
 		if (result == exit_attribute_mode
@@ -361,7 +362,7 @@ NCURSES_SP_NAME(tgetstr) (NCURSES_SP_DCLx NCURSES_CONST char *id, char **area)
 		}
 		if (area != 0
 		    && *area != 0) {
-		    (void) strcpy(*area, result);
+		    _nc_STRCPY(*area, result, 1024);
 		    result = *area;
 		    *area += strlen(*area) + 1;
 		}

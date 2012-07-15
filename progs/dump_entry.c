@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2008,2010 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2011,2012 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -39,7 +39,7 @@
 #include "termsort.c"		/* this C file is generated */
 #include <parametrized.h>	/* so is this */
 
-MODULE_ID("$Id: dump_entry.c,v 1.89 2010/05/01 22:04:08 tom Exp $")
+MODULE_ID("$Id: dump_entry.c,v 1.100 2012/06/09 21:44:40 tom Exp $")
 
 #define INDENT			8
 #define DISCARD(string) string = ABSENT_STRING
@@ -57,6 +57,7 @@ static int tversion;		/* terminfo version */
 static int outform;		/* output format to use */
 static int sortmode;		/* sort mode to use */
 static int width = 60;		/* max line width for listings */
+static int height = 65535;	/* max number of lines for listings */
 static int column;		/* current column, limited by 'width' */
 static int oldcol;		/* last value of column before wrap */
 static bool pretty;		/* true if we format if-then-else strings */
@@ -172,11 +173,17 @@ nametrans(const char *name)
 }
 
 void
-dump_init(const char *version, int mode, int sort, int twidth, int traceval,
+dump_init(const char *version,
+	  int mode,
+	  int sort,
+	  int twidth,
+	  int theight,
+	  unsigned traceval,
 	  bool formatted)
 /* set up for entry display */
 {
     width = twidth;
+    height = theight;
     pretty = formatted;
 
     /* versions */
@@ -201,7 +208,7 @@ dump_init(const char *version, int mode, int sort, int twidth, int traceval,
 	bool_names = boolnames;
 	num_names = numnames;
 	str_names = strnames;
-	separator = twidth ? ", " : ",";
+	separator = (twidth > 0 && theight > 1) ? ", " : ",";
 	trailer = "\n\t";
 	break;
 
@@ -209,7 +216,7 @@ dump_init(const char *version, int mode, int sort, int twidth, int traceval,
 	bool_names = boolfnames;
 	num_names = numfnames;
 	str_names = strfnames;
-	separator = twidth ? ", " : ",";
+	separator = (twidth > 0 && theight > 1) ? ", " : ",";
 	trailer = "\n\t";
 	break;
 
@@ -393,8 +400,8 @@ force_wrap(void)
 static void
 wrap_concat(const char *src)
 {
-    unsigned need = strlen(src);
-    unsigned want = strlen(separator) + need;
+    size_t need = strlen(src);
+    size_t want = strlen(separator) + need;
 
     if (column > INDENT
 	&& column + (int) want > width) {
@@ -593,14 +600,28 @@ fmt_entry(TERMTYPE *tterm,
 	column = INDENT;	/* FIXME: workaround to prevent empty lines */
     } else {
 	strcpy_DYN(&outbuf, tterm->term_names);
+
+	/*
+	 * Colon is legal in terminfo descriptions, but not in termcap.
+	 */
+	if (!infodump) {
+	    char *p = outbuf.text;
+	    while (*p) {
+		if (*p == ':') {
+		    *p = '=';
+		}
+		++p;
+	    }
+	}
 	strcpy_DYN(&outbuf, separator);
 	column = (int) outbuf.used;
-	force_wrap();
+	if (height > 1)
+	    force_wrap();
     }
 
     for_each_boolean(j, tterm) {
 	i = BoolIndirect(j);
-	name = ExtBoolname(tterm, i, bool_names);
+	name = ExtBoolname(tterm, (int) i, bool_names);
 	assert(strlen(name) < sizeof(buffer) - EXTRA_CAP);
 
 	if (!version_filter(BOOLEAN, i))
@@ -610,21 +631,21 @@ fmt_entry(TERMTYPE *tterm,
 
 	predval = pred(BOOLEAN, i);
 	if (predval != FAIL) {
-	    (void) strcpy(buffer, name);
+	    _nc_STRCPY(buffer, name, sizeof(buffer));
 	    if (predval <= 0)
-		(void) strcat(buffer, "@");
+		_nc_STRCAT(buffer, "@", sizeof(buffer));
 	    else if (i + 1 > num_bools)
 		num_bools = i + 1;
 	    WRAP_CONCAT;
 	}
     }
 
-    if (column != INDENT)
+    if (column != INDENT && height > 1)
 	force_wrap();
 
     for_each_number(j, tterm) {
 	i = NumIndirect(j);
-	name = ExtNumname(tterm, i, num_names);
+	name = ExtNumname(tterm, (int) i, num_names);
 	assert(strlen(name) < sizeof(buffer) - EXTRA_CAP);
 
 	if (!version_filter(NUMBER, i))
@@ -635,9 +656,11 @@ fmt_entry(TERMTYPE *tterm,
 	predval = pred(NUMBER, i);
 	if (predval != FAIL) {
 	    if (tterm->Numbers[i] < 0) {
-		sprintf(buffer, "%s@", name);
+		_nc_SPRINTF(buffer, _nc_SLIMIT(sizeof(buffer))
+			    "%s@", name);
 	    } else {
-		sprintf(buffer, "%s#%d", name, tterm->Numbers[i]);
+		_nc_SPRINTF(buffer, _nc_SLIMIT(sizeof(buffer))
+			    "%s#%d", name, tterm->Numbers[i]);
 		if (i + 1 > num_values)
 		    num_values = i + 1;
 	    }
@@ -645,7 +668,7 @@ fmt_entry(TERMTYPE *tterm,
 	}
     }
 
-    if (column != INDENT)
+    if (column != INDENT && height > 1)
 	force_wrap();
 
     len += (int) (num_bools
@@ -670,7 +693,7 @@ fmt_entry(TERMTYPE *tterm,
 
     for_each_string(j, tterm) {
 	i = StrIndirect(j);
-	name = ExtStrname(tterm, i, str_names);
+	name = ExtStrname(tterm, (int) i, str_names);
 	assert(strlen(name) < sizeof(buffer) - EXTRA_CAP);
 
 	capability = tterm->Strings[i];
@@ -698,14 +721,14 @@ fmt_entry(TERMTYPE *tterm,
 	    if (PRESENT(insert_character) || PRESENT(parm_ich)) {
 		if (SAME_CAP(i, enter_insert_mode)
 		    && enter_insert_mode == ABSENT_STRING) {
-		    (void) strcpy(buffer, "im=");
+		    _nc_STRCPY(buffer, "im=", sizeof(buffer));
 		    WRAP_CONCAT;
 		    continue;
 		}
 
 		if (SAME_CAP(i, exit_insert_mode)
 		    && exit_insert_mode == ABSENT_STRING) {
-		    (void) strcpy(buffer, "ei=");
+		    _nc_STRCPY(buffer, "ei=", sizeof(buffer));
 		    WRAP_CONCAT;
 		    continue;
 		}
@@ -739,7 +762,8 @@ fmt_entry(TERMTYPE *tterm,
 		num_strings = i + 1;
 
 	    if (!VALID_STRING(capability)) {
-		sprintf(buffer, "%s@", name);
+		_nc_SPRINTF(buffer, _nc_SLIMIT(sizeof(buffer))
+			    "%s@", name);
 		WRAP_CONCAT;
 	    } else if (outform == F_TERMCAP || outform == F_TCONVERR) {
 		int params = ((i < (int) SIZEOF(parametrized))
@@ -750,13 +774,14 @@ fmt_entry(TERMTYPE *tterm,
 
 		if (cv == 0) {
 		    if (outform == F_TCONVERR) {
-			sprintf(buffer, "%s=!!! %s WILL NOT CONVERT !!!",
-				name, srccap);
+			_nc_SPRINTF(buffer, _nc_SLIMIT(sizeof(buffer))
+				    "%s=!!! %s WILL NOT CONVERT !!!",
+				    name, srccap);
 		    } else if (suppress_untranslatable) {
 			continue;
 		    } else {
 			char *s = srccap, *d = buffer;
-			sprintf(d, "..%s=", name);
+			_nc_SPRINTF(d, _nc_SLIMIT(sizeof(buffer)) "..%s=", name);
 			d += strlen(d);
 			while ((*d = *s++) != 0) {
 			    if (*d == ':') {
@@ -769,7 +794,8 @@ fmt_entry(TERMTYPE *tterm,
 			}
 		    }
 		} else {
-		    sprintf(buffer, "%s=%s", name, cv);
+		    _nc_SPRINTF(buffer, _nc_SLIMIT(sizeof(buffer))
+				"%s=%s", name, cv);
 		}
 		len += (int) strlen(capability) + 1;
 		WRAP_CONCAT;
@@ -805,11 +831,13 @@ fmt_entry(TERMTYPE *tterm,
      */
     if (tversion == V_HPUX) {
 	if (VALID_STRING(memory_lock)) {
-	    (void) sprintf(buffer, "meml=%s", memory_lock);
+	    _nc_SPRINTF(buffer, _nc_SLIMIT(sizeof(buffer))
+			"meml=%s", memory_lock);
 	    WRAP_CONCAT;
 	}
 	if (VALID_STRING(memory_unlock)) {
-	    (void) sprintf(buffer, "memu=%s", memory_unlock);
+	    _nc_SPRINTF(buffer, _nc_SLIMIT(sizeof(buffer))
+			"memu=%s", memory_unlock);
 	    WRAP_CONCAT;
 	}
     } else if (tversion == V_AIX) {
@@ -832,9 +860,11 @@ fmt_entry(TERMTYPE *tterm,
 	    tp[0] = '\0';
 
 	    if (box_ok) {
-		(void) strcpy(buffer, "box1=");
-		(void) strcat(buffer, _nc_tic_expand(boxchars,
-						     outform == F_TERMINFO, numbers));
+		_nc_STRCPY(buffer, "box1=", sizeof(buffer));
+		_nc_STRCAT(buffer,
+			   _nc_tic_expand(boxchars,
+					  outform == F_TERMINFO, numbers),
+			   sizeof(buffer));
 		WRAP_CONCAT;
 	    }
 	}
@@ -846,7 +876,7 @@ fmt_entry(TERMTYPE *tterm,
      */
     if (outcount) {
 	bool trimmed = FALSE;
-	j = outbuf.used;
+	j = (PredIdx) outbuf.used;
 	if (j >= 2
 	    && outbuf.text[j - 1] == '\t'
 	    && outbuf.text[j - 2] == '\n') {
@@ -926,7 +956,7 @@ kill_labels(TERMTYPE *tterm, int target)
     char name[10];
 
     for (n = 0; n <= 10; ++n) {
-	sprintf(name, "lf%d", n);
+	_nc_SPRINTF(name, _nc_SLIMIT(sizeof(name)) "lf%d", n);
 	if ((cap = find_string(tterm, name)) != ABSENT_STRING
 	    && kill_string(tterm, cap)) {
 	    target -= (int) (strlen(cap) + 5);
@@ -951,7 +981,7 @@ kill_fkeys(TERMTYPE *tterm, int target)
     char name[10];
 
     for (n = 60; n >= 0; --n) {
-	sprintf(name, "kf%d", n);
+	_nc_SPRINTF(name, _nc_SLIMIT(sizeof(name)) "kf%d", n);
 	if ((cap = find_string(tterm, name)) != ABSENT_STRING
 	    && kill_string(tterm, cap)) {
 	    target -= (int) (strlen(cap) + 5);
@@ -1064,7 +1094,7 @@ dump_entry(TERMTYPE *tterm,
 	     */
 	    unsigned n;
 	    for (n = STRCOUNT; n < NUM_STRINGS(tterm); n++) {
-		const char *name = ExtStrname(tterm, n, strnames);
+		const char *name = ExtStrname(tterm, (int) n, strnames);
 
 		if (VALID_STRING(tterm->Strings[n])) {
 		    set_attributes = ABSENT_STRING;
@@ -1144,21 +1174,45 @@ dump_uses(const char *name, bool infodump)
 
     if (outform == F_TERMCAP || outform == F_TCONVERR)
 	trim_trailing();
-    (void) sprintf(buffer, "%s%s", infodump ? "use=" : "tc=", name);
+    _nc_SPRINTF(buffer, _nc_SLIMIT(sizeof(buffer))
+		"%s%s", infodump ? "use=" : "tc=", name);
     wrap_concat(buffer);
 }
 
 int
 show_entry(void)
 {
-    trim_trailing();
+    /*
+     * Trim any remaining whitespace.
+     */
+    if (outbuf.used != 0) {
+	bool infodump = (outform != F_TERMCAP && outform != F_TCONVERR);
+	char delim = (char) (infodump ? ',' : ':');
+	int j;
+
+	for (j = (int) outbuf.used - 1; j > 0; --j) {
+	    char ch = outbuf.text[j];
+	    if (ch == '\n') {
+		;
+	    } else if (isspace(UChar(ch))) {
+		outbuf.used = (size_t) j;
+	    } else if (!infodump && ch == '\\') {
+		outbuf.used = (size_t) j;
+	    } else if (ch == delim && (j == 0 || outbuf.text[j - 1] != '\\')) {
+		outbuf.used = (size_t) (j + 1);
+	    } else {
+		break;
+	    }
+	}
+	outbuf.text[outbuf.used] = '\0';
+    }
     (void) fputs(outbuf.text, stdout);
     putchar('\n');
     return (int) outbuf.used;
 }
 
 void
-compare_entry(void (*hook) (PredType t, PredIdx i, const char *name),
+compare_entry(PredHook hook,
 	      TERMTYPE *tp GCC_UNUSED,
 	      bool quiet)
 /* compare two entries */
@@ -1170,7 +1224,7 @@ compare_entry(void (*hook) (PredType t, PredIdx i, const char *name),
 	fputs("    comparing booleans.\n", stdout);
     for_each_boolean(j, tp) {
 	i = BoolIndirect(j);
-	name = ExtBoolname(tp, i, bool_names);
+	name = ExtBoolname(tp, (int) i, bool_names);
 
 	if (isObsolete(outform, name))
 	    continue;
@@ -1182,7 +1236,7 @@ compare_entry(void (*hook) (PredType t, PredIdx i, const char *name),
 	fputs("    comparing numbers.\n", stdout);
     for_each_number(j, tp) {
 	i = NumIndirect(j);
-	name = ExtNumname(tp, i, num_names);
+	name = ExtNumname(tp, (int) i, num_names);
 
 	if (isObsolete(outform, name))
 	    continue;
@@ -1194,7 +1248,7 @@ compare_entry(void (*hook) (PredType t, PredIdx i, const char *name),
 	fputs("    comparing strings.\n", stdout);
     for_each_string(j, tp) {
 	i = StrIndirect(j);
-	name = ExtStrname(tp, i, str_names);
+	name = ExtStrname(tp, (int) i, str_names);
 
 	if (isObsolete(outform, name))
 	    continue;

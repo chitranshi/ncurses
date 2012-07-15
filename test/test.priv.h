@@ -29,7 +29,7 @@
 /****************************************************************************
  *  Author: Thomas E. Dickey                    1996-on                     *
  ****************************************************************************/
-/* $Id: test.priv.h,v 1.103 2011/03/22 09:15:45 tom Exp $ */
+/* $Id: test.priv.h,v 1.114 2011/10/29 19:59:55 tom Exp $ */
 
 #ifndef __TEST_PRIV_H
 #define __TEST_PRIV_H 1
@@ -58,6 +58,10 @@
 /*
  * Fallback definitions to accommodate broken compilers.
  */
+#ifndef HAVE_ASSUME_DEFAULT_COLORS
+#define HAVE_ASSUME_DEFAULT_COLORS 0
+#endif
+
 #ifndef HAVE_CURSES_VERSION
 #define HAVE_CURSES_VERSION 0
 #endif
@@ -202,6 +206,14 @@
 #define HAVE_USE_DEFAULT_COLORS 0
 #endif
 
+#ifndef HAVE_USE_SCREEN
+#define HAVE_USE_SCREEN 0
+#endif
+
+#ifndef HAVE_USE_WINDOW
+#define HAVE_USE_WINDOW 0
+#endif
+
 #ifndef HAVE_WRESIZE
 #define HAVE_WRESIZE 0
 #endif
@@ -220,6 +232,13 @@
 
 #ifndef NO_LEAKS
 #define NO_LEAKS 0
+#endif
+
+/*
+ * Workaround for HPUX
+ */
+#if defined(__hpux) && !defined(NCURSES_VERSION)
+#define _ACS_COMPAT_CODE	/* needed for acs_map vs __acs_map */
 #endif
 
 #include <stdlib.h>
@@ -269,21 +288,18 @@
 
 /*
  * Not all curses.h implementations include unctrl.h,
- * Solaris 10 xpg4 for example.
  */
-#if defined(NCURSES_VERSION) || defined(_XOPEN_CURSES)
-#if defined(HAVE_NCURSESW_NCURSES_H)
+#if defined(HAVE_NCURSESW_UNCTRL_H)
 #include <ncursesw/unctrl.h>
-#elif defined(HAVE_NCURSES_NCURSES_H)
+#elif defined(HAVE_NCURSES_UNCTRL_H)
 #include <ncurses/unctrl.h>
-#else
+#elif defined(HAVE_UNCTRL_H)
 #include <unctrl.h>
-#endif
 #endif
 
 #if HAVE_GETOPT_H
 #include <getopt.h>
-#else
+#elif !defined(HAVE_GETOPT_HEADER)
 /* 'getopt()' may be prototyped in <stdlib.h>, but declaring its variables
  * doesn't hurt.
  */
@@ -323,17 +339,20 @@ extern int optind;
 #endif
 
 #if !USE_SOFTKEYS
-#define slk_init() /* nothing */
-#define slk_restore() /* nothing */
-#define slk_clear() /* nothing */
+#define slk_init()		/* nothing */
+#define slk_restore()		/* nothing */
+#define slk_clear()		/* nothing */
 #endif
 
 #ifndef HAVE_WSYNCDOWN
-#define wsyncdown(win) /* nothing */
+#define wsyncdown(win)		/* nothing */
 #endif
 
 #ifndef USE_WIDEC_SUPPORT
-#if (defined(_XOPEN_SOURCE_EXTENDED) || defined(_XPG5)) && defined(WACS_ULCORNER)
+#if (defined(_XOPEN_SOURCE_EXTENDED) \
+  || (defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE - 0 >= 500)) \
+  || (defined(NCURSES_WIDECHAR) && (NCURSES_WIDECHAR - 0 < 1))) \
+  && defined(WACS_ULCORNER)
 #define USE_WIDEC_SUPPORT 1
 #else
 #define USE_WIDEC_SUPPORT 0
@@ -653,24 +672,31 @@ extern char *strnames[], *strcodes[], *strfnames[];
  * The same would be needed for HPUX 10.20
  */
 #ifndef TPUTS_ARG
-#if defined(sun) && !defined(_XOPEN_CURSES) && !defined(NCURSES_VERSION_PATCH)
-#define TPUTS_ARG char
-extern char *tgoto(char *, int, int);	/* available, but not prototyped */
-#else
 #define TPUTS_ARG int
 #endif
+
+#if defined(sun) && !defined(_XOPEN_CURSES) && !defined(NCURSES_VERSION_PATCH)
+#undef TPUTS_ARG
+#define TPUTS_ARG char
+extern char *tgoto(char *, int, int);	/* available, but not prototyped */
+#endif
+
+#ifndef TPUTS_PROTO
+#define TPUTS_PROTO(func,value) int func(TPUTS_ARG value)
+#endif
+
+#ifndef TPUTS_RETURN
+#define TPUTS_RETURN(value) return value
 #endif
 
 /*
  * Workarounds for Solaris's X/Open curses
  */
-#if defined(sun) && defined(_XOPEN_CURSES) && !defined(NCURSES_VERSION_PATCH)
 #if !defined(KEY_MIN) && defined(__KEY_MIN)
 #define KEY_MIN __KEY_MIN
 #endif
 #if !defined(KEY_MAX) && defined(__KEY_MIN)
 #define KEY_MAX __KEY_MAX
-#endif
 #endif
 
 /*
@@ -702,22 +728,9 @@ extern char *tgoto(char *, int, int);	/* available, but not prototyped */
 #define CONST_MENUS		/* nothing */
 #endif
 
-#ifndef HAVE_USE_WINDOW
-#if !defined(NCURSES_VERSION_PATCH) || (NCURSES_VERSION_PATCH < 20070915) || !NCURSES_EXT_FUNCS
-#define HAVE_USE_WINDOW 0
-#else
-#define HAVE_USE_WINDOW 1
-#endif
-#endif
-
 /*
  * Simplify setting up demo of threading with these macros.
  */
-
-#if !HAVE_USE_WINDOW
-typedef int (*NCURSES_WINDOW_CB) (WINDOW *, void *);
-typedef int (*NCURSES_SCREEN_CB) (SCREEN *, void *);
-#endif
 
 #if HAVE_USE_WINDOW
 #define USING_WINDOW(w,func) use_window(w, (NCURSES_WINDOW_CB) func, w)

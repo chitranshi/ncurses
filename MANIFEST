@@ -545,6 +545,8 @@
 ./include/nc_alloc.h
 ./include/nc_mingw.h
 ./include/nc_panel.h
+./include/nc_string.h
+./include/nc_termios.h
 ./include/nc_tparm.h
 ./include/ncurses_cfg.hin
 ./include/ncurses_defs
@@ -764,7 +766,6 @@
 ./mk-0th.awk
 ./mk-1st.awk
 ./mk-2nd.awk
-./mk-dlls.sh.in
 ./mk-hdr.awk
 ./ncurses/Makefile.in
 ./ncurses/README
@@ -867,6 +868,12 @@
 ./ncurses/llib-lncursest
 ./ncurses/llib-lncursestw
 ./ncurses/llib-lncursesw
+./ncurses/llib-ltic
+./ncurses/llib-ltictw
+./ncurses/llib-lticw
+./ncurses/llib-ltinfo
+./ncurses/llib-ltinfotw
+./ncurses/llib-ltinfow
 ./ncurses/modules
 ./ncurses/tinfo/MKcaptab.awk
 ./ncurses/tinfo/MKcaptab.sh
@@ -970,6 +977,14 @@
 ./ncurses/win32con/gettimeofday.c
 ./ncurses/win32con/wcwidth.c
 ./ncurses/win32con/win_driver.c
+./package/debian/changelog
+./package/debian/compat
+./package/debian/control
+./package/debian/copyright
+./package/debian/rules
+./package/debian/source/format
+./package/debian/watch
+./package/ncurses.spec
 ./panel/Makefile.in
 ./panel/headers
 ./panel/llib-lpanel
@@ -1022,6 +1037,7 @@
 ./test/cardfile.dat
 ./test/chgat.c
 ./test/clip_printw.c
+./test/color_name.h
 ./test/color_set.c
 ./test/configure
 ./test/configure.in

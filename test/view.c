@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2011,2012 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -50,7 +50,7 @@
  * scroll operation worked, and the refresh() code only had to do a
  * partial repaint.
  *
- * $Id: view.c,v 1.81 2010/11/14 01:06:02 tom Exp $
+ * $Id: view.c,v 1.85 2012/06/09 20:29:33 tom Exp $
  */
 
 #include <test.priv.h>
@@ -110,9 +110,9 @@ static void show_all(const char *tag);
 #if CAN_RESIZE
 static RETSIGTYPE adjust(int sig);
 static int interrupted;
+static bool waiting = FALSE;
 #endif
 
-static bool waiting = FALSE;
 static int shift = 0;
 static bool try_color = FALSE;
 
@@ -120,6 +120,8 @@ static char *fname;
 static NCURSES_CH_T **vec_lines;
 static NCURSES_CH_T **lptr;
 static int num_lines;
+
+static void usage(void) GCC_NORETURN;
 
 static void
 usage(void)
@@ -180,7 +182,7 @@ ch_dup(char *src)
 {
     unsigned len = (unsigned) strlen(src);
     NCURSES_CH_T *dst = typeMalloc(NCURSES_CH_T, len + 1);
-    unsigned j, k;
+    size_t j, k;
 #if USE_WIDEC_SUPPORT
     wchar_t wstr[CCHARW_MAX + 1];
     wchar_t wch;
@@ -354,7 +356,7 @@ main(int argc, char *argv[])
 	if (has_colors()) {
 	    start_color();
 	    init_pair(my_pair, COLOR_WHITE, COLOR_BLUE);
-	    bkgd(COLOR_PAIR(my_pair));
+	    bkgd((chtype) COLOR_PAIR(my_pair));
 	} else {
 	    try_color = FALSE;
 	}
@@ -373,10 +375,12 @@ main(int argc, char *argv[])
 		adjust(0);
 		my_label = "interrupt";
 	    }
-#endif
 	    waiting = TRUE;
 	    c = getch();
 	    waiting = FALSE;
+#else
+	    c = getch();
+#endif
 	    if ((c < 127) && isdigit(c)) {
 		if (!got_number) {
 		    MvPrintw(0, 0, "Count: ");

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2010,2011 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2011,2012 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -40,7 +40,7 @@ AUTHOR
    Author: Eric S. Raymond <esr@snark.thyrsus.com> 1993
            Thomas E. Dickey (beginning revision 1.27 in 1996).
 
-$Id: ncurses.c,v 1.365 2011/01/22 19:48:33 tom Exp $
+$Id: ncurses.c,v 1.372 2012/07/07 18:09:38 tom Exp $
 
 ***************************************************************************/
 
@@ -490,7 +490,7 @@ ShellOut(bool message)
 #ifdef __MINGW32__
     system("cmd.exe");
 #else
-    system("sh");
+    IGNORE_RC(system("sh"));
 #endif
     if (message)
 	addstr("returned from shellout.\n");
@@ -777,11 +777,20 @@ resize_boxes(unsigned level, WINDOW *win)
     }
     doupdate();
 }
-#endif	/* resize_boxes */
+#endif /* resize_boxes */
 #else
 #define forget_boxes()		/* nothing */
 #define remember_boxes(level,text,frame)	/* nothing */
 #endif
+
+/*
+ * Return-code is OK/ERR or a keyname.
+ */
+static const char *
+ok_keyname(int code)
+{
+    return ((code == OK) ? "OK" : ((code == ERR) ? "ERR" : keyname(code)));
+}
 
 static void
 wgetch_test(unsigned level, WINDOW *win, int delay)
@@ -824,9 +833,11 @@ wgetch_test(unsigned level, WINDOW *win, int delay)
 	} else if (c == 'g') {
 	    waddstr(win, "getstr test: ");
 	    echo();
-	    wgetnstr(win, buf, sizeof(buf) - 1);
+	    c = wgetnstr(win, buf, sizeof(buf) - 1);
 	    noecho();
-	    wprintw(win, "I saw %d characters:\n\t`%s'.", (int) strlen(buf), buf);
+	    wprintw(win, "I saw %d characters:\n\t`%s' (%s).",
+		    (int) strlen(buf), buf,
+		    ok_keyname(c));
 	    wclrtoeol(win);
 	    wgetch_wrap(win, first_y);
 	} else if (c == 'k') {
@@ -1394,7 +1405,7 @@ show_attr(int row, int skip, bool arrow, chtype attr, const char *name)
 	if (!(termattrs() & test)) {
 	    printw(" (N/A)");
 	} else {
-	    if (ncv > 0 && (getbkgd(stdscr) & A_COLOR)) {
+	    if (ncv > 0 && stdscr && (getbkgd(stdscr) & A_COLOR)) {
 		static const chtype table[] =
 		{
 		    A_STANDOUT,
@@ -1675,8 +1686,8 @@ wide_show_attr(int row, int skip, bool arrow, chtype attr, short pair, const cha
 	    add_wch(&ch);
 	}
     } else {
-	attr_t old_attr;
-	short old_pair;
+	attr_t old_attr = 0;
+	short old_pair = 0;
 
 	(void) attr_get(&old_attr, &old_pair, 0);
 	(void) attr_set(attr, pair, 0);
@@ -2972,7 +2983,7 @@ wide_slk_test(void)
 #endif
 	default:
 	    if (cycle_attr(c, &at_code, &attr)) {
-		slk_attr_set(attr, (fg || bg), NULL);
+		slk_attr_set(attr, (short) (fg || bg), NULL);
 		slk_touch();
 		slk_noutrefresh();
 		break;
@@ -3360,6 +3371,7 @@ show_upper_widechars(int first, int repeat, int space, attr_t attr, short pair)
 	     * The repeat-count may make text wrap - avoid that.
 	     */
 	    getyx(stdscr, y, x);
+	    (void) y;
 	    if (x >= col + (COLS / 2) - 2)
 		break;
 	} while (--count > 0);
@@ -4269,8 +4281,10 @@ acs_and_scroll(void)
 
 		    neww->next = current ? current->next : 0;
 		    neww->last = current;
-		    neww->last->next = neww;
-		    neww->next->last = neww;
+		    if (neww->last != 0)
+			neww->last->next = neww;
+		    if (neww->next != 0)
+			neww->next->last = neww;
 
 		    neww->wind = getwin(fp);
 
@@ -5226,7 +5240,7 @@ flushinp_test(WINDOW *win)
 #ifdef A_COLOR
     if (use_colors) {
 	init_pair(2, COLOR_CYAN, COLOR_BLUE);
-	wbkgd(subWin, COLOR_PAIR(2) | ' ');
+	wbkgd(subWin, (chtype) (COLOR_PAIR(2) | ' '));
     }
 #endif
     (void) wattrset(subWin, A_BOLD);
@@ -6056,11 +6070,11 @@ overlap_test_1_attr(WINDOW *win, int flavor, int col)
 	break;
     case 2:
 	init_pair(cpair, COLOR_BLUE, COLOR_WHITE);
-	(void) wattrset(win, (attr_t) COLOR_PAIR(cpair) | A_NORMAL);
+	(void) wattrset(win, (int) (COLOR_PAIR(cpair) | A_NORMAL));
 	break;
     case 3:
 	init_pair(cpair, COLOR_WHITE, COLOR_BLUE);
-	(void) wattrset(win, (attr_t) COLOR_PAIR(cpair) | A_BOLD);
+	(void) wattrset(win, (int) (COLOR_PAIR(cpair) | A_BOLD));
 	break;
     }
 }
@@ -6772,7 +6786,7 @@ main(int argc, char *argv[])
 	    use_default_colors();
 	    min_colors = -1;
 	}
-#if NCURSES_VERSION_PATCH >= 20000708
+#if HAVE_ASSUME_DEFAULT_COLORS
 	if (assumed_colors)
 	    assume_default_colors(default_fg, default_bg);
 #endif

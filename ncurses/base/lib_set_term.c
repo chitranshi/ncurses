@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2009,2010 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2011,2012 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -47,7 +47,7 @@
 #define CUR SP_TERMTYPE
 #endif
 
-MODULE_ID("$Id: lib_set_term.c,v 1.138 2010/12/20 00:42:20 tom Exp $")
+MODULE_ID("$Id: lib_set_term.c,v 1.141 2012/07/07 20:37:40 tom Exp $")
 
 #ifdef USE_TERM_DRIVER
 #define MaxColors      InfoOf(sp).maxcolors
@@ -284,7 +284,7 @@ NCURSES_SP_NAME(_nc_setupscreen) (
 				     int slines,
 				     int scolumns,
 				     FILE *output,
-				     bool filtered,
+				     int filtered,
 				     int slk_format)
 {
     char *env;
@@ -619,6 +619,7 @@ NCURSES_SP_NAME(_nc_setupscreen) (
 #endif
 #if USE_SIZECHANGE
     sp->_resize = NCURSES_SP_NAME(resizeterm);
+    sp->_ungetch = safe_ungetch;
 #endif
 
     NewScreen(sp)->_clear = TRUE;
@@ -695,7 +696,7 @@ NCURSES_EXPORT(int)
 _nc_setupscreen(int slines GCC_UNUSED,
 		int scolumns GCC_UNUSED,
 		FILE *output,
-		bool filtered,
+		int filtered,
 		int slk_format)
 {
     SCREEN *sp = 0;
@@ -759,6 +760,7 @@ NCURSES_SP_NAME(ripoffline) (NCURSES_SP_DCLx
 			     int line,
 			     int (*init) (WINDOW *, int))
 {
+    START_TRACE();
     return NCURSES_SP_NAME(_nc_ripoffline) (NCURSES_SP_ARGx
 					    (line < 0) ? -1 : 1,
 					    init);

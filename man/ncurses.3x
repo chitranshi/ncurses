@@ -1,6 +1,6 @@
 '\" t
 .\"***************************************************************************
-.\" Copyright (c) 1998-2010,2011 Free Software Foundation, Inc.              *
+.\" Copyright (c) 1998-2011,2012 Free Software Foundation, Inc.              *
 .\"                                                                          *
 .\" Permission is hereby granted, free of charge, to any person obtaining a  *
 .\" copy of this software and associated documentation files (the            *
@@ -27,7 +27,7 @@
 .\" authorization.                                                           *
 .\"***************************************************************************
 .\"
-.\" $Id: ncurses.3x,v 1.103 2011/02/05 23:21:29 tom Exp $
+.\" $Id: ncurses.3x,v 1.107 2012/07/14 21:13:06 tom Exp $
 .hy 0
 .TH ncurses 3X ""
 .de bP
@@ -108,9 +108,9 @@ Most programs would additionally use the sequence:
 .sp
 Before a \fBcurses\fR program is run, the tab stops of the terminal
 should be set and its initialization strings, if defined, must be output.
-This can be done by executing the \fBtput init\fR command
+This can be done by executing the \fB@TPUT@ init\fR command
 after the shell environment variable \fBTERM\fR has been exported.
-\fBtset(1)\fR is usually responsible for doing this.
+\fB@TSET@(1)\fR is usually responsible for doing this.
 [See \fBterminfo\fR(\*n) for further details.]
 .PP
 The \fBncurses\fR library permits manipulation of data structures,
@@ -637,6 +637,7 @@ use_default_colors/\fBdefault_colors\fR(3X)*
 use_env/\fBcurs_util\fR(3X)
 use_extended_names/\fBcurs_extend\fR(3X)*
 use_legacy_coding/\fBlegacy_coding\fR(3X)*
+use_tioctl/\fBcurs_util\fR(3X)
 vid_attr/\fBcurs_terminfo\fR(3X)
 vid_puts/\fBcurs_terminfo\fR(3X)
 vidattr/\fBcurs_terminfo\fR(3X)
@@ -734,6 +735,9 @@ Routines that return an integer return \fBERR\fR upon failure and an
 integer value other than \fBERR\fR upon successful completion, unless
 otherwise noted in the routine descriptions.
 .PP
+As a general rule, routines check for null pointers passed as parameters,
+and handle this as an error.
+.PP
 All macros return the value of the \fBw\fR version, except \fBsetscrreg\fR,
 \fBwsetscrreg\fR, \fBgetyx\fR, \fBgetbegyx\fR, and \fBgetmaxyx\fR.
 The return values of \fBsetscrreg\fR, \fBwsetscrreg\fR, \fBgetyx\fR, \fBgetbegyx\fR, and
@@ -786,7 +790,9 @@ For best results, \fBlines\fR and \fBcols\fR should not be specified in
 a terminal description for terminals which are run as emulations.
 .IP
 Use the \fBuse_env\fR function to disable all use of external environment
-(including system calls) to determine the screen size.
+(but not including system calls) to determine the screen size.
+Use the \fBuse_tioctl\fR function to update \fBCOLUMNS\fP or \fBLINES\fP
+to match the screen size obtained from system calls or the terminal database.
 .TP 5
 ESCDELAY
 Specifies the total time, in milliseconds, for which ncurses will
@@ -933,7 +939,7 @@ disables the special check for "linux" and "screen".
 .IP
 As an alternative to the environment variable,
 ncurses checks for an extended terminfo capability \fBU8\fP.
-This is a numeric capability which can be compiled using \fBtic\ \-x\fP.
+This is a numeric capability which can be compiled using \fB@TIC@\ \-x\fP.
 For example
 .RS 5
 .sp
@@ -1004,6 +1010,13 @@ Specifies a list of directories to search for terminal descriptions.
 The list is separated by colons (i.e., ":") on Unix, semicolons on OS/2 EMX.
 All of the terminal descriptions are in terminfo form, which makes
 a subdirectory named for the first letter of the terminal names therein.
+.IP
+If \fBncurses\fP is built with a hashed database,
+then each entry in this list can also be the path of the corresponding
+database file.
+.IP
+If \fBncurses\fP is built with a support for reading termcap files
+directly, then an entry in this list may be the path of a termcap file.
 .TP 5
 TERMPATH
 If TERMCAP does not hold a file name then \fBncurses\fR checks
@@ -1143,6 +1156,15 @@ The EXTENDED XSI Curses functionality
 A small number of local differences (that is, individual differences between
 the XSI Curses and \fBncurses\fR calls) are described in \fBPORTABILITY\fR
 sections of the library man pages.
+.PP
+Unlike other implementations, this one checks parameters such as pointers
+to WINDOW structures to ensure they are not null.
+The main reason for providing this behavior is to guard against programmer
+error.
+The standard interface does not provide a way for the library
+to tell an application which of several possible errors were detected.
+Relying on this (or some other) extension will adversely affect the
+portability of curses applications.
 .PP
 This implementation also contains several extensions:
 .bP

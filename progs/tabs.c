@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2008-2009,2010 Free Software Foundation, Inc.              *
+ * Copyright (c) 2008-2011,2012 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -37,7 +37,7 @@
 #define USE_LIBTINFO
 #include <progs.priv.h>
 
-MODULE_ID("$Id: tabs.c,v 1.19 2010/10/23 22:26:01 tom Exp $")
+MODULE_ID("$Id: tabs.c,v 1.23 2012/02/22 23:57:44 tom Exp $")
 
 static void usage(void) GCC_NORETURN;
 
@@ -140,10 +140,11 @@ print_ruler(int *tab_list)
     for (n = 0; n < max_cols; n += 10) {
 	int ch = 1 + (n / 10);
 	char buffer[20];
-	sprintf(buffer, "----+----%c",
-		((ch < 10)
-		 ? (ch + '0')
-		 : (ch + 'A' - 10)));
+	_nc_SPRINTF(buffer, _nc_SLIMIT(sizeof(buffer))
+		    "----+----%c",
+		    ((ch < 10)
+		     ? (ch + '0')
+		     : (ch + 'A' - 10)));
 	printf("%.*s", ((max_cols - n) > 10) ? 10 : (max_cols - n), buffer);
     }
     putchar('\n');
@@ -227,7 +228,7 @@ comma_is_needed(const char *source)
     bool result = FALSE;
 
     if (source != 0) {
-	unsigned len = strlen(source);
+	size_t len = strlen(source);
 	if (len != 0)
 	    result = (source[len - 1] != ',');
     } else {
@@ -251,7 +252,7 @@ add_to_tab_list(char **append, const char *value)
 
     if (copied != 0 && *copied != '\0') {
 	const char *comma = ",";
-	unsigned need = 1 + strlen(copied);
+	size_t need = 1 + strlen(copied);
 
 	if (*copied == ',')
 	    comma = "";
@@ -266,11 +267,11 @@ add_to_tab_list(char **append, const char *value)
 	if (result != 0) {
 	    *result = '\0';
 	    if (*append != 0) {
-		strcpy(result, *append);
+		_nc_STRCPY(result, *append, need);
 		free(*append);
 	    }
-	    strcat(result, comma);
-	    strcat(result, copied);
+	    _nc_STRCAT(result, comma, need);
+	    _nc_STRCAT(result, copied, need);
 	}
 
 	*append = result;
@@ -353,7 +354,6 @@ main(int argc, char *argv[])
     bool no_op = FALSE;
     int n, ch;
     NCURSES_CONST char *term_name = 0;
-    const char *mar_list = 0;	/* ignored */
     char *append = 0;
     const char *tab_list = 0;
 
@@ -446,7 +446,11 @@ main(int argc, char *argv[])
 	    while ((ch = *++option) != '\0') {
 		switch (ch) {
 		case 'm':
-		    mar_list = option;
+		    /*
+		     * The "+mXXX" option is unimplemented because only the long-obsolete
+		     * att510d implements smgl, which is needed to support
+		     * this option.
+		     */
 		    break;
 		default:
 		    /* special case of relative stops separated by spaces? */
