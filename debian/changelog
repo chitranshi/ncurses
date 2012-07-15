@@ -1,6 +1,8 @@
 ncurses (5.9+20120714-1) UNRELEASED; urgency=low
 
   * New upstream patchlevel.
+    - Modify init_pair() to accept -1's for color value after
+      assume_default_colors() has been called (Closes: #337095).
     - Update libtinfo5 symbols file for new symbols.
   * Drop patches applied upstream: 00-terminfo-update.diff,
     04-fix-tabset-directory.diff and 05-fix-poll-test.diff.
