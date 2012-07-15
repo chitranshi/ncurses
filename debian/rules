@@ -121,7 +121,8 @@ CONFARGS =	--prefix=/usr \
 		--with-default-terminfo-dir=/etc/terminfo \
 		--with-terminfo-dirs="/etc/terminfo:/lib/terminfo:/usr/share/terminfo" \
 		--with-ticlib=tic \
-		--with-termlib=tinfo
+		--with-termlib=tinfo \
+		--with-xterm-kbs=del
 
 CONFARGS-TEST =	--prefix=/usr \
 		--bindir=/usr/lib/ncurses/examples \
