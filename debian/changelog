@@ -1,6 +1,8 @@
 ncurses (5.9+20120714-1) UNRELEASED; urgency=low
 
   * New upstream patchlevel.
+  * Drop patches applied upstream: 00-terminfo-update.diff,
+    04-fix-tabset-directory.diff and 05-fix-poll-test.diff.
 
  -- Sven Joachim <svenjoac@gmx.de>  Sun, 15 Jul 2012 09:10:27 +0200
 
