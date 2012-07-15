@@ -5,31 +5,25 @@ Description: Omit -L part from ncurses5{w,}-config output
  search path.  The value is also wrong if ncurses-bin is of a
  different architecture than libncurses5-dev.
  .
- Upstream included a similar patch in the 20110507 patchlevel to omit
- the -L part if $libdir is /usr/lib.  Until there is a way to obtain
- the multiarch path without running dpkg-architecture our patch is not
- upstreamable.
+ Upstream only omits the -L part if $libdir is /usr/lib.  Until there
+ is a way to obtain the multiarch path without running
+ dpkg-architecture our patch is not upstreamable.
 Bug-Debian: http://bugs.debian.org/638281
 Forwarded: not-needed
-Last-Update: 2011-08-24
+Last-Update: 2012-07-15
 
 ---
- misc/ncurses-config.in |    4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ misc/ncurses-config.in |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 --- a/misc/ncurses-config.in
 +++ b/misc/ncurses-config.in
-@@ -85,11 +85,11 @@
- 	--libs)
- 		if test @TINFO_NAME@ = @LIB_NAME@ ; then
- 		sed -e 's,^[ ]*,,' -e 's, [ ]*, ,g' -e 's,[ ]*$,,' <<-ENDECHO
--			-L$libdir @EXTRA_LDFLAGS@ -l${THIS} @LIBS@
-+			@EXTRA_LDFLAGS@ -l${THIS} @LIBS@
+@@ -84,7 +84,7 @@
  ENDECHO
- 		else
- 		sed -e 's,^[ ]*,,' -e 's, [ ]*, ,g' -e 's,[ ]*$,,' <<-ENDECHO
--			-L$libdir @EXTRA_LDFLAGS@ -l${THIS} -l${TINFO_LIB} @LIBS@
-+			@EXTRA_LDFLAGS@ -l${THIS} -l${TINFO_LIB} @LIBS@
- ENDECHO
- 		fi
  		;;
+ 	--libs)
+-		if test "$libdir" = /usr/lib
++		if true
+ 		then
+ 			LIBDIR=
+ 		else
