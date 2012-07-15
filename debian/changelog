@@ -8,6 +8,7 @@ ncurses (5.9+20120714-1) UNRELEASED; urgency=low
     04-fix-tabset-directory.diff and 05-fix-poll-test.diff.
   * Adapt patch 03-debian-ncursesconfig-omit-L.diff to upstream changes.
   * Drop /usr/share/terminfo from ncurses-bin (Closes: #678441).
+  * Drop Conflicts on old libc6-i386 versions in the lib32* packages.
 
  -- Sven Joachim <svenjoac@gmx.de>  Sun, 15 Jul 2012 09:10:27 +0200
 
