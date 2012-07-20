@@ -149,9 +149,14 @@ libterminfofiles=a/ansi c/cons25 c/cons25-debian c/cygwin d/dumb h/hurd l/linux 
 badterminfo = 5/5250 f/fbterm i/iterm i/iterm-am i/iterm-color j/jfbterm \
 	k/kon k/kon2 l/linux-5250 s/st s/st-256color s/stterm s/stterm-256color
 
-# The ncurses configure test won't work when cross compiling (e.g. for
-# 64 bit libraries), so force the libgpm soname to the correct value.
+ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
+# Force necessary configure checks which do not work when
+# cross compiling; all Debian platforms return unsigned char
+# and working poll for these configure checks.
+export cf_cv_type_of_bool=unsigned char
+export cf_cv_working_poll=yes
 export cf_cv_gpm_soname=libgpm.so.2
+endif
 
 $(objdir)/config.status:
 	test -d $(objdir) || mkdir $(objdir)
@@ -173,9 +178,6 @@ $(objdir-static)/config.status:
 $(objdir-32)/config.status:
 	test -d $(objdir-32) || mkdir $(objdir-32)
 
-	# Force necessary configure checks which do not work when
-	# cross compiling; all Debian platforms return unsigned char
-	# and working poll for these configure checks.
 	cf_cv_type_of_bool='unsigned char'; export cf_cv_type_of_bool; \
 	cf_cv_working_poll=yes; export cf_cv_working_poll; \
 	cd $(objdir-32) && CFLAGS="$(CFLAGS)" CC="gcc -m32" \
