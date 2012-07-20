@@ -387,14 +387,6 @@ ifeq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
 		$(tempdir)/usr/bin/tic -x debian/$$ti.ti; \
 	done
 else
-	@build_ver=`sed -n -e					\
-	  's/^.*NCURSES_VERSION_STRING \"\(.*\)\"$$/\1/p'	\
-	  obj/include/ncurses_cfg.h`;				\
-	if [ "$$build_ver" != `tic -V | sed 's/^.* //'` ]; then	\
-	  echo "Build environment version mismatch for tic!";	\
-	  exit 1;						\
-	fi
-
 	set -e; \
 	for ti in xterm hurd rxvt rxvt-unicode; do \
 		TERMINFO=$(fulltempdir)/usr/share/terminfo \

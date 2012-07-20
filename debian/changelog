@@ -7,6 +7,9 @@ ncurses (5.9+20120714-1) UNRELEASED; urgency=low
   * Drop patches applied upstream: 00-terminfo-update.diff,
     04-fix-tabset-directory.diff and 05-fix-poll-test.diff.
   * Adapt patch 03-debian-ncursesconfig-omit-L.diff to upstream changes.
+  * Improve cross-building support:
+    - Don't fail if the system version of tic has a different (upstream)
+      version than the one that is being built (Closes: #681798).
   * Drop /usr/share/terminfo from ncurses-bin (Closes: #678441).
   * Drop Conflicts on old libc6-i386 versions in the lib32* packages.
   * Update years in debian/copyright.
