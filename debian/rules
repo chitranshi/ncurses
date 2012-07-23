@@ -102,6 +102,8 @@ with_gpm = --with-gpm
 endif
 
 CONFARGS =	--prefix=/usr \
+		--build=$(DEB_BUILD_GNU_TYPE) \
+		--host=$(DEB_HOST_GNU_TYPE) \
 		--with-shared \
 		--mandir=/usr/share/man \
 		--without-profile --without-debug \
@@ -125,13 +127,15 @@ CONFARGS =	--prefix=/usr \
 		--with-xterm-kbs=del
 
 CONFARGS-TEST =	--prefix=/usr \
+		--build=$(DEB_BUILD_GNU_TYPE) \
+		--host=$(DEB_HOST_GNU_TYPE) \
 		--bindir=/usr/lib/ncurses/examples \
 		--with-ncursesw \
 		--with-curses-dir=$(wobjdir)
 
 ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
-CONFARGS += --with-build-cc=gcc --host=$(DEB_HOST_GNU_TYPE)
-CONFARGS-TEST += --with-build-cc=gcc --host=$(DEB_HOST_GNU_TYPE)
+CONFARGS += --with-build-cc=gcc
+CONFARGS-TEST += --with-build-cc=gcc
 endif
 
 # Files for /lib/terminfo.
@@ -184,7 +188,6 @@ $(objdir-32)/config.status:
 		BUILD_CC="gcc" CXX="g++ -m32" \
 		$(srcdir)/configure \
 		$(CONFARGS) \
-		--build=$(DEB_BUILD_GNU_TYPE) \
 		--host=$(build_32_target) \
 		--without-gpm \
 		--with-install-prefix=$(fulltempdir) \
@@ -199,7 +202,6 @@ $(objdir-64)/config.status:
 		BUILD_CC="gcc" CXX="g++ -m64" \
 		$(srcdir)/configure \
 		$(CONFARGS) \
-		--build=$(DEB_BUILD_GNU_TYPE) \
 		--host=$(build_64_target) \
 		--without-gpm \
 		--with-install-prefix=$(fulltempdir) \
@@ -249,7 +251,6 @@ $(wobjdir-32)/config.status:
 		BUILD_CC="gcc" BUILD_CPPFLAGS="-D_GNU_SOURCE" CXX="g++ -m32" \
 		$(srcdir)/configure \
 		$(CONFARGS) \
-		--build=$(DEB_BUILD_GNU_TYPE) \
 		--host=$(build_32_target) \
 		--without-gpm \
 		--with-install-prefix=$(fulltempdir) \
