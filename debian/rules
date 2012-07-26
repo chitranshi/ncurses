@@ -103,7 +103,6 @@ endif
 
 CONFARGS =	--prefix=/usr \
 		--build=$(DEB_BUILD_GNU_TYPE) \
-		--host=$(DEB_HOST_GNU_TYPE) \
 		--with-shared \
 		--mandir=/usr/share/man \
 		--without-profile --without-debug \
@@ -134,7 +133,8 @@ CONFARGS-TEST =	--prefix=/usr \
 		--with-curses-dir=$(wobjdir)
 
 ifneq ($(DEB_BUILD_GNU_TYPE),$(DEB_HOST_GNU_TYPE))
-CONFARGS += --with-build-cc=gcc
+CONFARGS += --with-build-cc=gcc --host=$(DEB_HOST_GNU_TYPE)
+CONFARGS-TEST += --host=$(DEB_HOST_GNU_TYPE)
 endif
 
 # Files for /lib/terminfo.
