@@ -13,6 +13,7 @@ ncurses (5.9+20120714-1) UNRELEASED; urgency=low
     - Assume working poll() (see #676461).
   * Drop /usr/share/terminfo from ncurses-bin (Closes: #678441).
   * Drop Conflicts on old libc6-i386 versions in the lib32* packages.
+  * Don't unnecessarily depend on g++-multilib on kfreebsd-amd64.
   * Update years in debian/copyright.
 
  -- Sven Joachim <svenjoac@gmx.de>  Sun, 15 Jul 2012 09:10:27 +0200
