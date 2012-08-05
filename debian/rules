@@ -109,7 +109,7 @@ CONFARGS =	--prefix=/usr \
 		--disable-rpath --enable-echo \
 		--enable-const \
 		--enable-pc-files \
-		--with-pkg-config-libdir=/usr/lib/pkgconfig \
+		--with-pkg-config-libdir=/usr/lib/$(DEB_HOST_MULTIARCH)/pkgconfig \
 		--without-ada \
 		--without-tests \
 		--without-progs \
