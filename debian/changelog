@@ -1,4 +1,4 @@
-ncurses (5.9+20120714-1) UNRELEASED; urgency=low
+ncurses (5.9+20120804-1) UNRELEASED; urgency=low
 
   * New upstream patchlevel.
     - Modify init_pair() to accept -1's for color value after
