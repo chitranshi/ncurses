@@ -163,7 +163,7 @@ Description: shared libraries for terminal handling (64-bit)
  compiled with ncurses.
  .
  This package supports the 64-bit ABI variant of your system's
- architecure.
+ architecture.
 
 Package: lib64ncurses5-dev
 Architecture: i386 powerpc sparc s390
@@ -182,7 +182,7 @@ Description: developer's libraries for ncurses (64-bit)
  and symbolic links that developers using ncurses will need.
  .
  This package supports the 64-bit ABI variant of your system's
- architecure.
+ architecture.
 
 Package: lib32ncurses5
 Architecture: amd64 ppc64
@@ -198,7 +198,7 @@ Description: shared libraries for terminal handling (32-bit)
  compiled with ncurses.
  .
  This package supports the 32-bit ABI variant of your system's
- architecure.
+ architecture.
 
 Package: lib32ncurses5-dev
 Architecture: amd64 ppc64
@@ -216,7 +216,7 @@ Description: developer's libraries for ncurses (32-bit)
  and symbolic links that developers using ncurses will need.
  .
  This package supports the 32-bit ABI variant of your system's
- architecure.
+ architecture.
 
 Package: lib32ncursesw5
 Architecture: amd64 ppc64
@@ -231,7 +231,7 @@ Description: shared libraries for terminal handling (wide character support) (32
  compiled with ncursesw, which includes support for wide characters.
  .
  This package supports the 32-bit ABI variant of your system's
- architecure.
+ architecture.
 
 Package: lib32ncursesw5-dev
 Architecture: amd64 ppc64
@@ -250,7 +250,7 @@ Description: developer's libraries for ncursesw (32-bit)
  .
  This package includes support for wide characters.
  This package supports the 32-bit ABI variant of your system's
- architecure.
+ architecture.
 
 Package: lib64tinfo5
 Architecture: i386 powerpc sparc s390
@@ -264,7 +264,7 @@ Description: shared low-level terminfo library for terminal handling (64-bit)
  .
  This package contains the shared low-level terminfo library.
  .
- This package supports the 64-bit ABI variant of your system's architecure.
+ This package supports the 64-bit ABI variant of your system's architecture.
 
 Package: lib32tinfo5
 Architecture: amd64 ppc64
@@ -278,7 +278,7 @@ Description: shared low-level terminfo library for terminal handling (32-bit)
  .
  This package contains the shared low-level terminfo library.
  .
- This package supports the 32-bit ABI variant of your system's architecure.
+ This package supports the 32-bit ABI variant of your system's architecture.
 
 Package: lib32tinfo-dev
 Architecture: amd64 ppc64
@@ -296,7 +296,7 @@ Description: developer's library for the low-level terminfo library (32-bit)
  using the low-level terminfo library will need.  Packages should not
  build-depend on this package.
  .
- This package supports the 32-bit ABI variant of your system's architecure.
+ This package supports the 32-bit ABI variant of your system's architecture.
 
 Package: ncurses-bin
 Architecture: any
