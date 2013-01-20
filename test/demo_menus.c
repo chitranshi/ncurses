@@ -26,7 +26,7 @@
  * authorization.                                                           *
  ****************************************************************************/
 /*
- * $Id: demo_menus.c,v 1.34 2012/06/09 20:30:33 tom Exp $
+ * $Id: demo_menus.c,v 1.37 2012/11/18 00:18:54 tom Exp $
  *
  * Demonstrate a variety of functions from the menu library.
  * Thomas Dickey - 2005/4/9
@@ -108,18 +108,6 @@ static MENU *mpFile;
 static MENU *mpSelect;
 
 static bool loaded_file = FALSE;
-
-#if !HAVE_STRDUP
-#define strdup my_strdup
-static char *
-strdup(char *s)
-{
-    char *p = typeMalloc(char, strlen(s) + 1);
-    if (p)
-	strcpy(p, s);
-    return (p);
-}
-#endif /* not HAVE_STRDUP */
 
 /* Common function to allow ^T to toggle trace-mode in the middle of a test
  * so that trace-files can be made smaller.
@@ -281,12 +269,15 @@ menu_destroy(MENU * m)
 		free((char *) blob);
 	    }
 	    free(items);
+	    items = 0;
 	}
 #ifdef TRACE
 	if ((count > 0) && (m == mpTrace)) {
 	    ITEM **ip = items;
-	    while (*ip)
-		free(*ip++);
+	    if (ip != 0) {
+		while (*ip)
+		    free(*ip++);
+	    }
 	}
 #endif
     }
@@ -398,6 +389,8 @@ build_select_menu(MenuNo number, char *filename)
 		}
 		loaded_file = TRUE;
 	    }
+	    if (ap == 0)
+		free(items);
 	}
     }
     if (ap == 0) {
@@ -867,7 +860,7 @@ main(int argc, char *argv[])
 #endif /* HAVE_RIPOFFLINE */
 #ifdef TRACE
 	case 't':
-	    trace(strtoul(optarg, 0, 0));
+	    trace((unsigned) strtoul(optarg, 0, 0));
 	    break;
 #endif
 	default:

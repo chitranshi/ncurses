@@ -37,11 +37,18 @@
 #define USE_LIBTINFO
 #include <progs.priv.h>
 
-MODULE_ID("$Id: tabs.c,v 1.23 2012/02/22 23:57:44 tom Exp $")
+MODULE_ID("$Id: tabs.c,v 1.25 2012/11/18 01:21:47 tom Exp $")
 
 static void usage(void) GCC_NORETURN;
 
 static int max_cols;
+
+static void
+failed(const char *s)
+{
+    perror(s);
+    ExitProgram(EXIT_FAILURE);
+}
 
 static int
 putch(int c)
@@ -83,28 +90,29 @@ decode_tabs(const char *tab_list)
     int prior = 0;
     int ch;
 
-    if (result != 0) {
-	while ((ch = *tab_list++) != '\0') {
-	    if (isdigit(UChar(ch))) {
-		value *= 10;
-		value += (ch - '0');
-	    } else if (ch == ',') {
-		result[n] = value + prior;
-		if (n > 0 && result[n] <= result[n - 1]) {
-		    fprintf(stderr,
-			    "tab-stops are not in increasing order: %d %d\n",
-			    value, result[n - 1]);
-		    free(result);
-		    result = 0;
-		    break;
-		}
-		++n;
-		value = 0;
-		prior = 0;
-	    } else if (ch == '+') {
-		if (n)
-		    prior = result[n - 1];
+    if (result == 0)
+	failed("decode_tabs");
+
+    while ((ch = *tab_list++) != '\0') {
+	if (isdigit(UChar(ch))) {
+	    value *= 10;
+	    value += (ch - '0');
+	} else if (ch == ',') {
+	    result[n] = value + prior;
+	    if (n > 0 && result[n] <= result[n - 1]) {
+		fprintf(stderr,
+			"tab-stops are not in increasing order: %d %d\n",
+			value, result[n - 1]);
+		free(result);
+		result = 0;
+		break;
 	    }
+	    ++n;
+	    value = 0;
+	    prior = 0;
+	} else if (ch == '+') {
+	    if (n)
+		prior = result[n - 1];
 	}
     }
 
@@ -126,6 +134,7 @@ decode_tabs(const char *tab_list)
 	result[n++] = value + prior;
 	result[n] = 0;
     }
+
     return result;
 }
 
@@ -264,15 +273,16 @@ add_to_tab_list(char **append, const char *value)
 	    need += strlen(*append);
 
 	result = malloc(need);
-	if (result != 0) {
-	    *result = '\0';
-	    if (*append != 0) {
-		_nc_STRCPY(result, *append, need);
-		free(*append);
-	    }
-	    _nc_STRCAT(result, comma, need);
-	    _nc_STRCAT(result, copied, need);
+	if (result == 0)
+	    failed("add_to_tab_list");
+
+	*result = '\0';
+	if (*append != 0) {
+	    _nc_STRCPY(result, *append, need);
+	    free(*append);
 	}
+	_nc_STRCAT(result, comma, need);
+	_nc_STRCAT(result, copied, need);
 
 	*append = result;
     }

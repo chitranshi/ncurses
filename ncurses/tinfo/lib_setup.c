@@ -48,7 +48,7 @@
 #include <locale.h>
 #endif
 
-MODULE_ID("$Id: lib_setup.c,v 1.148 2012/07/21 18:05:41 tom Exp $")
+MODULE_ID("$Id: lib_setup.c,v 1.155 2012/12/15 19:04:54 tom Exp $")
 
 /****************************************************************************
  *
@@ -438,8 +438,7 @@ _nc_update_screensize(SCREEN *sp)
      * We're doing it this way because those functions belong to the upper
      * ncurses library, while this resides in the lower terminfo library.
      */
-    if (sp != 0
-	&& sp->_resize != 0) {
+    if (sp != 0 && sp->_resize != 0) {
 	if ((new_lines != old_lines) || (new_cols != old_cols)) {
 	    sp->_resize(NCURSES_SP_ARGx new_lines, new_cols);
 	} else if (sp->_sig_winch && (sp->_ungetch != 0)) {
@@ -546,7 +545,9 @@ NCURSES_EXPORT(int)
 _nc_unicode_locale(void)
 {
     int result = 0;
-#if HAVE_LANGINFO_CODESET
+#if defined(__MINGW32__) && USE_WIDEC_SUPPORT
+    result = 1;
+#elif HAVE_LANGINFO_CODESET
     char *env = nl_langinfo(CODESET);
     result = !strcmp(env, "UTF-8");
     T(("_nc_unicode_locale(%s) ->%d", env, result));
@@ -634,7 +635,11 @@ TINFO_SETUP_TERM(TERMINAL ** tp,
     if (tname == 0) {
 	tname = getenv("TERM");
 	if (tname == 0 || *tname == '\0') {
+#ifdef USE_TERM_DRIVER
+	    tname = "unknown";
+#else
 	    ret_error0(TGETENT_ERR, "TERM environment variable not set.\n");
+#endif
 	}
     }
 
@@ -677,6 +682,9 @@ TINFO_SETUP_TERM(TERMINAL ** tp,
 	&& _nc_name_match(termp->type.term_names, tname, "|")) {
 	T(("reusing existing terminal information and mode-settings"));
 	code = OK;
+#ifdef USE_TERM_DRIVER
+	TCB = (TERMINAL_CONTROL_BLOCK *) termp;
+#endif
     } else {
 #ifdef USE_TERM_DRIVER
 	termp = (TERMINAL *) typeCalloc(TERMINAL_CONTROL_BLOCK, 1);
@@ -775,11 +783,14 @@ TINFO_SETUP_TERM(TERMINAL ** tp,
 	if ((VALID_STRING(cursor_address)
 	     || (VALID_STRING(cursor_down) && VALID_STRING(cursor_home)))
 	    && VALID_STRING(clear_screen)) {
+	    free(termp);
 	    ret_error1(TGETENT_YES, "terminal is not really generic.\n", tname);
 	} else {
+	    free(termp);
 	    ret_error1(TGETENT_NO, "I need something more specific.\n", tname);
 	}
     } else if (hard_copy) {
+	free(termp);
 	ret_error1(TGETENT_YES, "I can't handle hardcopy terminals.\n", tname);
     }
 #endif
@@ -836,7 +847,7 @@ _nc_setupterm(NCURSES_CONST char *tname,
 	      int reuse)
 {
     int res;
-    TERMINAL *termp;
+    TERMINAL *termp = 0;
     res = TINFO_SETUP_TERM(&termp, tname, Filedes, errret, reuse);
     if (ERR != res)
 	NCURSES_SP_NAME(set_curterm) (CURRENT_SCREEN_PRE, termp);

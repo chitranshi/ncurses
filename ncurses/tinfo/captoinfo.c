@@ -93,7 +93,7 @@
 #include <ctype.h>
 #include <tic.h>
 
-MODULE_ID("$Id: captoinfo.c,v 1.72 2012/02/22 22:40:24 tom Exp $")
+MODULE_ID("$Id: captoinfo.c,v 1.77 2012/12/30 00:50:40 tom Exp $")
 
 #define MAX_PUSHED	16	/* max # args we can push onto the stack */
 
@@ -114,9 +114,7 @@ init_string(void)
 /* initialize 'my_string', 'my_length' */
 {
     if (my_string == 0)
-	my_string = typeMalloc(char, my_length = 256);
-    if (my_string == 0)
-	_nc_err_abort(MSG_NO_MEMORY);
+	TYPE_MALLOC(char, my_length = 256, my_string);
 
     *my_string = '\0';
     return my_string;
@@ -534,10 +532,13 @@ save_tc_char(char *bufptr, int c1)
 	    bufptr = save_char(bufptr, '\\');
 	bufptr = save_char(bufptr, c1);
     } else {
-	if (c1 == (c1 & 0x1f))	/* iscntrl() returns T on 255 */
-	    _nc_STRCPY(temp, unctrl((chtype) c1), sizeof(temp));
-	else
-	    _nc_SPRINTF(temp, _nc_SLIMIT(sizeof(temp)) "\\%03o", c1);
+	if (c1 == (c1 & 0x1f)) {	/* iscntrl() returns T on 255 */
+	    _nc_SPRINTF(temp, _nc_SLIMIT(sizeof(temp))
+			"%.20s", unctrl((chtype) c1));
+	} else {
+	    _nc_SPRINTF(temp, _nc_SLIMIT(sizeof(temp))
+			"\\%03o", c1);
+	}
 	bufptr = save_string(bufptr, temp);
     }
     return bufptr;
@@ -706,7 +707,8 @@ _nc_infotocap(const char *cap GCC_UNUSED, const char *str, int const parameteriz
 		   && ((in0 == 4 && in1 == 10 && in2 == 48)
 		       || (in0 == 3 && in1 == 9 && in2 == 38))) {
 	    /* dumb-down an optimized case from xterm-256color for termcap */
-	    str = strstr(str, ";m");
+	    if ((str = strstr(str, ";m")) == 0)
+		break;		/* cannot happen */
 	    ++str;
 	    if (in2 == 48) {
 		bufptr = save_string(bufptr, "[48;5;%dm");
@@ -848,7 +850,7 @@ _nc_infotocap(const char *cap GCC_UNUSED, const char *str, int const parameteriz
 	 * but that may not be the end of the string.
 	 */
 	assert(str != 0);
-	if (*str == '\0')
+	if (str == 0 || *str == '\0')
 	    break;
 
     }				/* endwhile (*str) */

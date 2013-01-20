@@ -42,7 +42,7 @@
 
 #include <dump_entry.h>
 
-MODULE_ID("$Id: infocmp.c,v 1.120 2012/06/08 23:05:25 tom Exp $")
+MODULE_ID("$Id: infocmp.c,v 1.123 2012/11/17 23:15:10 tom Exp $")
 
 #define L_CURL "{"
 #define R_CURL "}"
@@ -118,6 +118,13 @@ ExitProgram(int code)
     _nc_free_tic(code);
 }
 #endif
+
+static void
+failed(const char *s)
+{
+    perror(s);
+    ExitProgram(EXIT_FAILURE);
+}
 
 static char *
 canonical_name(char *ptr, char *buf)
@@ -1213,7 +1220,9 @@ any_initializer(const char *fmt, const char *type)
 	need = (strlen(entries->tterm.term_names)
 		+ strlen(type)
 		+ strlen(fmt));
-	initializer = (char *) malloc(need);
+	initializer = (char *) malloc(need + 1);
+	if (initializer == 0)
+	    failed("any_initializer");
     }
 
     _nc_STRCPY(initializer, entries->tterm.term_names, need);
@@ -1492,6 +1501,9 @@ main(int argc, char *argv[])
 
     /* make sure we have enough space to add two terminal entries */
     myargv = typeCalloc(char *, (size_t) (argc + 3));
+    if (myargv == 0)
+	failed("myargv");
+
     memcpy(myargv, argv, (sizeof(char *) * (size_t) argc));
     argv = myargv;
 
@@ -1674,11 +1686,15 @@ main(int argc, char *argv[])
     }
 
     maxterms = (size_t) (argc + 2 - optind);
-    tfile = typeMalloc(path, maxterms);
-    tname = typeCalloc(char *, maxterms);
-    entries = typeCalloc(ENTRY, maxterms);
+    if ((tfile = typeMalloc(path, maxterms)) == 0)
+	failed("tfile");
+    if ((tname = typeCalloc(char *, maxterms)) == 0)
+	  failed("tname");
+    if ((entries = typeCalloc(ENTRY, maxterms)) == 0)
+	failed("entries");
 #if NO_LEAKS
-    entered = typeCalloc(ENTERED, maxterms);
+    if ((entered = typeCalloc(ENTERED, maxterms)) == 0)
+	failed("entered");
 #endif
 
     if (tfile == 0

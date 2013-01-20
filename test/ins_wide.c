@@ -26,7 +26,7 @@
  * authorization.                                                           *
  ****************************************************************************/
 /*
- * $Id: ins_wide.c,v 1.17 2012/06/09 20:29:33 tom Exp $
+ * $Id: ins_wide.c,v 1.20 2012/12/16 00:51:02 tom Exp $
  *
  * Demonstrate the wins_wstr() and wins_wch functions.
  * Thomas Dickey - 2002/11/23
@@ -242,6 +242,15 @@ test_inserts(int level)
 	(void) cbreak();	/* take input chars one at a time, no wait for \n */
 	(void) noecho();	/* don't echo input */
 	keypad(stdscr, TRUE);
+
+	/*
+	 * Show the characters inserted in color, to distinguish from those
+	 * that are shifted.
+	 */
+	if (has_colors()) {
+	    start_color();
+	    init_pair(1, COLOR_WHITE, COLOR_BLUE);
+	}
     }
 
     limit = LINES - 5;
@@ -275,13 +284,7 @@ test_inserts(int level)
 
     doupdate();
 
-    /*
-     * Show the characters inserted in color, to distinguish from those that
-     * are shifted.
-     */
     if (has_colors()) {
-	start_color();
-	init_pair(1, COLOR_WHITE, COLOR_BLUE);
 	wbkgdset(work, (chtype) (COLOR_PAIR(1) | ' '));
     }
 
@@ -291,11 +294,13 @@ test_inserts(int level)
 	case key_RECUR:
 	    test_inserts(level + 1);
 
-	    touchwin(look);
+	    if (look)
+		touchwin(look);
 	    touchwin(work);
 	    touchwin(show);
 
-	    wnoutrefresh(look);
+	    if (look)
+		wnoutrefresh(look);
 	    wnoutrefresh(work);
 	    wnoutrefresh(show);
 
@@ -439,10 +444,10 @@ test_inserts(int level)
 	}
     }
     if (level > 0) {
-	delwin(show);
 	delwin(work);
 	delwin(look);
     }
+    delwin(show);
 }
 
 static void

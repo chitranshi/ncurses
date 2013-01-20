@@ -26,7 +26,7 @@
  * authorization.                                                           *
  ****************************************************************************/
 /*
- * $Id: movewindow.c,v 1.35 2012/06/09 20:30:32 tom Exp $
+ * $Id: movewindow.c,v 1.38 2012/12/15 18:36:40 tom Exp $
  *
  * Demonstrate move functions for windows and derived windows from the curses
  * library.
@@ -78,6 +78,14 @@ static void tail_line(CONST_FMT char *fmt,...) GCC_PRINTFLIKE(1, 2);
 
 static unsigned num_windows;
 static FRAME *all_windows;
+
+static void
+failed(const char *s)
+{
+    perror(s);
+    endwin();
+    ExitProgram(EXIT_FAILURE);
+}
 
 static void
 message(int lineno, CONST_FMT char *fmt, va_list argp)
@@ -198,7 +206,6 @@ selectcell(WINDOW *parent,
 			i = event.y - uli;
 			j = event.x - ulj;
 		    }
-		    moved = TRUE;
 		} else {
 		    beep();
 		    break;
@@ -211,8 +218,16 @@ selectcell(WINDOW *parent,
 	    res.x = ulj + j;
 	    return (&res);
 	}
-	i %= si;
-	j %= sj;
+
+	if (si <= 0)
+	    i = 0;
+	else
+	    i %= si;
+
+	if (sj <= 0)
+	    j = 0;
+	else
+	    j %= sj;
 
 	/*
 	 * If the caller can handle continuous movement, return the result.
@@ -306,6 +321,8 @@ add_window(WINDOW *parent, WINDOW *child)
     keypad(child, TRUE);
     if (need > have) {
 	all_windows = typeRealloc(FRAME, need, all_windows);
+	if (!all_windows)
+	    failed("add_window");
     }
     all_windows[num_windows].parent = parent;
     all_windows[num_windows].child = child;

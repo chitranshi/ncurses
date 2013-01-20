@@ -1,6 +1,6 @@
-# $Id: Makefile.in,v 1.59 2011/08/07 15:46:50 tom Exp $
+# $Id: Makefile.in,v 1.61 2012/09/29 19:37:34 tom Exp $
 ##############################################################################
-# Copyright (c) 1998-2010,2011 Free Software Foundation, Inc.                #
+# Copyright (c) 1998-2011,2012 Free Software Foundation, Inc.                #
 #                                                                            #
 # Permission is hereby granted, free of charge, to any person obtaining a    #
 # copy of this software and associated documentation files (the "Software"), #
@@ -57,6 +57,7 @@ exec_prefix	= @exec_prefix@
 bindir		= @bindir@
 libdir		= @libdir@
 includedir	= @includedir@
+datarootdir	= @datarootdir@
 datadir		= @datadir@
 
 LIBTOOL		= @LIBTOOL@
@@ -113,7 +114,7 @@ ABI_VERSION	= @cf_cv_abi_version@
 
 RANLIB		= @LIB_PREP@
 
-LIBRARIES	= @LIBS_TO_MAKE@
+LIBRARIES	= @Libs_To_Make@
 
 LINT		= @LINT@
 LINT_OPTS	= @LINT_OPTS@

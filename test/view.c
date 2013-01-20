@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 1998-2011,2012 Free Software Foundation, Inc.              *
+ * Copyright (c) 1998-2012,2013 Free Software Foundation, Inc.              *
  *                                                                          *
  * Permission is hereby granted, free of charge, to any person obtaining a  *
  * copy of this software and associated documentation files (the            *
@@ -50,10 +50,11 @@
  * scroll operation worked, and the refresh() code only had to do a
  * partial repaint.
  *
- * $Id: view.c,v 1.85 2012/06/09 20:29:33 tom Exp $
+ * $Id: view.c,v 1.92 2013/01/20 00:11:24 tom Exp $
  */
 
 #include <test.priv.h>
+#include <widechars.h>
 
 #include <time.h>
 
@@ -81,22 +82,8 @@
 #include <sys/ptem.h>
 #endif
 
-#if USE_WIDEC_SUPPORT
-#if HAVE_MBTOWC && HAVE_MBLEN
-#define reset_mbytes(state) IGNORE_RC(mblen(NULL, 0)), IGNORE_RC(mbtowc(NULL, NULL, 0))
-#define count_mbytes(buffer,length,state) mblen(buffer,length)
-#define check_mbytes(wch,buffer,length,state) \
-	(int) mbtowc(&wch, buffer, length)
-#define state_unused
-#elif HAVE_MBRTOWC && HAVE_MBRLEN
-#define reset_mbytes(state) init_mb(state)
-#define count_mbytes(buffer,length,state) mbrlen(buffer,length,&state)
-#define check_mbytes(wch,buffer,length,state) \
-	(int) mbrtowc(&wch, buffer, length, &state)
-#else
-make an error
-#endif
-#endif				/* USE_WIDEC_SUPPORT */
+#undef CTRL
+#define CTRL(x)	((x) & 0x1f)
 
 static RETSIGTYPE finish(int sig) GCC_NORETURN;
 static void show_all(const char *tag);
@@ -137,6 +124,7 @@ usage(void)
 #if defined(KEY_RESIZE)
 	," -r       use old-style sigwinch handler rather than KEY_RESIZE"
 #endif
+	," -s       start in single-step mode, waiting for input"
 #ifdef TRACE
 	," -t       trace screen updates"
 	," -T NUM   specify trace mask"
@@ -245,6 +233,7 @@ main(int argc, char *argv[])
     int value = 0;
     bool done = FALSE;
     bool got_number = FALSE;
+    bool single_step = FALSE;
 #if CAN_RESIZE
     bool nonposix_resize = FALSE;
 #endif
@@ -260,7 +249,7 @@ main(int argc, char *argv[])
     (void) signal(SIGINT, finish);	/* arrange interrupts to terminate */
 #endif
 
-    while ((i = getopt(argc, argv, "cin:rtT:")) != -1) {
+    while ((i = getopt(argc, argv, "cin:rstT:")) != -1) {
 	switch (i) {
 	case 'c':
 	    try_color = TRUE;
@@ -278,9 +267,18 @@ main(int argc, char *argv[])
 	    nonposix_resize = TRUE;
 	    break;
 #endif
+	case 's':
+	    single_step = TRUE;
+	    break;
 #ifdef TRACE
 	case 'T':
-	    trace((unsigned) atoi(optarg));
+	    {
+		char *next = 0;
+		int tvalue = (int) strtol(optarg, &next, 0);
+		if (tvalue < 0 || (next != 0 && *next != 0))
+		    usage();
+		trace((unsigned) tvalue);
+	    }
 	    break;
 	case 't':
 	    trace(TRACE_CALLS);
@@ -308,7 +306,7 @@ main(int argc, char *argv[])
 	(void) signal(SIGWINCH, adjust);	/* arrange interrupts to resize */
 #endif
 
-    /* slurp the file */
+    Trace(("slurp the file"));
     for (lptr = &vec_lines[0]; (lptr - vec_lines) < MAXLINES; lptr++) {
 	char temp[BUFSIZ], *s, *d;
 	int col;
@@ -316,8 +314,26 @@ main(int argc, char *argv[])
 	if (fgets(buf, sizeof(buf), fp) == 0)
 	    break;
 
-	/* convert tabs so that shift will work properly */
+#if USE_WIDEC_SUPPORT
+	if (lptr == vec_lines) {
+	    if (!memcmp("﻿", buf, 3)) {
+		Trace(("trim BOM"));
+		s = buf + 3;
+		d = buf;
+		do {
+		} while ((*d++ = *s++) != '\0');
+	    }
+	}
+#endif
+
+	/* convert tabs and nonprinting chars so that shift will work properly */
 	for (s = buf, d = temp, col = 0; (*d = *s) != '\0'; s++) {
+	    if (*d == '\r') {
+		if (s[1] == '\n')
+		    continue;
+		else
+		    break;
+	    }
 	    if (*d == '\n') {
 		*d = '\0';
 		break;
@@ -349,7 +365,8 @@ main(int argc, char *argv[])
     (void) nonl();		/* tell curses not to do NL->CR/NL on output */
     (void) cbreak();		/* take input chars one at a time, no wait for \n */
     (void) noecho();		/* don't echo input */
-    nodelay(stdscr, TRUE);
+    if (!single_step)
+	nodelay(stdscr, TRUE);
     idlok(stdscr, TRUE);	/* allow use of insert/delete line */
 
     if (try_color) {
@@ -470,6 +487,9 @@ main(int argc, char *argv[])
 	    nodelay(stdscr, TRUE);
 	    my_delay = 0;
 	    break;
+	case CTRL('L'):
+	    redrawwin(stdscr);
+	    break;
 	case ERR:
 	    if (!my_delay)
 		napms(50);
@@ -557,7 +577,7 @@ show_all(const char *tag)
     printw("%.*s", COLS, temp);
     clrtoeol();
     this_time = time((time_t *) 0);
-    strcpy(temp, ctime(&this_time));
+    strncpy(temp, ctime(&this_time), 30);
     if ((i = (int) strlen(temp)) != 0) {
 	temp[--i] = 0;
 	if (move(0, COLS - i - 2) != ERR)

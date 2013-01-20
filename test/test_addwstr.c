@@ -26,7 +26,7 @@
  * authorization.                                                           *
  ****************************************************************************/
 /*
- * $Id: test_addwstr.c,v 1.8 2012/06/09 20:29:33 tom Exp $
+ * $Id: test_addwstr.c,v 1.11 2012/12/16 00:11:18 tom Exp $
  *
  * Demonstrate the waddwstr() and wadd_wch functions.
  * Thomas Dickey - 2009/9/12
@@ -247,6 +247,15 @@ test_inserts(int level)
 	(void) cbreak();	/* take input chars one at a time, no wait for \n */
 	(void) noecho();	/* don't echo input */
 	keypad(stdscr, TRUE);
+
+	/*
+	 * Show the characters inserted in color, to distinguish from those that
+	 * are shifted.
+	 */
+	if (has_colors()) {
+	    start_color();
+	    init_pair(1, COLOR_WHITE, COLOR_BLUE);
+	}
     }
 
     limit = LINES - 5;
@@ -280,13 +289,7 @@ test_inserts(int level)
 
     doupdate();
 
-    /*
-     * Show the characters inserted in color, to distinguish from those that
-     * are shifted.
-     */
     if (has_colors()) {
-	start_color();
-	init_pair(1, COLOR_WHITE, COLOR_BLUE);
 	wbkgdset(work, (chtype) (COLOR_PAIR(1) | ' '));
     }
 
@@ -296,11 +299,13 @@ test_inserts(int level)
 	case key_RECUR:
 	    test_inserts(level + 1);
 
-	    touchwin(look);
+	    if (look)
+		touchwin(look);
 	    touchwin(work);
 	    touchwin(show);
 
-	    wnoutrefresh(look);
+	    if (look)
+		wnoutrefresh(look);
 	    wnoutrefresh(work);
 	    wnoutrefresh(show);
 
@@ -446,8 +451,8 @@ test_inserts(int level)
 	    break;
 	}
     }
+    delwin(show);
     if (level > 0) {
-	delwin(show);
 	delwin(work);
 	delwin(look);
     }

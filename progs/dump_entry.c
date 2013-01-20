@@ -39,7 +39,7 @@
 #include "termsort.c"		/* this C file is generated */
 #include <parametrized.h>	/* so is this */
 
-MODULE_ID("$Id: dump_entry.c,v 1.100 2012/06/09 21:44:40 tom Exp $")
+MODULE_ID("$Id: dump_entry.c,v 1.104 2012/12/30 00:51:13 tom Exp $")
 
 #define INDENT			8
 #define DISCARD(string) string = ABSENT_STRING
@@ -100,6 +100,15 @@ static const char *separator, *trailer;
 #define StrIndirect(j)  ((sortmode == S_NOSORT) ? (j) : str_indirect[j])
 #endif
 
+static void failed(const char *) GCC_NORETURN;
+
+static void
+failed(const char *s)
+{
+    perror(s);
+    ExitProgram(EXIT_FAILURE);
+}
+
 static void
 strncpy_DYN(DYNBUF * dst, const char *src, size_t need)
 {
@@ -107,6 +116,8 @@ strncpy_DYN(DYNBUF * dst, const char *src, size_t need)
     if (want > dst->size) {
 	dst->size += (want + 1024);	/* be generous */
 	dst->text = typeRealloc(char, dst->size, dst->text);
+	if (dst->text == 0)
+	    failed("strncpy_DYN");
     }
     (void) strncpy(dst->text + dst->used, src, need);
     dst->used += need;
@@ -819,7 +830,9 @@ fmt_entry(TERMTYPE *tterm,
 	    }
 	}
 	/* e.g., trimmed_sgr0 */
-	if (capability != tterm->Strings[i])
+	if (capability != ABSENT_STRING &&
+	    capability != CANCELLED_STRING &&
+	    capability != tterm->Strings[i])
 	    free(capability);
     }
     len += (int) (num_strings * 2);
@@ -860,11 +873,41 @@ fmt_entry(TERMTYPE *tterm,
 	    tp[0] = '\0';
 
 	    if (box_ok) {
+		char *tmp = _nc_tic_expand(boxchars,
+					   (outform == F_TERMINFO),
+					   numbers);
 		_nc_STRCPY(buffer, "box1=", sizeof(buffer));
-		_nc_STRCAT(buffer,
-			   _nc_tic_expand(boxchars,
-					  outform == F_TERMINFO, numbers),
-			   sizeof(buffer));
+		while (*tmp != '\0') {
+		    size_t have = strlen(buffer);
+		    size_t next = strlen(tmp);
+		    size_t want = have + next + 1;
+		    size_t last = next;
+		    char save = '\0';
+
+		    /*
+		     * If the expanded string is too long for the buffer,
+		     * chop it off and save the location where we chopped it.
+		     */
+		    if (want >= sizeof(buffer)) {
+			save = tmp[last];
+			tmp[last] = '\0';
+		    }
+		    _nc_STRCAT(buffer, tmp, sizeof(buffer));
+
+		    /*
+		     * If we chopped the buffer, replace the missing piece and
+		     * shift everything to append the remainder.
+		     */
+		    if (save != '\0') {
+			next = 0;
+			tmp[last] = save;
+			while ((tmp[next] = tmp[last + next]) != '\0') {
+			    ++next;
+			}
+		    } else {
+			break;
+		    }
+		}
 		WRAP_CONCAT;
 	    }
 	}
