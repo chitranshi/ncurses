@@ -3,7 +3,8 @@ ncurses (5.9+20130119-1) UNRELEASED; urgency=low
   * New upstream patchlevel.
     - Modify init_pair() to accept -1's for color value after
       assume_default_colors() has been called (Closes: #337095).
-    - Update libtinfo5 symbols file for new symbols.
+    - Update symbols files for new symbols.
+    - Remove internal symbol _nc_memmove from libncurses{w,5} symbols files.
   * Drop patches applied upstream: 00-terminfo-update.diff,
     04-fix-tabset-directory.diff and 05-fix-poll-test.diff.
   * Adapt patch 03-debian-ncursesconfig-omit-L.diff to upstream changes.

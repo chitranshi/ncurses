@@ -192,8 +192,8 @@ libncurses.so.5 #PACKAGE# #MINVER#
  (optional)_nc_insert_ch@Base 5.5-5~
  (optional)_nc_make_oldhash@Base 5.5-5~
  (optional)_nc_makenew@Base 5.5-5~
- (optional)_nc_memmove@Base 5.5-5~
  (optional)_nc_msec_cost@Base 5.5-5~
+ (optional)_nc_mvcur@Base 5.9+20130119
  (optional)_nc_mvcur_init@Base 5.5-5~
  (optional)_nc_mvcur_resume@Base 5.5-5~
  (optional)_nc_mvcur_wrap@Base 5.5-5~

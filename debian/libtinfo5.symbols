@@ -60,6 +60,7 @@ libtinfo.so.5 #PACKAGE# #MINVER#
  (optional)_nc_outch@Base 0
  _nc_pathlast@Base 0
  (optional)_nc_prescreen@Base 0
+ (optional)_nc_putchar@Base 5.9+20130119
  (optional)_nc_putp@Base 0
  (optional)_nc_putp_flush@Base 0
  _nc_read_entry@Base 0
@@ -78,7 +79,7 @@ libtinfo.so.5 #PACKAGE# #MINVER#
  _nc_set_source@Base 0
  _nc_set_tty_mode@Base 0
  _nc_set_type@Base 0
- (optional)_nc_setenv_num@Base 5.9+20120804
+ (optional)_nc_setenv_num@Base 5.9+20130119
  (optional)_nc_setup_tinfo@Base 0
  (optional)_nc_setupterm@Base 0
  (optional)_nc_str_copy@Base 0
@@ -177,7 +178,7 @@ libtinfo.so.5 #PACKAGE# #MINVER#
  unctrl@Base 0
  use_env@Base 0
  use_extended_names@Base 0
- use_tioctl@Base 5.9+20120804
+ use_tioctl@Base 5.9+20130119
  wtimeout@Base 0
 libtic.so.5 #PACKAGE# #MINVER#
  _nc_capcmp@Base 5.9-3~
@@ -205,7 +206,7 @@ libtic.so.5 #PACKAGE# #MINVER#
  _nc_save_str@Base 5.9-3~
  _nc_set_writedir@Base 5.9-3~
  _nc_start_line@Base 5.9-3~
- _nc_strict_bsd@Base 5.9+20120804
+ _nc_strict_bsd@Base 5.9+20130119
  _nc_syntax@Base 5.9-3~
  _nc_tic_expand@Base 5.9-3~
  _nc_tic_written@Base 5.9-3~
