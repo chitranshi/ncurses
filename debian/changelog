@@ -6,6 +6,7 @@ ncurses (5.9+20130119-1) UNRELEASED; urgency=low
     - Modify name-comparison for tgetstr, etc., to accommodate legacy
       applications as well as to improve compatbility with BSD 4.2
       termcap implementations (Closes: #698299).
+    - Add advice in infocmp manpage for termcap users (Closes: #698469).
     - Update symbols files for new symbols.
     - Remove internal symbol _nc_memmove from libncurses{w,5} symbols files.
   * Drop patches applied upstream: 00-terminfo-update.diff,
