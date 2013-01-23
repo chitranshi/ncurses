@@ -9,7 +9,7 @@ export LDFLAGS := $(shell dpkg-buildflags --get LDFLAGS)
 
 # These are important since this is a library package
 soname=5
-sodepver = (>= 5.7+20100313)
+sodepver = (>= 5.9+20130119)
 
 # Name our packages
 package-base=ncurses-base

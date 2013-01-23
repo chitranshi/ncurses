@@ -7,7 +7,7 @@ ncurses (5.9+20130119-1) UNRELEASED; urgency=low
       applications as well as to improve compatibility with BSD 4.2
       termcap implementations (Closes: #698299).
     - Add advice in infocmp manpage for termcap users (Closes: #698469).
-    - Update symbols files for new symbols.
+    - Update symbols files for new symbols, bump shlibs.
     - Remove internal symbol _nc_memmove from libncurses{w,5} symbols files.
   * Drop patches applied upstream: 00-terminfo-update.diff,
     04-fix-tabset-directory.diff and 05-fix-poll-test.diff.
