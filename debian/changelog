@@ -1,4 +1,4 @@
-ncurses (5.9+20130119-1) UNRELEASED; urgency=low
+ncurses (5.9+20130119-1) experimental; urgency=low
 
   * New upstream patchlevel.
     - Modify init_pair() to accept -1's for color value after
@@ -23,7 +23,7 @@ ncurses (5.9+20130119-1) UNRELEASED; urgency=low
   * Don't unnecessarily depend on g++-multilib on kfreebsd-amd64.
   * Update years in debian/copyright.
 
- -- Sven Joachim <svenjoac@gmx.de>  Sun, 15 Jul 2012 09:10:27 +0200
+ -- Sven Joachim <svenjoac@gmx.de>  Wed, 23 Jan 2013 18:50:58 +0100
 
 ncurses (5.9-10) unstable; urgency=low
 
