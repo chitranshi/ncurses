@@ -25,7 +25,7 @@
 -- sale, use or other dealings in this Software without prior written        --
 -- authorization.                                                            --
 -------------------------------------------------------------------------------
--- $Id: NEWS,v 1.2014 2013/01/20 01:05:06 tom Exp $
+-- $Id: NEWS,v 1.2030 2013/03/09 22:42:05 tom Exp $
 -------------------------------------------------------------------------------
 
 This is a log of changes that ncurses has gone through since Zeyd started
@@ -44,6 +44,80 @@ See the AUTHORS file for the corresponding full names.
 
 Changes through 1.9.9e did not credit all contributions;
 it is not possible to add this information.
+
+20130309
+	+ amend change to toe.c for reading from /dev/zero, to ensure that
+	  there is a buffer for the temporary filename (cf: 20120324).
+	+ regenerated html manpages.
+	+ fix typo in terminfo.head (report by Sven Joachim, cf: 20130302).
+	+ updated some autoconf macros:
+	  + CF_ACVERSION_CHECK, from byacc 1.9 20130304
+	  + CF_INTEL_COMPILER, CF_XOPEN_SOURCE from luit 2.0-20130217
+	+ add configure option --with-cxx-shared to permit building
+	  libncurses++ as a shared library when using g++, e.g., the same
+	  limitations as libtool but better integrated with the usual build
+	  configuration (Redhat 911540).
+	+ modify MKkey_defs.sh to filter out build-path which was unnecessarily
+	  shown in curses.h (Debian #689131).
+
+20130302
+	+ add section to terminfo manpage discussing user-defined capabilities.
+	+ update manpage description of NCURSES_NO_SETBUF, explaining why it
+	  is obsolete.
+	+ add a check in waddch_nosync() to ensure that tab characters are
+	  treated as control characters; some broken locales claim they are
+	  printable.
+	+ add some traces to the Windows console driver.
+	+ initialize a temporary array in _nc_mbtowc, needed for some cases
+	  of raw input in MinGW port.
+
+20130218
+	+ correct ifdef on change to lib_twait.c (report by  Werner Fink).
+	+ update config.guess, config.sub
+
+20130216
+	+ modify test/testcurs.c to work with mouse for ncurses as it does for
+	  pdcurses.
+	+ modify test/knight.c to work with mouse for pdcurses as it does for
+	  ncurses.
+	+ modify internal recursion in wgetch() which handles cooked mode to
+	  check if the call to wgetnstr() returned an error.  This can happen
+	  when both nocbreak() and nodelay() are set, for instance (report by
+	  Nils Christopher Brause) (cf: 960418).
+	+ fixes for issues found by Coverity:
+	  + add a check for valid position in ClearToEOS()
+	  + fix in lib_twait.c when --enable-wgetch-events is used, pointer
+	    use after free.
+	  + improve a limit-check in make_hash.c
+	  + fix a memory leak in hashed_db.c
+
+20130209
+	+ modify test/configure script to make it simpler to override names
+	  of curses-related libraries, to help with linking with pdcurses in
+	  mingw environment.
+	+ if the --with-terminfo-dirs configure option is not used, there is
+	  no corresponding compiled-in value for that.  Fill in "no default
+	  value" for that part of the manpage substitution.
+
+20130202
+	+ correct initialization in knight.c which let it occasionally make
+	  an incorrect move (cf: 20001028).
+	+ improve documentation of the terminfo/termcap search path.
+
+20130126
+	+ further fixes to mvcur to pass callback function (cf: 20130112),
+	  needed to make test/dots_mvcur work.
+	+ reduce calls to SetConsoleActiveScreenBuffer in win_driver.c, to
+	  help reduce flicker.
+	+ modify configure script to omit "+b" from linker options for very
+	  old HP-UX systems (report by Dennis Grevenstein)
+	+ add HP-UX workaround for missing EILSEQ on old HP-UX systems (patch
+	  by Dennis Grevenstein).
+	+ restore memmove/strdup support for antique systems (request by
+	  Dennis Grevenstein).
+	+ change %l behavior in tparm to push the string length onto the stack
+	  rather than saving the formatted length into the output buffer
+	  (report by Roy Marples, cf: 980620).
 
 20130119
 	+ fixes for issues found by Coverity:

@@ -1,5 +1,5 @@
 dnl***************************************************************************
-dnl Copyright (c) 1998-2011,2012 Free Software Foundation, Inc.              *
+dnl Copyright (c) 1998-2012,2013 Free Software Foundation, Inc.              *
 dnl                                                                          *
 dnl Permission is hereby granted, free of charge, to any person obtaining a  *
 dnl copy of this software and associated documentation files (the            *
@@ -28,7 +28,7 @@ dnl***************************************************************************
 dnl
 dnl Author: Thomas E. Dickey 1995-on
 dnl
-dnl $Id: aclocal.m4,v 1.644 2012/12/23 00:45:32 tom Exp $
+dnl $Id: aclocal.m4,v 1.654 2013/03/10 00:23:09 tom Exp $
 dnl Macros used in NCURSES auto-configuration script.
 dnl
 dnl These macros are maintained separately from NCURSES.  The copyright on
@@ -62,7 +62,7 @@ AC_DEFUN([AM_LANGINFO_CODESET],
   fi
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_ACVERSION_CHECK version: 3 updated: 2012/10/03 18:39:53
+dnl CF_ACVERSION_CHECK version: 4 updated: 2013/03/04 19:52:56
 dnl ------------------
 dnl Conditionally generate script according to whether we're using a given autoconf.
 dnl
@@ -71,6 +71,7 @@ dnl $2 = code to use if AC_ACVERSION is at least as high as $1.
 dnl $3 = code to use if AC_ACVERSION is older than $1.
 define([CF_ACVERSION_CHECK],
 [
+ifdef([AC_ACVERSION], ,[m4_copy([m4_PACKAGE_VERSION],[AC_ACVERSION])])dnl
 ifdef([m4_version_compare],
 [m4_if(m4_version_compare(m4_defn([AC_ACVERSION]), [$1]), -1, [$3], [$2])],
 [CF_ACVERSION_COMPARE(
@@ -1306,7 +1307,7 @@ AC_ARG_ENABLE(rpath,
 AC_MSG_RESULT($cf_cv_enable_rpath)
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_ENABLE_STRING_HACKS version: 2 updated: 2012/10/06 17:56:13
+dnl CF_ENABLE_STRING_HACKS version: 3 updated: 2013/01/26 16:26:12
 dnl ----------------------
 dnl On a few platforms, the compiler and/or loader nags with untruthful
 dnl comments stating that "most" uses of strcat/strcpy/sprintf are incorrect,
@@ -1325,7 +1326,7 @@ AC_DEFUN([CF_ENABLE_STRING_HACKS],
 [
 AC_MSG_CHECKING(if you want to work around bogus compiler/loader warnings)
 AC_ARG_ENABLE(string-hacks,
-	[  --enable-string-hacks  work around bogus compiler/loader warnings],
+	[  --enable-string-hacks   work around bogus compiler/loader warnings],
 	[with_string_hacks=$enableval],
 	[with_string_hacks=no])
 AC_MSG_RESULT($with_string_hacks)
@@ -1564,6 +1565,37 @@ else
 	AC_MSG_ERROR(Cannot find dlsym function)
 fi
 ])
+dnl ---------------------------------------------------------------------------
+dnl CF_FUNC_MEMMOVE version: 8 updated: 2012/10/04 20:12:20
+dnl ---------------
+dnl Check for memmove, or a bcopy that can handle overlapping copy.  If neither
+dnl is found, add our own version of memmove to the list of objects.
+AC_DEFUN([CF_FUNC_MEMMOVE],
+[
+AC_CHECK_FUNC(memmove,,[
+AC_CHECK_FUNC(bcopy,[
+	AC_CACHE_CHECK(if bcopy does overlapping moves,cf_cv_good_bcopy,[
+		AC_TRY_RUN([
+int main() {
+	static char data[] = "abcdefghijklmnopqrstuwwxyz";
+	char temp[40];
+	bcopy(data, temp, sizeof(data));
+	bcopy(temp+10, temp, 15);
+	bcopy(temp+5, temp+15, 10);
+	${cf_cv_main_return:-return} (strcmp(temp, "klmnopqrstuwwxypqrstuwwxyz"));
+}
+		],
+		[cf_cv_good_bcopy=yes],
+		[cf_cv_good_bcopy=no],
+		[cf_cv_good_bcopy=unknown])
+		])
+	],[cf_cv_good_bcopy=no])
+	if test "$cf_cv_good_bcopy" = yes ; then
+		AC_DEFINE(USE_OK_BCOPY,1,[Define to 1 to use bcopy when memmove is unavailable])
+	else
+		AC_DEFINE(USE_MY_MEMMOVE,1,[Define to 1 to use replacement function when memmove is unavailable])
+	fi
+])])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_FUNC_NANOSLEEP version: 4 updated: 2012/10/06 17:56:13
 dnl -----------------
@@ -2742,7 +2774,7 @@ CPPFLAGS="-I. -I../include $CPPFLAGS"
 AC_SUBST(CPPFLAGS)
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_INTEL_COMPILER version: 4 updated: 2010/05/26 05:38:42
+dnl CF_INTEL_COMPILER version: 5 updated: 2013/02/10 10:41:05
 dnl -----------------
 dnl Check if the given compiler is really the Intel compiler for Linux.  It
 dnl tries to imitate gcc, but does not return an error when it finds a mismatch
@@ -2756,6 +2788,7 @@ dnl $1 = GCC (default) or GXX
 dnl $2 = INTEL_COMPILER (default) or INTEL_CPLUSPLUS
 dnl $3 = CFLAGS (default) or CXXFLAGS
 AC_DEFUN([CF_INTEL_COMPILER],[
+AC_REQUIRE([AC_CANONICAL_HOST])
 ifelse([$2],,INTEL_COMPILER,[$2])=no
 
 if test "$ifelse([$1],,[$1],GCC)" = yes ; then
@@ -3035,7 +3068,7 @@ ifelse($1,,,[$1=$LIB_PREFIX])
 	AC_SUBST(LIB_PREFIX)
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_LIB_RULES version: 67 updated: 2012/10/06 13:36:35
+dnl CF_LIB_RULES version: 69 updated: 2013/03/09 19:22:30
 dnl ------------
 dnl Append definitions and rules for the given models to the subdirectory
 dnl Makefiles, and the recursion rule for the top-level Makefile.  If the
@@ -3090,6 +3123,8 @@ do
 		for cf_item in $cf_LIST_MODELS
 		do
 			CF_LIB_SUFFIX($cf_item,cf_suffix,cf_depsuf)
+			cf_libname=$cf_dir
+			test "$cf_dir" = c++ && cf_libname=ncurses++
 			if test $cf_item = shared ; then
 			if test "$cf_cv_do_symlinks" = yes ; then
 				case "$cf_cv_shlib_version" in #(vi
@@ -3149,17 +3184,17 @@ do
 			case $cf_cv_shlib_version in #(vi
 			cygdll) #(vi
 				cf_cygsuf=`echo "$cf_suffix" | sed -e 's/\.dll/\${ABI_VERSION}.dll/'`
-				Libs_To_Make="$Libs_To_Make ../lib/cyg${cf_dir}${cf_cygsuf}"
+				Libs_To_Make="$Libs_To_Make ../lib/cyg${cf_libname}${cf_cygsuf}"
 				continue
 				;;
 			mingw)
 				cf_cygsuf=`echo "$cf_suffix" | sed -e 's/\.dll/\${ABI_VERSION}.dll/'`
-				Libs_To_Make="$Libs_To_Make ../lib/lib${cf_dir}${cf_cygsuf}"
+				Libs_To_Make="$Libs_To_Make ../lib/lib${cf_libname}${cf_cygsuf}"
 				continue
 				;;
 			esac
 			fi
-			Libs_To_Make="$Libs_To_Make ../lib/${cf_prefix}${cf_dir}${cf_suffix}"
+			Libs_To_Make="$Libs_To_Make ../lib/${cf_prefix}${cf_libname}${cf_suffix}"
 		done
 
 		if test $cf_dir = ncurses ; then
@@ -3195,6 +3230,12 @@ do
 			cf_subsets=`echo "$LIB_SUBSETS" | sed -e 's/^termlib.* //'`
 		fi
 
+		if test $cf_dir = c++; then
+			if test "x$with_shared_cxx" != xyes; then
+				Libs_To_Make='../lib/$(LIBNAME)'
+			fi
+		fi
+
 		sed -e "s%@Libs_To_Make@%$Libs_To_Make%" \
 		    -e "s%@SHARED_LIB@%$SHARED_LIB%" \
 			$cf_dir/Makefile >$cf_dir/Makefile.out
@@ -3209,8 +3250,15 @@ do
 			cf_subdirs=
 			for cf_item in $cf_LIST_MODELS
 			do
+
 			echo "Appending rules for ${cf_item} model (${cf_dir}: ${cf_subset})"
 			CF_UPPER(cf_ITEM,$cf_item)
+
+			CXX_MODEL=$cf_ITEM
+			if test "$CXX_MODEL" = SHARED; then
+				test "x$with_shared_cxx" = xno && CXX_MODEL=NORMAL
+			fi
+
 			CF_LIB_SUFFIX($cf_item,cf_suffix,cf_depsuf)
 			CF_OBJ_SUBDIR($cf_item,cf_subdir)
 
@@ -3228,6 +3276,8 @@ do
 					cf_libname=$TICS_LIB_SUFFIX
 					;;
 				esac
+			elif test $cf_dir = c++ ; then
+				cf_libname=ncurses++$LIB_SUFFIX
 			else
 				cf_libname=${cf_libname}$LIB_SUFFIX
 			fi
@@ -3279,6 +3329,7 @@ do
 				name=${cf_libname}${cf_dir_suffix} \
 				traces=$LIB_TRACING \
 				MODEL=$cf_ITEM \
+				CXX_MODEL=$CXX_MODEL \
 				model=$cf_subdir \
 				prefix=$cf_prefix \
 				suffix=$cf_suffix \
@@ -4061,7 +4112,7 @@ AC_ARG_WITH(manpage-tbl,
 AC_MSG_RESULT($MANPAGE_TBL)
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_MAN_PAGES version: 41 updated: 2012/08/11 19:35:44
+dnl CF_MAN_PAGES version: 43 updated: 2013/02/09 12:53:45
 dnl ------------
 dnl Try to determine if the man-pages on the system are compressed, and if
 dnl so, what format is used.  Use this information to construct a script that
@@ -4179,11 +4230,12 @@ case \$i in #(vi
 	if test ! -f $cf_man_alias ; then
 cat >>$cf_man_alias <<-CF_EOF2
 		s,@DATADIR@,\$datadir,g
-		s,@TERMINFO@,\$TERMINFO,g
-		s,@NCURSES_MAJOR@,\$NCURSES_MAJOR,g
-		s,@NCURSES_MINOR@,\$NCURSES_MINOR,g
-		s,@NCURSES_PATCH@,\$NCURSES_PATCH,g
-		s,@NCURSES_OSPEED@,\$NCURSES_OSPEED,g
+		s,@TERMINFO@,\${TERMINFO:="no default value"},g
+		s,@TERMINFO_DIRS@,\${TERMINFO_DIRS:="no default value"},g
+		s,@NCURSES_MAJOR@,\${NCURSES_MAJOR:="no default value"},g
+		s,@NCURSES_MINOR@,\${NCURSES_MINOR:="no default value"},g
+		s,@NCURSES_PATCH@,\${NCURSES_PATCH:="no default value"},g
+		s,@NCURSES_OSPEED@,\${NCURSES_OSPEED:="no default value"},g
 CF_EOF
 	ifelse($1,,,[
 	for cf_name in $1
@@ -5227,7 +5279,7 @@ CF_VERBOSE(...checked $1 [$]$1)
 AC_SUBST(EXTRA_LDFLAGS)
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_SHARED_OPTS version: 71 updated: 2012/12/22 19:34:47
+dnl CF_SHARED_OPTS version: 72 updated: 2013/01/26 16:26:12
 dnl --------------
 dnl --------------
 dnl Attempt to determine the appropriate CC/LD options for creating a shared
@@ -5349,6 +5401,14 @@ CF_EOF
 		if test $cf_cv_ldflags_search_paths_first = yes; then
 			LDFLAGS="$LDFLAGS -Wl,-search_paths_first"
 		fi
+		;;
+	hpux[[7-8]]*) #(vi
+		# HP-UX 8.07 ld lacks "+b" option used for libdir search-list 
+		if test "$GCC" != yes; then
+			CC_SHARED_OPTS='+Z'
+		fi
+		MK_SHARED_LIB='${LD} -b -o $[@]'
+		INSTALL_LIB="-m 555"
 		;;
 	hpux*) #(vi
 		# (tested with gcc 2.7.2 -- I don't have c89)
@@ -6906,6 +6966,26 @@ test "$cf_with_sysmouse" = yes && AC_DEFINE(USE_SYSMOUSE,1,[Define to 1 if we ca
 fi
 ])dnl
 dnl ---------------------------------------------------------------------------
+dnl CF_WITH_SYSTYPE version: 1 updated: 2013/01/26 16:26:12
+dnl ---------------
+dnl For testing, override the derived host system-type which is used to decide
+dnl things such as the linker commands used to build shared libraries.  This is
+dnl normally chosen automatically based on the type of system which you are
+dnl building on.  We use it for testing the configure script.
+dnl
+dnl This is different from the --host option: it is used only for testing parts
+dnl of the configure script which would not be reachable with --host since that
+dnl relies on the build environment being real, rather than mocked up.
+AC_DEFUN([CF_WITH_SYSTYPE],[
+CF_CHECK_CACHE([AC_CANONICAL_SYSTEM])
+AC_ARG_WITH(system-type,
+	[  --with-system-type=XXX  test: override derived host system-type],
+[AC_MSG_WARN(overriding system type to $withval)
+	cf_cv_system_name=$withval
+	host_os=$withval
+])
+])dnl
+dnl ---------------------------------------------------------------------------
 dnl CF_WITH_VALGRIND version: 1 updated: 2006/12/14 18:00:21
 dnl ----------------
 AC_DEFUN([CF_WITH_VALGRIND],[
@@ -6914,7 +6994,7 @@ CF_NO_LEAKS_OPTION(valgrind,
 	[USE_VALGRIND])
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_XOPEN_SOURCE version: 42 updated: 2012/01/07 08:26:49
+dnl CF_XOPEN_SOURCE version: 43 updated: 2013/02/10 10:41:05
 dnl ---------------
 dnl Try to get _XOPEN_SOURCE defined properly that we can use POSIX functions,
 dnl or adapt to the vendor's definitions to get equivalent functionality,
@@ -6924,6 +7004,7 @@ dnl Parameters:
 dnl	$1 is the nominal value for _XOPEN_SOURCE
 dnl	$2 is the nominal value for _POSIX_C_SOURCE
 AC_DEFUN([CF_XOPEN_SOURCE],[
+AC_REQUIRE([AC_CANONICAL_HOST])
 
 cf_XOPEN_SOURCE=ifelse([$1],,500,[$1])
 cf_POSIX_C_SOURCE=ifelse([$2],,199506L,[$2])
