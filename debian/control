@@ -74,6 +74,7 @@ Package: libncurses5-dev
 Architecture: any
 Section: libdevel
 Priority: optional
+Multi-Arch: same
 Depends: libtinfo5 (= ${binary:Version}), libncurses5 (= ${binary:Version}),
          libtinfo-dev (= ${binary:Version}), ncurses-bin (= ${binary:Version}),
          libc-dev, ${misc:Depends}
@@ -120,6 +121,7 @@ Package: libncursesw5-dev
 Architecture: any
 Section: libdevel
 Priority: optional
+Multi-Arch: same
 Depends: libtinfo5 (= ${binary:Version}), libncursesw5 (= ${binary:Version}),
          libtinfo-dev (= ${binary:Version}), ncurses-bin (= ${binary:Version}),
          libc-dev, ${misc:Depends}
