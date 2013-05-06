@@ -1,4 +1,4 @@
-ncurses (5.9+20130309-1) UNRELEASED; urgency=low
+ncurses (5.9+20130504-1) UNRELEASED; urgency=low
 
   * New upstream patchlevel.
     - modify MKkey_defs.sh to filter out build-path which was
