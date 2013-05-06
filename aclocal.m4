@@ -28,7 +28,7 @@ dnl***************************************************************************
 dnl
 dnl Author: Thomas E. Dickey 1995-on
 dnl
-dnl $Id: aclocal.m4,v 1.654 2013/03/10 00:23:09 tom Exp $
+dnl $Id: aclocal.m4,v 1.666 2013/04/13 22:59:35 tom Exp $
 dnl Macros used in NCURSES auto-configuration script.
 dnl
 dnl These macros are maintained separately from NCURSES.  The copyright on
@@ -492,7 +492,7 @@ else	AC_MSG_RESULT(no)
 fi
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_BOOL_SIZE version: 12 updated: 2006/12/16 12:33:30
+dnl CF_BOOL_SIZE version: 13 updated: 2013/04/13 18:03:21
 dnl ------------
 dnl Test for the size of 'bool' in the configured C++ compiler (e.g., a type).
 dnl Don't bother looking for bool.h, since it's been deprecated.
@@ -526,7 +526,7 @@ AC_CACHE_VAL(cf_cv_type_of_bool,[
 
 #endif
 
-main()
+int main()
 {
 	FILE *fp = fopen("cf_test.out", "w");
 	if (fp != 0) {
@@ -678,7 +678,7 @@ case "$CC" in #(vi
 esac
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_CFG_DEFAULTS version: 8 updated: 2011/06/04 20:09:13
+dnl CF_CFG_DEFAULTS version: 9 updated: 2013/04/13 18:58:32
 dnl ---------------
 dnl Determine the default configuration into which we'll install ncurses.  This
 dnl can be overridden by the user's command-line options.  There's two items to
@@ -696,7 +696,7 @@ AC_MSG_CHECKING(for prefix)
 if test "x$prefix" = "xNONE" ; then
 	case "$cf_cv_system_name" in
 		# non-vendor systems don't have a conflict
-	openbsd*|freebsd*|mirbsd*|linux*|cygwin*|k*bsd*-gnu)
+	openbsd*|freebsd*|mirbsd*|linux*|cygwin*|k*bsd*-gnu|mingw*)
 		prefix=/usr
 		;;
 	*)	prefix=$ac_default_prefix
@@ -912,6 +912,27 @@ if test "$cf_cv_check_gpm_wgetch" != yes ; then
 fi
 ])])dnl
 dnl ---------------------------------------------------------------------------
+dnl CF_CHECK_LIBTOOL_VERSION version: 1 updated: 2013/04/06 18:03:09
+dnl ------------------------
+dnl Show the version of libtool
+dnl
+dnl Save the version in a cache variable - this is not entirely a good thing,
+dnl but the version string from libtool is very ugly, and for bug reports it
+dnl might be useful to have the original string.
+AC_DEFUN([CF_CHECK_LIBTOOL_VERSION],[
+if test -n "$LIBTOOL" && test "$LIBTOOL" != none
+then
+	AC_MSG_CHECKING(version of $LIBTOOL)
+	CF_LIBTOOL_VERSION
+	AC_MSG_RESULT($cf_cv_libtool_version)
+	if test -z "$cf_cv_libtool_version" ; then
+		AC_MSG_ERROR(This is not GNU libtool)
+	fi
+else
+	AC_MSG_ERROR(GNU libtool has not been found)
+fi
+])dnl
+dnl ---------------------------------------------------------------------------
 dnl CF_CHECK_WCHAR_H version: 1 updated: 2011/10/29 15:01:05
 dnl ----------------
 dnl Check if wchar.h can be used, i.e., without defining _XOPEN_SOURCE_EXTENDED
@@ -1001,7 +1022,7 @@ fi
 test "$cf_cv_cpp_param_init" = yes && AC_DEFINE(CPP_HAS_PARAM_INIT,1,[Define to 1 if C++ has parameter initialization])
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_CPP_STATIC_CAST version: 2 updated: 2012/10/06 17:56:13
+dnl CF_CPP_STATIC_CAST version: 3 updated: 2013/04/13 18:03:21
 dnl ------------------
 dnl Check if the C++ compiler accepts static_cast in generics.  This appears to
 dnl not be supported in g++ before 3.0
@@ -1023,7 +1044,7 @@ public:
 	       int begin_x = 0)
   {
   }
-
+  NCursesPanel();
   ~NCursesPanel();
 };
 
@@ -1529,6 +1550,15 @@ AC_DEFUN([CF_FIXUP_ADAFLAGS],[
 		;;
 	esac
 	AC_MSG_RESULT($ADAFLAGS)
+])dnl
+dnl ---------------------------------------------------------------------------
+dnl CF_FORGET_TOOL version: 1 updated: 2013/04/06 18:03:09
+dnl --------------
+dnl Forget that we saw the given tool.
+AC_DEFUN([CF_FORGET_TOOL],[
+unset ac_cv_prog_ac_ct_$1
+unset ac_ct_$1
+unset $1
 ])dnl
 dnl ---------------------------------------------------------------------------
 dnl CF_FUNC_DLSYM version: 3 updated: 2012/10/06 11:17:15
@@ -3051,6 +3081,18 @@ CF_SUBDIR_PATH($1,$2,lib)
 $1="$cf_library_path_list [$]$1"
 ])dnl
 dnl ---------------------------------------------------------------------------
+dnl CF_LIBTOOL_VERSION version: 1 updated: 2013/04/06 18:03:09
+dnl ------------------
+AC_DEFUN([CF_LIBTOOL_VERSION],[
+if test -n "$LIBTOOL" && test "$LIBTOOL" != none
+then
+	cf_cv_libtool_version=`$LIBTOOL --version 2>&1 | sed -e '/^$/d' |sed -e '2,$d' -e 's/([[^)]]*)//g' -e 's/^[[^1-9]]*//' -e 's/[[^0-9.]].*//'`
+else
+	cf_cv_libtool_version=
+fi
+test -z "$cf_cv_libtool_version" && unset cf_cv_libtool_version
+])dnl
+dnl ---------------------------------------------------------------------------
 dnl CF_LIB_PREFIX version: 9 updated: 2012/01/21 19:28:10
 dnl -------------
 dnl Compute the library-prefix for the given host system
@@ -3068,7 +3110,7 @@ ifelse($1,,,[$1=$LIB_PREFIX])
 	AC_SUBST(LIB_PREFIX)
 ])dnl
 dnl ---------------------------------------------------------------------------
-dnl CF_LIB_RULES version: 69 updated: 2013/03/09 19:22:30
+dnl CF_LIB_RULES version: 72 updated: 2013/03/24 17:10:41
 dnl ------------
 dnl Append definitions and rules for the given models to the subdirectory
 dnl Makefiles, and the recursion rule for the top-level Makefile.  If the
@@ -3126,73 +3168,58 @@ do
 			cf_libname=$cf_dir
 			test "$cf_dir" = c++ && cf_libname=ncurses++
 			if test $cf_item = shared ; then
-			if test "$cf_cv_do_symlinks" = yes ; then
-				case "$cf_cv_shlib_version" in #(vi
-				rel) #(vi
-					case "$cf_cv_system_name" in #(vi
-					darwin*)
-					case .${LIB_SUFFIX} in
-					.tw*)
-						cf_suffix=`echo $cf_suffix | sed 's/^tw//'`
-						cf_suffix=tw'.${REL_VERSION}'"$cf_suffix"
+				if test -n "${LIB_SUFFIX}"
+				then
+					cf_shared_suffix=`echo "$cf_suffix" | sed 's/^'"${LIB_SUFFIX}"'//'`
+				else
+					cf_shared_suffix="$cf_suffix"
+				fi
+				if test "$cf_cv_do_symlinks" = yes ; then
+					cf_version_name=
+
+					case "$cf_cv_shlib_version" in #(vi
+					rel) #(vi
+						cf_version_name=REL_VERSION
 						;;
-					.t*)
-						cf_suffix=`echo $cf_suffix | sed 's/^t//'`
-						cf_suffix=t'.${REL_VERSION}'"$cf_suffix"
-						;;
-					.w*)
-						cf_suffix=`echo $cf_suffix | sed 's/^w//'`
-						cf_suffix=w'.${REL_VERSION}'"$cf_suffix"
-						;;
-					*)
-						cf_suffix='.${REL_VERSION}'"$cf_suffix"
+					abi)
+						cf_version_name=ABI_VERSION
 						;;
 					esac
-					;; #(vi
-					*) cf_suffix="$cf_suffix"'.${REL_VERSION}' ;;
-					esac
+
+					if test -n "$cf_version_name"
+					then
+						case "$cf_cv_system_name" in #(vi
+						darwin*)
+							# "w", etc?
+							cf_suffix="${LIB_SUFFIX}"'.${'$cf_version_name'}'"$cf_shared_suffix"
+							;; #(vi
+						*)
+							cf_suffix="$cf_suffix"'.${'$cf_version_name'}'
+							;;
+						esac
+					fi
+					if test -n "${LIB_SUFFIX}"
+					then
+						cf_shared_suffix=`echo "$cf_suffix" | sed 's/^'"${LIB_SUFFIX}"'//'`
+					else
+						cf_shared_suffix="$cf_suffix"
+					fi
+				fi
+				# cygwin needs import library, and has unique naming convention
+				# use autodetected ${cf_prefix} for import lib and static lib, but
+				# use 'cyg' prefix for shared lib.
+				case $cf_cv_shlib_version in #(vi
+				cygdll) #(vi
+					cf_cygsuf=`echo "$cf_suffix" | sed -e 's/\.dll/\${ABI_VERSION}.dll/'`
+					Libs_To_Make="$Libs_To_Make ../lib/cyg${cf_libname}${cf_cygsuf}"
+					continue
 					;;
-				abi)
-					case "$cf_cv_system_name" in #(vi
-					darwin*)
-					case .${LIB_SUFFIX} in
-					.tw*)
-						cf_suffix=`echo $cf_suffix | sed 's/^tw//'`
-						cf_suffix=tw'.${ABI_VERSION}'"$cf_suffix"
-						;;
-					.t*)
-						cf_suffix=`echo $cf_suffix | sed 's/^t//'`
-						cf_suffix=t'.${ABI_VERSION}'"$cf_suffix"
-						;;
-					.w*)
-						cf_suffix=`echo $cf_suffix | sed 's/^w//'`
-						cf_suffix=w'.${ABI_VERSION}'"$cf_suffix"
-						;;
-					*)
-						cf_suffix='.${ABI_VERSION}'"$cf_suffix"
-						;;
-					esac
-					;; #(vi
-					*) cf_suffix="$cf_suffix"'.${ABI_VERSION}' ;;
-					esac
+				mingw)
+					cf_cygsuf=`echo "$cf_suffix" | sed -e 's/\.dll/\${ABI_VERSION}.dll/'`
+					Libs_To_Make="$Libs_To_Make ../lib/lib${cf_libname}${cf_cygsuf}"
+					continue
 					;;
 				esac
-			fi
-			# cygwin needs import library, and has unique naming convention
-			# use autodetected ${cf_prefix} for import lib and static lib, but
-			# use 'cyg' prefix for shared lib.
-			case $cf_cv_shlib_version in #(vi
-			cygdll) #(vi
-				cf_cygsuf=`echo "$cf_suffix" | sed -e 's/\.dll/\${ABI_VERSION}.dll/'`
-				Libs_To_Make="$Libs_To_Make ../lib/cyg${cf_libname}${cf_cygsuf}"
-				continue
-				;;
-			mingw)
-				cf_cygsuf=`echo "$cf_suffix" | sed -e 's/\.dll/\${ABI_VERSION}.dll/'`
-				Libs_To_Make="$Libs_To_Make ../lib/lib${cf_libname}${cf_cygsuf}"
-				continue
-				;;
-			esac
 			fi
 			Libs_To_Make="$Libs_To_Make ../lib/${cf_prefix}${cf_libname}${cf_suffix}"
 		done
@@ -3231,8 +3258,29 @@ do
 		fi
 
 		if test $cf_dir = c++; then
-			if test "x$with_shared_cxx" != xyes; then
-				Libs_To_Make='../lib/$(LIBNAME)'
+			if test "x$with_shared_cxx" != xyes && test -n "$cf_shared_suffix"; then
+				cf_list=
+				for cf_item in $Libs_To_Make
+				do
+					case $cf_item in
+					*.a)
+						;;
+					*)
+						cf_item=`echo "$cf_item" | sed -e "s,"$cf_shared_suffix",.a,"`
+						;;
+					esac
+					for cf_test in $cf_list
+					do
+						if test "$cf_test" = "$cf_item"
+						then
+							cf_LIST_MODELS=`echo "$cf_LIST_MODELS" | sed -e 's/normal//'`
+							cf_item=
+							break
+						fi
+					done
+					test -n "$cf_item" && cf_list="$cf_list $cf_item"
+				done
+				Libs_To_Make="$cf_list"
 			fi
 		fi
 
@@ -3256,7 +3304,15 @@ do
 
 			CXX_MODEL=$cf_ITEM
 			if test "$CXX_MODEL" = SHARED; then
-				test "x$with_shared_cxx" = xno && CXX_MODEL=NORMAL
+				case $cf_cv_shlib_version in #(vi
+				cygdll|mingw) #(vi
+					test "x$with_shared_cxx" = xno && CF_VERBOSE(overriding CXX_MODEL to SHARED)
+					with_shared_cxx=yes
+					;;
+				*)
+					test "x$with_shared_cxx" = xno && CXX_MODEL=NORMAL
+					;;
+				esac
 			fi
 
 			CF_LIB_SUFFIX($cf_item,cf_suffix,cf_depsuf)
@@ -6586,7 +6642,7 @@ if test "$with_gpm" != no ; then
 fi
 ])
 dnl ---------------------------------------------------------------------------
-dnl CF_WITH_LIBTOOL version: 28 updated: 2011/07/02 15:40:32
+dnl CF_WITH_LIBTOOL version: 29 updated: 2013/04/06 18:03:09
 dnl ---------------
 dnl Provide a configure option to incorporate libtool.  Define several useful
 dnl symbols for the makefile rules.
@@ -6656,7 +6712,14 @@ ifdef([AC_PROG_LIBTOOL],[
 		CF_PATH_SYNTAX(with_libtool)
 		LIBTOOL=$with_libtool
 	else
-		AC_PATH_PROG(LIBTOOL,libtool)
+		AC_CHECK_TOOLS(LIBTOOL,[libtool glibtool],none)
+		CF_LIBTOOL_VERSION
+		if test -z "$cf_cv_libtool_version" && test "$LIBTOOL" = libtool
+		then
+			CF_FORGET_TOOL(LIBTOOL)
+			AC_CHECK_TOOLS(LIBTOOL,[glibtool],none)
+			CF_LIBTOOL_VERSION
+		fi
 	fi
 	if test -z "$LIBTOOL" ; then
 		AC_MSG_ERROR(Cannot find libtool)
@@ -6672,17 +6735,7 @@ ifdef([AC_PROG_LIBTOOL],[
 	LIB_UNINSTALL='${LIBTOOL} --mode=uninstall'
 	LIB_PREP=:
 
-	# Show the version of libtool
-	AC_MSG_CHECKING(version of libtool)
-
-	# Save the version in a cache variable - this is not entirely a good
-	# thing, but the version string from libtool is very ugly, and for
-	# bug reports it might be useful to have the original string. "("
-	cf_cv_libtool_version=`$LIBTOOL --version 2>&1 | sed -e '/^$/d' |sed -e '2,$d' -e 's/([[^)]]*)//g' -e 's/^[[^1-9]]*//' -e 's/[[^0-9.]].*//'`
-	AC_MSG_RESULT($cf_cv_libtool_version)
-	if test -z "$cf_cv_libtool_version" ; then
-		AC_MSG_ERROR(This is not GNU libtool)
-	fi
+	CF_CHECK_LIBTOOL_VERSION
 
 	# special hack to add -no-undefined (which libtool should do for itself)
 	LT_UNDEF=

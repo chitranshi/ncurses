@@ -25,7 +25,7 @@
 -- sale, use or other dealings in this Software without prior written        --
 -- authorization.                                                            --
 -------------------------------------------------------------------------------
--- $Id: NEWS,v 1.2030 2013/03/09 22:42:05 tom Exp $
+-- $Id: NEWS,v 1.2053 2013/05/04 23:03:37 tom Exp $
 -------------------------------------------------------------------------------
 
 This is a log of changes that ncurses has gone through since Zeyd started
@@ -45,6 +45,68 @@ See the AUTHORS file for the corresponding full names.
 Changes through 1.9.9e did not credit all contributions;
 it is not possible to add this information.
 
+20130504
+	+ fixes for issues found by Coverity:
+	  + correct FNKEY() macro in progs/dump_entry.c, allowing kf11-kf63 to
+	    display when infocmp's -R option is used for HP or AIX subsets.
+	  + fix dead-code issue with test/movewindow.c
+	  + improve limited-checking in _nc_read_termtype().
+
+20130427
+	+ fix clang 3.2 warning in progs/dump_entry.c
+	+ drop AC_TYPE_SIGNAL check; ncurses relies on c89 and later.
+
+20130413
+	+ add MinGW to cases where ncurses installs by default into /usr
+	  (prompted by discussion with Daniel Silva Ferreira).
+	+ add -D option to infocmp's usage-message (patch by Miroslav Lichvar).
+	+ add a missing 'int' type for main function in configure check for
+	  type of bool variable, to work with clang 3.2 (report by Dmitri
+	  Gribenko).
+	+ improve configure check for static_cast, to work with clang 3.2
+	  (report by Dmitri Gribenko).
+	+ re-order rule for demo.o and macros defining header dependencies in
+	  c++/Makefile.in to accommodate gmake (report by Dmitri Gribenko).
+
+20130406
+	+ improve parameter checking in copywin().
+	+ modify configure script to work around OS X's "libtool" program, to
+	  choose glibtool instead.  At the same time, chance the autoconf macro
+	  to look for a "tool" rather than a "prog", to help with potential use
+	  in cross-compiling.
+	+ separate the rpath usage for c++ library from demo program
+	  (Redhat #911540)
+	+ update/correct header-dependencies in c++ makefile (report by Werner
+	  Fink).
+	+ add --with-cxx-shared to dpkg-script, as done for rpm-script.
+
+20130324
+	+ build-fix for libtool configuration (reports by Daniel Silva Ferreira
+	  and Roumen Petrov).
+
+20130323
+	+ build-fix for OS X, to handle changes for --with-cxx-shared feature
+	  (report by Christian Ebert).
+	+ change initialization for vt220, similar entries for consistency
+	  with cursor-key strings (NetBSD #47674) -TD
+	+ further improvements to linux-16color (Benjamin Sittler)
+
+20130316
+	+ additional fix for tic.c, to allocate missing buffer space.
+	+ eliminate configure-script warnings for gen-pkgconfig.in
+	+ correct typo in sgr string for sun-color,
+	  add bold for consistency with sgr,
+	  change smso for consistency with sgr -TD
+	+ correct typo in sgr string for terminator -TD
+	+ add blink to the attributes masked by ncv in linux-16color (report
+	  by Benjamin Sittler)
+	+ improve warning message from post-load checking for missing "%?"
+	  operator by tic/infocmp by showing the entry name and capability.
+	+ minor formatting improvement to tic/infocmp -f option to ensure
+	  line split after "%;".
+	+ amend scripting for --with-cxx-shared option to handle the debug
+	  library "libncurses++_g.a" (report by Sven Joachim).
+
 20130309
 	+ amend change to toe.c for reading from /dev/zero, to ensure that
 	  there is a buffer for the temporary filename (cf: 20120324).
@@ -56,7 +118,7 @@ it is not possible to add this information.
 	+ add configure option --with-cxx-shared to permit building
 	  libncurses++ as a shared library when using g++, e.g., the same
 	  limitations as libtool but better integrated with the usual build
-	  configuration (Redhat 911540).
+	  configuration (Redhat #911540).
 	+ modify MKkey_defs.sh to filter out build-path which was unnecessarily
 	  shown in curses.h (Debian #689131).
 
@@ -2651,7 +2713,7 @@ it is not possible to add this information.
 	+ modify configure script to quiet c++ build with libtool when the
 	  --disable-echo option is used.
 	+ modify configure script to disable ada95 if libtool is selected,
-	  writing a warning message (addresses FreeBSD ports/114493).
+	  writing a warning message (addresses FreeBSD #114493).
 	+ update config.guess, config.sub
 
 20070707
@@ -5217,7 +5279,7 @@ it is not possible to add this information.
 	+ modify lib_screen.c and lib_newwin.c to maintain the SCREEN-specific
 	  pointers for curscr/stdscr/newscr when scr_save() and scr_restore()
 	  modify the global curscr/stdscr/newscr variables.  Fixes Redhat
-	  #68199 dated 2002-07-07.
+	  #68199.
 	+ add checks for null pointer in calls to tparm() and tgoto() based on
 	  FreeBSD bug report.  If ncurses were built with termcap support, and
 	  the first call to tgoto() were a zero-length string, the result would
