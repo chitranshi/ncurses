@@ -4,7 +4,7 @@ ncurses (5.9+20130504-1) UNRELEASED; urgency=low
     - modify MKkey_defs.sh to filter out build-path which was
       unnecessarily shown in curses.h.
   * The headers should now be identical across architectures where
-    libc-dev is coinstallable, so mark libncurses{w}5-dev as
+    libc-dev is coinstallable, so mark libncurses{w,}5-dev as
     "Multi-Arch: same" again (Closes: #689131).
 
  -- Sven Joachim <svenjoac@gmx.de>  Sun, 10 Mar 2013 11:13:14 +0100
