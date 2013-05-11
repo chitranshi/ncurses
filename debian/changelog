@@ -1,4 +1,4 @@
-ncurses (5.9+20130504-1) UNRELEASED; urgency=low
+ncurses (5.9+20130504-1) unstable; urgency=low
 
   * New upstream patchlevel.
     - modify MKkey_defs.sh to filter out build-path which was
@@ -7,7 +7,7 @@ ncurses (5.9+20130504-1) UNRELEASED; urgency=low
     libc-dev is coinstallable, so mark libncurses{w,}5-dev as
     "Multi-Arch: same" again (Closes: #689131).
 
- -- Sven Joachim <svenjoac@gmx.de>  Sun, 10 Mar 2013 11:13:14 +0100
+ -- Sven Joachim <svenjoac@gmx.de>  Sat, 11 May 2013 13:00:56 +0200
 
 ncurses (5.9+20130119-1) experimental; urgency=low
 
