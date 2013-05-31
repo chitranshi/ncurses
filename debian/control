@@ -8,7 +8,7 @@ Build-Depends: debhelper (>= 8.1.3),
                g++-multilib [amd64 i386 powerpc ppc64 s390 sparc],
                libgpm-dev [linux-any],
                pkg-config,
-Standards-Version: 3.9.3
+Standards-Version: 3.9.4
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=collab-maint/ncurses.git
 Vcs-Git: git://anonscm.debian.org/collab-maint/ncurses.git
 Homepage: http://invisible-island.net/ncurses/
