@@ -19,6 +19,7 @@ Pre-Depends: ${misc:Pre-Depends}
 Multi-Arch: same
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Replaces: libncurses5 (<< 5.9-3)
+Breaks: dialog (<< 1.2-20130523)
 Description: shared low-level terminfo library for terminal handling
  The ncurses library routines are a terminal-independent method of
  updating character screens with reasonable optimization.
