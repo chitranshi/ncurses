@@ -2,6 +2,7 @@ ncurses (5.9+20130504-2) UNRELEASED; urgency=low
 
   * Add Breaks against dialog (<< 1.2-20130523) to libtinfo5, since
     older dialog versions misbehave (Closes: #709325).
+  * Switch Vcs-* fields to anonscm.debian.org.
 
  -- Sven Joachim <svenjoac@gmx.de>  Fri, 31 May 2013 17:56:12 +0200
 
