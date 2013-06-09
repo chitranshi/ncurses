@@ -42,7 +42,7 @@
 
 #include <dump_entry.h>
 
-MODULE_ID("$Id: infocmp.c,v 1.124 2013/04/13 22:15:14 Miroslav.Lichvar Exp $")
+MODULE_ID("$Id: infocmp.c,v 1.126 2013/06/08 16:51:33 tom Exp $")
 
 #define L_CURL "{"
 #define R_CURL "}"
@@ -404,7 +404,11 @@ show_comparing(char **names)
  * macro is used for limit-checks against the symbols that tic uses to omit
  * the two types of non-standard entry.
  */
+#if NCURSES_XNAMES
 #define check_user_definable(n,limit) if (!_nc_user_definable && (n) > (limit)) break
+#else
+#define check_user_definable(n,limit) if ((n) > (limit)) break
+#endif
 
 /*
  * Use these macros to simplify loops on C_COMMON and C_NAND:
@@ -1745,7 +1749,7 @@ main(int argc, char *argv[])
 	    tname[termcount] = argv[optind];
 
 	    if (directory) {
-#if USE_DATABASE
+#if NCURSES_USE_DATABASE
 #if MIXEDCASE_FILENAMES
 #define LEAF_FMT "%c"
 #else

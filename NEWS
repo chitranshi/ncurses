@@ -25,7 +25,7 @@
 -- sale, use or other dealings in this Software without prior written        --
 -- authorization.                                                            --
 -------------------------------------------------------------------------------
--- $Id: NEWS,v 1.2053 2013/05/04 23:03:37 tom Exp $
+-- $Id: NEWS,v 1.2069 2013/06/08 21:00:03 tom Exp $
 -------------------------------------------------------------------------------
 
 This is a log of changes that ncurses has gone through since Zeyd started
@@ -44,6 +44,51 @@ See the AUTHORS file for the corresponding full names.
 
 Changes through 1.9.9e did not credit all contributions;
 it is not possible to add this information.
+
+20130608
+	+ add to test/demo_forms.c examples of using the menu-hooks as well
+	  as showing how the menu item user-data can be used to pass a callback
+	  function pointer.
+	+ add test/dots_termcap.c
+	+ remove setupterm call from test/demo_termcap.c
+	+ build-fix if --disable-ext-funcs configure option is used.
+	+ modified test/edit_field.c and test/demo_forms.c to move the lengths
+	  into a user-data structure, keeping the original string for later
+	  expansion to free-format input/out demo.
+	+ modified test/demo_forms.c to load data from file.
+	+ added note to clarify Terminal.app's non-emulation of the various
+	  terminal types listed in the preferences dialog -TD
+	+ fix regression in error-reporting in lib_setup.c (Debian #711134,
+	  cf: 20121117).
+	+ build-fix for a case where --enable-broken_linker and
+	  --enable-reentrant options are combined (report by George R Goffe).
+
+20130525
+	+ modify mvcur() to distinguish between internal use by the ncurses
+	  library, and external callers, preventing it from reading the content
+	  of the screen which is only nonblank when curses calls have updated
+	  it.  This makes test/dots_mvcur.c avoid painting colored cells in
+	  the left margin of the display.
+	+ minor fix to test/dots_mvcur.c
+	+ move configured symbols USE_DATABASE and USE_TERMCAP to term.h as
+	  NCURSES_USE_DATABASE and NCURSES_USE_TERMCAP to allow consistent
+	  use of these symbols in term_entry.h
+
+20130518
+	+ corrected ifdefs in test/testcurs.c to allow comparison of mouse
+	  interface versus pdcurses (cf: 20130316).
+	+ add pow() to configure-check for math library, needed since
+	  20121208 for test/hanoi (Debian #708056).
+	+ regenerated html manpages.
+	+ update doctype used for html documentation.
+
+20130511
+	+ move nsterm-related entries out of "obsolete" section to more
+	  plausible "ansi consoles" -TD
+	+ additional cleanup of table-of-contents by reordering -TD
+	+ revise fix for check for 8-bit value in _nc_insert_ch(); prior fix
+	  prevented inserts when video attributes were attached to the data
+	  (cf: 20121215) (Redhat #959534).
 
 20130504
 	+ fixes for issues found by Coverity:
