@@ -1,6 +1,8 @@
 ncurses (5.9+20130608-1) UNRELEASED; urgency=low
 
   * New upstream patchlevel.
+    - Add pow() to configure-check for math library, needed for
+      test/hanoi (Closes: #708056).
   * Add Breaks against dialog (<< 1.2-20130523) to libtinfo5, since
     older dialog versions misbehave (Closes: #709325).
   * Switch Vcs-* fields to anonscm.debian.org.
